@@ -159,7 +159,8 @@
                      if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
                      });
                      return result;
-        }
+	}
+	document.baseURI = parseGet('path_to_lect');
         var slideshow = remark.create({
                                       sourceUrl: parseGet('path_to_lect')
                                       });
