@@ -23,7 +23,16 @@
             url('fonts/PTM55F.svg#PTM55F') format('svg');
         }
     
-    
+    	.first-page, .last-page {
+	    background-image: url('background.png');
+	    vertical-align: 'bottom';
+	    text-align: 'right';
+	}
+	
+	.first-page h1, .last-page h1 {
+	    margin-bottom: 70px;
+	}
+
         h1, h2, h3 {
             font-family: 'HelveticaNeueCyrBold';
             fill: #4BA6C1;
@@ -162,7 +171,7 @@
 	}
 	document.baseURI = parseGet('path_to_lect');
         var slideshow = remark.create({
-                                      sourceUrl: parseGet('path_to_lect')
+                                      sourceUrl: parseGet('path_to_lect') + 'lect.txt'
                                       });
     </script>
 </body>
