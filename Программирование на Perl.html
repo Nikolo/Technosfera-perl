@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Программирование на Perl</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+        @font-face {
+            font-family: 'HelveticaNeueCyrBold';
+            src: url('fonts/HelveticaNeueCyrBold.eot');
+            src: url('fonts/HelveticaNeueCyrBold.eot') format('embedded-opentype'),
+            url('fonts/HelveticaNeueCyrBold.woff2') format('woff2'),
+            url('fonts/HelveticaNeueCyrBold.woff') format('woff'),
+            url('fonts/HelveticaNeueCyrBold.ttf') format('truetype'),
+            url('fonts/HelveticaNeueCyrBold.svg#HelveticaNeueCyrBold') format('svg');
+        }
+        @font-face {
+            font-family: 'PTM55F';
+            src: url('fonts/PTM55F.eot');
+            src: url('fonts/PTM55F.eot') format('embedded-opentype'),
+            url('fonts/PTM55F.woff2') format('woff2'),
+            url('fonts/PTM55F.woff') format('woff'),
+            url('fonts/PTM55F.ttf') format('truetype'),
+            url('fonts/PTM55F.svg#PTM55F') format('svg');
+        }
+    
+    
+        h1, h2, h3 {
+            font-family: 'HelveticaNeueCyrBold';
+            fill: #4BA6C1;
+        }
+
+        .bold_font {
+            font-family: 'HelveticaNeueCyrBold';
+            font-weight: bold;
+        }
+
+        .remark-code, .remark-inline-code {
+            font-family: 'PTM55F';
+            font-size: 24px;
+            line-height: 1.15em;
+        }
+
+        .floatright {
+            float: right;
+            padding: 10px 10px 10px 16px;
+        }
+    
+        .floatleft {
+            float: left;
+            padding: 10px 10px 10px 16px;
+        }
+    
+        .remark-code-span-highlighted {
+            background: inherit;
+        }
+    
+        .remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
+            content: "`";
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .center-aligned {
+            text-align: center;
+            font-size: 36pt;
+        }
+    
+        .remark-slide-content {
+            font-family: "HelveticaNeueCyrBold";
+        }
+    
+        .not .perl .remark-code-line-highlighted {
+            background-color: rgba(255, 0, 0, 0.5)
+        }
+    
+        .minpad-zp {
+            margin-left: -60px;
+        }
+    
+        .small {
+            font-size: 24px;
+            line-height: 1.15em;
+        }
+
+        .absmiddle {
+            position: absolute;
+        }
+    
+        .remark-slide-content h1 { font-size: 1.2em; }
+        .remark-slide-content h2 { font-size: 1.1em; }
+        .remark-slide-content h3 { font-size: 1em; }
+        .remark-inline-code {
+            background-color: #e2e2e2;
+            padding-left: 0.05em;
+            padding-right: 0.05em;
+            margin-left: -0.05em;
+            margin-right: -0.05em;
+        }
+    
+        .big {
+            font-size: 42px;
+        }
+    
+        .red {
+            color: red;
+        }
+    
+        .note {
+            display:block;
+            font-size: 18px;
+        }
+    
+        table {
+            width:95%;
+            border-collapse: separate;
+        }
+    
+        table td, table th {
+        }
+    
+        .hidden {
+            background-color: silver;
+        }
+    
+        .delete {
+            background-color: #ffaaaa;
+        }
+    
+        .optable {
+            font-size: 18px;
+            line-height: 0.95em;
+        }
+        .optable .remark-inline-code {
+            background-color: yellow;
+        }
+        .footer {
+            position: absolute;
+            bottom: 12px;
+            left: 128px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        function parseGet(val) {
+            var result = "Not found",
+            tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                     tmp = item.split("=");
+                     if (tmp[0] === val) result = decodeURIComponent(tmp[1]);
+                     });
+                     return result;
+        }
+        var slideshow = remark.create({
+                                      sourceUrl: parseGet('path_to_lect')
+                                      });
+    </script>
+</body>
+</html>
