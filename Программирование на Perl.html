@@ -25,8 +25,8 @@
     
     	.first-page, .last-page {
 	    background-image: url('background.png');
-	    vertical-align: 'bottom';
-	    text-align: 'right';
+	    vertical-align: bottom;
+	    text-align: right;
 	}
 	
 	.first-page h1, .last-page h1 {
@@ -154,8 +154,8 @@
     </style>
 </head>
 <body>
-    <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript">
-    </script>
+    <script src="//gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript">
     <script type="text/javascript">
         function parseGet(val) {
             var result = "Not found",
@@ -169,10 +169,12 @@
                      });
                      return result;
 	}
-	document.baseURI = parseGet('path_to_lect');
         var slideshow = remark.create({
                                       sourceUrl: parseGet('path_to_lect') + 'lect.txt'
                                       });
+	document.onload(function(){
+		$('img').each(function(){$(this).attr('src', parseGet('path_to_lect') + $(this).attr('src'))});
+	});
     </script>
 </body>
 </html>
