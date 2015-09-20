@@ -169,10 +169,10 @@
                      });
                      return result;
 	}
-        var slideshow = remark.create({
+	document.onload(function(){
+        	var slideshow = remark.create({
                                       sourceUrl: parseGet('path_to_lect') + 'lect.txt'
                                       });
-	document.onload(function(){
 		$('img').each(function(){$(this).attr('src', parseGet('path_to_lect') + $(this).attr('src'))});
 	});
     </script>
