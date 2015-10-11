@@ -43,7 +43,9 @@ close
 
 ---
 
-open( $fh, '&lt;', 'filename') vs open( $fh, '&lt; filename')
+```perl
+open( $fh, '<', 'filename') vs open( $fh, '< filename')
+```
 
 .floatright[![Right-aligned image](rw.jpg)]
 
@@ -57,9 +59,9 @@ fopen(3) r , r+ , w , w+ , a
 
 .clear[
 ```perl
-open( my $fh_cp, '&lt;:encoding(CP-1251)' , 'cp1251.txt' );
-open( my $fh_utf, '&gt;:encoding(UTF-8)' , 'utf8.txt' );
-while( &lt;$fh_cp&gt; ){
+open( my $fh_cp, '<:encoding(CP-1251)' , 'cp1251.txt' );
+open( my $fh_utf, '<:encoding(UTF-8)' , 'utf8.txt' );
+while( <$fh_cp> ){
     print $fh_utf $_;
 }
 close($fh_utf);
@@ -75,9 +77,9 @@ close($fh_cp);
 ```perl
 $input= <>
 
-$line = &lt;$handle&gt;
+$line = <$handle>
 
-@lines = &lt;$handle&gt;
+@lines = <$handle>
 ```
 
 Запись и файловый манипулятор
@@ -104,7 +106,7 @@ This is data from pm file
 
 Не нужно вызывать open
 ```perl
-my $line = &lt;DATA&gt;
+my $line = <DATA>
 ```
 
 ---
@@ -121,6 +123,8 @@ read($fh, $data, $data_size); # чтение двоичных данных
 eof($fh); # проверка на отсутствие данных
 ```
 
+---
+
 Пример:
 
 ```perl
@@ -128,7 +132,7 @@ use strict;
 use Digest::MD5 qw/md5/;
 my $data = '';
 my $data_size = 1024;
-open(my $fh, '&lt;:raw', 'data.bin') or die $!;
+open(my $fh, '<:raw', 'data.bin') or die $!;
 while(!eof($fh)){
     read($fh, $data, $data_size) == $data_size
         or die("Неверный размер прочитанных данных");
@@ -139,7 +143,7 @@ close($fh);
 
 ---
 
-.floatright[![right-aligned image](dbf.png)]
+![image](dbf.png)
 
 Произвольный доступ
 
@@ -170,7 +174,9 @@ tell($fh); # текущая позиция
 ```perl
 my $fname = 'file.txt';
 my $fh;
-open($fh, '&lt;', $fname) if -e $fname and -f $fname and -r $fname and !-z $fname;
+open($fh, '<', $fname) if 
+    -e $fname and -f $fname and 
+    -r $fname and !-z $fname;
 ```
 
 ---
@@ -195,28 +201,29 @@ rmdir 'dir_name';
 chdir 'dir_name';
 ```
 
+.clear[
 ```perl
-opendir(my $dh, 'path_to_dir') 
-    or die("Error open dir $!");
+use File::Path qw/make_path/;
+make_path( '/full/path/to/dir', owner => 'user', group => 'group', mode => 0755);
+```]
+
+---
+
+```perl
+opendir(my $dh, 'path_to_dir') or die("Error open dir $!");
 my $pos;
 while(my $fname = readdir $dh){
     print $fname;
     $pos = telldir $dh if $fname = 'data.bin';
 }
-if( $pos ){
-    seekdir( $dh, $pos ) if $pos;
+if ($pos){
+    seekdir($dh, $pos) if $pos;
     while(my $fname = readdir $dh){
         print "Second iter: $fname";
     }
 }
 closedir($dh);
 ```
-
-.clear[
-```perl
-use File::Path qw/make_path/;
-make_path( '/full/path/to/dir', owner => 'user', group => 'group', mode => 0755);
-```]
 
 ---
 
@@ -275,21 +282,17 @@ use Time::HiRes qw/gettimeofday/;
 my $i=0;
 my $start_time = gettimeofday();
 while(<>){$i++}
-print "Time to read $i lines: ".(gettimeofday() - $start_time).$/;
-print "Layers: ".join( ",", PerlIO::get_layers(STDIN)).$/;
+print "Layers: "
+    .join( ",", PerlIO::get_layers(STDIN))."; ";
+print "lines: $i; time: "
+    .(gettimeofday() - $start_time).$/;
 ```
 
-Time to read 352731 lines: 0.346665859222412
+Layers: unix,perlio; lines: 2932894; time: 0.410083055496216
 
-Layers: unix,perlio
+Layers: stdio; lines: 2932894; time: 3.00101494789124
 
-Time to read 352731 lines: 1.33791899681091
-
-Layers: unix
-
-Time to read 352731 lines: 40.1139190196991
-
-Layers: stdio
+Layers: unix; lines: 2932894; time: 33.2629461288452
 
 ---
 
@@ -298,11 +301,11 @@ Layers: stdio
 Например PerlIO::via::gzip
 
 ```perl
-open( $cfh, "&gt;:via(gzip)", 'stdout.gz' );
+open( $cfh, ">:via(gzip)", 'stdout.gz' );
 print $cfh @stuff;
 
-open( $fh, "&lt;:via(gzip)", "stuff.gz" );
-while (&lt;$fh&gt;) {
+open( $fh, "<:via(gzip)", "stuff.gz" );
+while (<$fh>) {
 ...
 }
 ```
@@ -341,7 +344,7 @@ layout: true
 ![image](system.jpg)
 
 ```perl
-my $out = `ls -l`; # стандартный вывод на выходе (построчно)
+my $out = `ls -l`; # построчное чтение stdout
 my @out = `ls -l`; # стандартный вывод на выходе
 system('ls -l'); #только результат
 open(my $out, '-|', 'ls', '-l');
@@ -353,6 +356,9 @@ pipe - связка манипуляторов в канал
 fork - порождение нового процесса (единственный способ)
 
 exec - замена текущего процесса другим
+
+---
+
 ```perl
 use strict;
 use POSIX qw(:sys_wait_h);
@@ -368,7 +374,7 @@ if(my $pid = fork()){
 else {
     die "Cannot fork $!" unless defined $pid;
     close($w);
-    while(&lt;$r&gt;){ print $_ }
+    while(<$r>){ print $_ }
     close($r);
     exit;
 }
@@ -385,14 +391,17 @@ INT,CHLD,TERM,ALRM ... кроме SIGKILL, SIGSEGV, SIGABRT
 Уборка зомби
 
 ```perl
-$SIG{CHLD} = sub {1 while( waitpid(-1, WNOHANG) > 0)};
-```
-
-```perl
 my $exit_status = $? &gt;&gt; 8;
 my $signal_num = $? &amp; 127;
 my $core_dump = $? &amp; 128;
 ```
+.clear[
+```perl
+$SIG{CHLD} = sub {1 while( waitpid(-1, WNOHANG) > 0)};
+```
+]
+
+---
 
 ```perl
 $SIG{CHLD} = sub {
@@ -435,11 +444,10 @@ $SIG{INT} = 'DEFAULT';
 - IPC::Open3
 - IPC::Run3
 - IO::Handle
-- IPC::Shareable
 
 ```perl
 my($wtr, $rdr, $err);
-$pid = open3($wtr, $rdr, $err, 'some cmd and args', 'optarg', ...);
+$pid = open3($wtr, $rdr, $err, 'cmd', 'arg', ...);
 ```
 
 Именованные каналы
@@ -447,8 +455,8 @@ $pid = open3($wtr, $rdr, $err, 'some cmd and args', 'optarg', ...);
 % mkfifo /path/named.pipe
 
 ```perl
-open( my $fifo, '&lt;', '/path/named.pipe' );
-while(&lt;$fifo&gt;){
+open( my $fifo, '<', '/path/named.pipe' );
+while(<$fifo>){
     print "Got: $_";
 }
 close($fifo);
@@ -477,23 +485,24 @@ layout: false
 layout: true
 #Работа с сокетами
 
-.footer[[socket](http://perldoc.perl.org/socket.html)]
+.footer[[Socket](http://perldoc.perl.org/Socket.html)]
 ---
 
 ```perl
-use Socket; # include &lt;socket.h&gt;
+use Socket; # include <socket.h>
 ```
 
 ```perl
 my $name = 'search.cpan.org';
 my $addr_bin = gethostbyname($name);
-my $ip = inet_ntoa($addr_bin);        # 194.106.223.155
+my $ip = inet_ntoa($addr_bin);   # 194.106.223.155
 ```
 
 ```perl
 my $ip = '207.171.7.72';
 my $addr_bin = inet_aton($ip);
-my $name = gethostbyaddr($addr_bin, PF_INET); # mt.perl.org
+my $name = gethostbyaddr($addr_bin, PF_INET); 
+                                 # mt.perl.org
 ```
 
 ---
@@ -503,13 +512,15 @@ my $name = gethostbyaddr($addr_bin, PF_INET); # mt.perl.org
 ```perl
 use strict;
 use IO::Socket;
-
-my $socket = IO::Socket::INET->new(PeerAddr => 'search.cpan.org',
+my $socket = IO::Socket::INET->new(
+    PeerAddr => 'search.cpan.org',
     PeerPort => 80,
     Proto    => "tcp",
-    Type     => SOCK_STREAM) or die "Can`t connect to search.cpan.org $/";
+    Type     => SOCK_STREAM) 
+or die "Can`t connect to search.cpan.org $/";
+
 print $socket "GET / HTTP/1.0\nHost: search.cpan.org\n\n";
-my @answer = &lt;$socket&gt;;
+my @answer = <$socket>;
 print( join( $/, @answer ));
 ```
 
@@ -522,7 +533,6 @@ print( join( $/, @answer ));
 ```perl
 use strict;
 use IO::Socket;
-
 my $server = IO::Socket::INET->new(LocalPort => 8081,
     Type      => SOCK_STREAM,
     ReuseAddr => 1,
@@ -530,7 +540,7 @@ my $server = IO::Socket::INET->new(LocalPort => 8081,
 while(my $client = $server->accept()){
     print "New connection! $/";
     $client->autoflush(1);
-    my $message = &lt;$client&gt;;
+    my $message = <$client>;
     chomp( $message );
     print $client "Echo: ".$message;
     close( $client );
@@ -547,18 +557,18 @@ close( $server );
 ```perl
 use IO::Socket qw/getnameinfo/;
 
-my $other_end = getpeername($client);
-my ($err, $hostname, $servicename) = getnameinfo($other_end);
-print "New connection! from $hostname : $servicename $/";
+my $other = getpeername($client);
+my ($err, $host, $service) = getnameinfo($other);
+print "New connection! from $host:$service $/";
 ```
 
 .floatleft[![right-aligned image](shpion.jpg)]
 ```c
 struct sockaddr_in {
-    short            sin_family;
-    unsigned short   sin_port;
-    struct in_addr   sin_addr;
-    char             sin_zero[8];
+    short          sin_family;
+    unsigned short sin_port;
+    struct in_addr sin_addr;
+    char           sin_zero[8];
 };
 ```
 ---
@@ -569,26 +579,23 @@ struct sockaddr_in {
 
 ```perl
 while(my $client = $server->accept()){
-  print "New connection! $/";
   my $child = fork();
   if($child){
-    close $client;
-    next;
+    close ($client); next;
   }
   if(defined $child){
     close($server);
-    my $other_end = getpeername($client);
-    my ($err, $hostname, $servicename) 
-        = getnameinfo($other_end);
-    print "Client $hostname : $servicename $/";
+    my $other = getpeername($client);
+    my ($err, $host, $service) 
+        = getnameinfo($other);
+    print "Client $host:$service $/";
     $client->autoflush(1);
-    my $message = &lt;$client&gt;;
+    my $message = <$client>;
     chomp( $message );
     print $client "Echo: ".$message;
     close( $client );
     exit;
-  }
-  else {
+  } else {
       die "Can't fork: $!";
   }
 }
@@ -646,9 +653,6 @@ pack TEMPLATE, LIST
 - **l** - Целое со знаком типа long
 - **n** - Целое 16 бит big-endian
 - **v** - Целое 16 бит little-endian
-- **х** - Нулевой байт
-- **Х** - Вернутся на байт назад
-- **@** - Заполнить до абсолютной позиции
 
 ---
 
@@ -704,8 +708,9 @@ layout: true
 ```perl
 use JSON::XS;
 use DDP;
-p JSON::XS::encode_json( { key_array => ["val1", "val2", 3] } );
-p JSON::XS::decode_json( '{"key_array":["val1", "val2", 3]}' );
+p JSON::XS::decode_json( 
+    '{"key_array":["val1", "val2", 3]}' 
+);
 ```
 
 ```bash 
@@ -718,6 +723,9 @@ p JSON::XS::decode_json( '{"key_array":["val1", "val2", 3]}' );
     ]
 }
 ```
+
+---
+
 
 ```perl
 use strict;
@@ -752,14 +760,17 @@ my $hash = CBOR::XS::decode_cbor( $cbor );
 ```perl
 use CBOR::XS;
 my $cbors = CBOR::XS::encode_cbor([12,20,30]);
-$cbors   .= CBOR::XS::encode_cbor(["val1","val2","val3"]);
+$cbors   .= CBOR::XS::encode_cbor(
+    ["val1","val2","val3"]
+);
 my @array = ();
 my $cbor_obj = CBOR::XS->new();
 while( length $cbors ){
-    my($data, $len) =$cbor_obj->decode_prefix($cbors);
-    substr $cbors, 0, $len, '';
-    push @array, $data;
-}        ```
+  my($data, $len)=$cbor_obj->decode_prefix($cbors);
+  substr $cbors, 0, $len, '';
+  push @array, $data;
+}
+```
 
 ---
 
@@ -809,14 +820,19 @@ layout: true
 
 ```perl
 use XML::LibXML;
-my $dom = XML::LibXML->load_xml(string => '<xml><test>1</test></xml>');
+my $dom = XML::LibXML->load_xml(
+    string => '<xml><test>1</test></xml>'
+);
 ```
 
 ```perl
 use XML::Parser;
-my $parser = XML::Parser->new(Handlers => {Start => sub{print "New tag"},
-End   => sub{print "End tag"},
-Char  => sub{print "Data"}});
+my $parser = XML::Parser->new(
+    Handlers => {
+        Start => sub{print "New tag"},
+        End   => sub{print "End tag"},
+        Char  => sub{print "Data"}
+    });
 $parser->parse('<xml><test>1</test></xml>');
 ```
 
@@ -861,7 +877,7 @@ layout: false
 ---
 
 layout: true
-# Разбор входных параметров (Getopt::Long)
+# Разбор входных параметров
 
 .footer[[Getopt::Long](http://perldoc.perl.org/Getopt/Long.html)]
 ---
@@ -938,11 +954,11 @@ Options:
 
 =over 8
 
-=item B&lt;-help&gt;
+=item B<-help>
 
 Print help message.
 
-=item B&lt;-verbose&gt;
+=item B<-verbose>
 
 Verbosely processing
 
@@ -950,7 +966,7 @@ Verbosely processing
 
 =head1 DESCRIPTION
 
-B&lt;this program&gt;
+B<this program>
 Programm do something
 
 =cut
