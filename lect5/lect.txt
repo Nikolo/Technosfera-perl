@@ -44,14 +44,14 @@ close
 ---
 
 ```perl
-open( $fh, '<', 'filename') vs open( $fh, '< filename')
+open( $fh, '<', 'file') vs open( $fh, '< file')
 ```
 
 .floatright[![Right-aligned image](rw.jpg)]
 
 Режимы открытия файла
 
-&lt;, +&lt;, &gt;, +&gt, &gt;&gt;;
+&lt;, +&lt;, &gt;, +>, &gt;&gt;;
 
 fopen(3) r , r+ , w , w+ , a 
 
@@ -59,14 +59,15 @@ fopen(3) r , r+ , w , w+ , a
 
 .clear[
 ```perl
-open( my $fh_cp, '<:encoding(CP-1251)' , 'cp1251.txt' );
-open( my $fh_utf, '<:encoding(UTF-8)' , 'utf8.txt' );
+open(my $fh_cp, '<:encoding(CP-1251)', 'cp1251.txt');
+open(my $fh_utf, '<:encoding(UTF-8)', 'utf8.txt');
 while( <$fh_cp> ){
     print $fh_utf $_;
 }
 close($fh_utf);
 close($fh_cp);
-```]
+```
+]
 
 ---
 
@@ -112,15 +113,20 @@ my $line = <DATA>
 ---
 
 ```perl
-binmode($fh); # для работы с двоичными данными
+# для работы с двоичными данными
+binmode($fh); 
 
-syswrite($fh, $data, length($data)); # небуферизированная запись
+# небуферизированная запись
+syswrite($fh, $data, length($data)); 
 
-sysread($fh, $data, $data_size); # прямой вызов системного read
+# прямой вызов системного read
+sysread($fh, $data, $data_size); 
 
-read($fh, $data, $data_size); # чтение двоичных данных
+# чтение двоичных данных
+read($fh, $data, $data_size); 
 
-eof($fh); # проверка на отсутствие данных
+# проверка на отсутствие данных
+eof($fh); 
 ```
 
 ---
@@ -135,7 +141,7 @@ my $data_size = 1024;
 open(my $fh, '<:raw', 'data.bin') or die $!;
 while(!eof($fh)){
     read($fh, $data, $data_size) == $data_size
-        or die("Неверный размер прочитанных данных");
+        or die("Неверный размер");
     print md5($data);
 }
 close($fh);
@@ -204,13 +210,17 @@ chdir 'dir_name';
 .clear[
 ```perl
 use File::Path qw/make_path/;
-make_path( '/full/path/to/dir', owner => 'user', group => 'group', mode => 0755);
+make_path( '/full/path/to/dir', 
+    owner => 'user', 
+    group => 'group', 
+    mode => 0755);
 ```]
 
 ---
 
 ```perl
-opendir(my $dh, 'path_to_dir') or die("Error open dir $!");
+opendir(my $dh, 'path_to_dir') 
+    or die("Error open dir $!");
 my $pos;
 while(my $fname = readdir $dh){
     print $fname;
@@ -397,7 +407,8 @@ my $core_dump = $? &amp; 128;
 ```
 .clear[
 ```perl
-$SIG{CHLD} = sub {1 while( waitpid(-1, WNOHANG) > 0)};
+$SIG{CHLD} = 
+    sub {1 while( waitpid(-1, WNOHANG) > 0)};
 ```
 ]
 
@@ -405,14 +416,14 @@ $SIG{CHLD} = sub {1 while( waitpid(-1, WNOHANG) > 0)};
 
 ```perl
 $SIG{CHLD} = sub {
-    while( my $pid = waitpid(-1, WNOHANG)){
-        last if $pid == -1;
-        if( WIFEXITED($?) ){ 
-            my $status = $? >> 8; 
-            print "Process $pid exited with status $status $/";
-        }
-        else { print "Process $pid sleep $/"}
+  while( my $pid = waitpid(-1, WNOHANG)){
+    last if $pid == -1;
+    if( WIFEXITED($?) ){ 
+      my $status = $? >> 8; 
+      print "Process $pid exited with status $status $/";
     }
+    else { print "Process $pid sleep $/"}
+  }
 };
 ```
 
@@ -505,6 +516,8 @@ my $name = gethostbyaddr($addr_bin, PF_INET);
                                  # mt.perl.org
 ```
 
+![right-aligned image](phones.png)
+
 ---
 
 Клиент
@@ -519,12 +532,11 @@ my $socket = IO::Socket::INET->new(
     Type     => SOCK_STREAM) 
 or die "Can`t connect to search.cpan.org $/";
 
-print $socket "GET / HTTP/1.0\nHost: search.cpan.org\n\n";
+print $socket 
+   "GET / HTTP/1.0\nHost: search.cpan.org\n\n";
 my @answer = <$socket>;
 print( join( $/, @answer ));
 ```
-
-![right-aligned image](phones.png)
 
 ---
 
@@ -533,12 +545,13 @@ print( join( $/, @answer ));
 ```perl
 use strict;
 use IO::Socket;
-my $server = IO::Socket::INET->new(LocalPort => 8081,
+my $server = IO::Socket::INET->new(
+    LocalPort => 8081,
     Type      => SOCK_STREAM,
     ReuseAddr => 1,
-    Listen    => 10) or die "Can't create server on port 8081 : $@ $/";
+    Listen    => 10) 
+or die "Can't create server on port 8081 : $@ $/";
 while(my $client = $server->accept()){
-    print "New connection! $/";
     $client->autoflush(1);
     my $message = <$client>;
     chomp( $message );
@@ -546,7 +559,6 @@ while(my $client = $server->accept()){
     close( $client );
     last if $message eq 'END';
 }
-
 close( $server );
 ```
 
@@ -575,7 +587,6 @@ struct sockaddr_in {
 
 Обработка нескольких соединений
 
-.floatright[![right-aligned image](fork.jpg)]
 
 ```perl
 while(my $client = $server->accept()){
@@ -586,8 +597,7 @@ while(my $client = $server->accept()){
   if(defined $child){
     close($server);
     my $other = getpeername($client);
-    my ($err, $host, $service) 
-        = getnameinfo($other);
+    my ($err, $host, $service) = getnameinfo($other);
     print "Client $host:$service $/";
     $client->autoflush(1);
     my $message = <$client>;
@@ -596,10 +606,14 @@ while(my $client = $server->accept()){
     close( $client );
     exit;
   } else {
-      die "Can't fork: $!";
+    die "Can't fork: $!";
   }
 }
 ```
+
+---
+
+.floatright[![right-aligned image](fork.jpg)]
 
 ---
 
@@ -1004,8 +1018,8 @@ print "Goodbye$/";
 layout: false
 # Домашнее задание
 
-1. Написать PerlIO::via::Numerator, который перед записью строки в файл будет проставлять её порядковый номер с момента запуска программы.
-1. Написать сетевой калькулятор, протокол общения между клиентом и сервером должен быть бинарный, с использованием pack/unpack. Сначала идёт заголовок в котором содержится тип выполняемого действия (расчет, построение польской нотации, проверка парности строк), размер выражения. После этого должно идти само выражение. Принимая заданный размер сервер делает необходимое действие, выдаёт результат и ждёт следующего задания. Так продолжается пока клиент не разорвёт соединение. Так же один сервер должен обслуживать несколько клиентов одновременно.
+1. Написать PerlIO::via::Numerator, который перед записью строки в файл будет проставлять её порядковый номер с момента запуска программы, а при чтении будет вырезать порядковый номер.
+1. Написать сетевой калькулятор, протокол общения между клиентом и сервером должен быть бинарный, с использованием pack/unpack. Сначала идёт заголовок, в котором содержится тип выполняемого действия (расчет, построение польской нотации, проверка парности строк) и размер выражения. После этого должно идти само выражение. Принимая заданный размер сервер делает необходимое действие, выдаёт результат и ждёт следующего задания. Так продолжается пока клиент не разорвёт соединение. Так же один сервер должен обслуживать несколько клиентов одновременно.
 
 ---
 
