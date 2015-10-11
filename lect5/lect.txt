@@ -25,6 +25,8 @@ layout: true
 
 #Работа с файлами (perlopentut, open)
 
+.footer[[perlopentut](http://perldoc.perl.org/perlopentut.html)]
+
 ---
 
 .floatright[![Right-aligned image](perl-camel-xls.png)]
