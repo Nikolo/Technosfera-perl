@@ -401,9 +401,9 @@ INT,CHLD,TERM,ALRM ... кроме SIGKILL, SIGSEGV, SIGABRT
 Уборка зомби
 
 ```perl
-my $exit_status = $? &gt;&gt; 8;
-my $signal_num = $? &amp; 127;
-my $core_dump = $? &amp; 128;
+my $exit_status = $? >> 8;
+my $signal_num = $? & 127;
+my $core_dump = $? & 128;
 ```
 .clear[
 ```perl
@@ -420,7 +420,7 @@ $SIG{CHLD} = sub {
     last if $pid == -1;
     if( WIFEXITED($?) ){ 
       my $status = $? >> 8; 
-      print "Process $pid exited with status $status $/";
+      print "$pid exit with status $status $/";
     }
     else { print "Process $pid sleep $/"}
   }
@@ -945,10 +945,11 @@ class: compact
 use Getopt::Long;
 use Pod::Usage;
 my $param = {};
-
-GetOptions($param, 'help|?', 'man', 'verbose') or pod2usage(2);
+GetOptions($param, 'help|?', 'man', 'verbose') 
+	or pod2usage(2);
 pod2usage(1) if $param->{help};
-pod2usage(-exitval => 0, -verbose => 2) if $param->{man};
+pod2usage(-exitval => 0, -verbose => 2) 
+	if $param->{man};
 
 __END__
 
@@ -996,11 +997,11 @@ layout: true
 use strict;
 
 sub is_interactive {
-    return -t STDIN &amp;&amp; -t STDOUT;
+    return -t STDIN && -t STDOUT;
 }
 
 my $do = 1;
-while( is_interactive() &amp;&amp; $do ){
+while( is_interactive() && $do ){
     print "Tell me anything: ";
     my $line = <>;
     print "Echo: ".$line;
