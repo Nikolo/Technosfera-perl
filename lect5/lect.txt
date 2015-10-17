@@ -515,11 +515,9 @@ my $addr_bin = inet_aton($ip);
 my $name = gethostbyaddr($addr_bin, PF_INET); 
                                  # mt.perl.org
 ```
-<center>
 
-![image](phones.png)
+.center[![image](phones.png)]
 
-</center>
 ---
 
 Клиент
@@ -613,11 +611,7 @@ while(my $client = $server->accept()){
 
 ---
 
-<center>
-
-![image](fork.jpg)
-
-</center>
+.center[![image](fork.jpg)]
 
 ---
 
