@@ -516,7 +516,9 @@ my $name = gethostbyaddr($addr_bin, PF_INET);
                                  # mt.perl.org
 ```
 <center>
+
 ![image](phones.png)
+
 </center>
 ---
 
@@ -611,7 +613,11 @@ while(my $client = $server->accept()){
 
 ---
 
-<center>[image](fork.jpg)</center>
+<center>
+
+![image](fork.jpg)
+
+</center>
 
 ---
 
