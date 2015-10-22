@@ -1103,7 +1103,7 @@ WriteMakefile(
 # http://jsonlines.org/
 # use JSON;
 
-use Local::PerlCourse::JSONL qw(
+use Local::JSONL qw(
   encode_jsonl
   decode_jsonl
 );
@@ -1117,7 +1117,7 @@ $array_ref = decode_jsonl($string);
 # ДЗ 3.2
 
 ```perl
-use Local::PerlCourse::Currency qw(set_rate);
+use Local::Currency qw(set_rate);
 
 set_rate(
   usd => 1,
@@ -1126,8 +1126,8 @@ set_rate(
   # ...
 );
 
-$rur = Local::PerlCourse::Currency::usd_to_rur(42);
-$cny = Local::PerlCourse::Currency::gbp_to_cny(30);
+$rur = Local::Currency::usd_to_rur(42);
+$cny = Local::Currency::gbp_to_cny(30);
 ```
 
 ---
@@ -1137,7 +1137,7 @@ $cny = Local::PerlCourse::Currency::gbp_to_cny(30);
 ```perl
 package Local::SomePackage;
 
-use Local::PerlCourse::GetterSetter qw(x y);
+use Local::GetterSetter qw(x y);
 # scalar only
 
 set_x(50);
