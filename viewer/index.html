@@ -5,6 +5,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style type="text/css">
         @font-face {
+            font-family: 'HelveticaNeueCyr';
+            src: url('fonts/HelveticaNeueCyr-Light.otf') format("opentype");
+        }
+        @font-face {
             font-family: 'HelveticaNeueCyrBold';
             src: url('fonts/HelveticaNeueCyrBold.eot');
             src: url('fonts/HelveticaNeueCyrBold.eot') format('embedded-opentype'),
@@ -22,7 +26,7 @@
             url('fonts/PTM55F.ttf') format('truetype'),
             url('fonts/PTM55F.svg#PTM55F') format('svg');
         }
-    
+
 		.firstpage, .lastpage {
 			background-image: url('background.png');
 			vertical-align: bottom;
@@ -59,16 +63,16 @@
             float: right;
             padding: 10px 10px 10px 16px;
         }
-    
+
         .floatleft {
             float: left;
             padding: 10px 10px 10px 16px;
         }
-    
+ 
         .remark-code-span-highlighted {
             background: inherit;
         }
-    
+ 
         .remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
             content: "`";
         }
@@ -83,10 +87,14 @@
         }
     
         .remark-slide-content {
-            font-family: "HelveticaNeueCyrBold";
-	    line-height: 1.5em;
+            font-family: "HelveticaNeueCyr";
+            line-height: 1.5em;
         }
     
+        .remark-slide-content strong {
+            font-family: "HelveticaNeueCyrBold";
+        }
+ 
         .not .perl .remark-code-line-highlighted {
             background-color: rgba(255, 0, 0, 0.5)
         }
