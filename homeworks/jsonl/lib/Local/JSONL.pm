@@ -20,8 +20,8 @@ our $VERSION = '1.00';
 =head1 SYNOPSIS
 
     use Local::JSONL qw(
-      encode_jsonl
-      decode_jsonl
+        encode_jsonl
+        decode_jsonl
     );
 
     $string = encode_jsonl([

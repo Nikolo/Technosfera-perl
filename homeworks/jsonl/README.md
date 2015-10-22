@@ -10,8 +10,8 @@
 
 ```perl
 use Local::JSONL qw(
-  encode_jsonl
-  decode_jsonl
+    encode_jsonl
+    decode_jsonl
 );
 
 $string = encode_jsonl([
