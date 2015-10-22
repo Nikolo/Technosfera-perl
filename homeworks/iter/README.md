@@ -28,6 +28,9 @@
 
 Итерируется последовательно по элементам других итераторов.
 
+Как проверить
+-------------
+
 ```bash
 $ perl Makefile.PL
 Generating a Unix-style Makefile
