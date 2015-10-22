@@ -782,13 +782,14 @@ has 'cache_dir' => ( ... );
 
 # ДЗ 5
 
-https://github.com/VadimPushtaev/sphera-oop
+https://github.com/Nikolo/Technosfera-perl/
+
+`/homeworks/iter`
 
 ```perl
 my $iterator = Local::Iterator::Array->new(
   array => [1, 2, 3]
 );
-
 $iterator->next(); # (1, 0);
 $iterator->next(); # (2, 0);
 $iterator->next(); # (3, 0);
@@ -799,7 +800,6 @@ $iterator->next(); # (undef, 1);
 my $iterator = Local::Iterator::File->new(
     file => '/tmp/file.txt'
 );
-
 $iterator->next(); # ('A', 0);
 $iterator->next(); # ('B', 0);
 $iterator->all(); # [qw(C D E)]
