@@ -169,9 +169,7 @@
     </style>
 </head>
 <body>
-    <script src="//gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
-    <!--script src="remark-latest.min.js" type="text/javascript"></script-->
-    <!--script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" type="text/javascript"></script-->
+    <script src="remark-latest.min.js" type="text/javascript"></script>
     <script src="jquery.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         function parseGet(val) {
@@ -187,18 +185,11 @@
                      return result;
 	}
 		$(document).ready(function(){
-			var path = parseGet('path_to_lect');
+			var path = 'lectures/' + parseGet('lect') + '/';
 			var slideshow = remark.create({
 				sourceUrl: path + 'lect.txt',
-				// highlightLanguage: 'perl',
 				highlightStyle: 'github',
-				// highlightStyle: 'rainbow',
-				// highlightStyle: 'solarized_light',
-				// highlightStyle: 'tomorrow',
-				// highlightStyle: 'vs',
-
 				highlightLines: true,
-				// highlightSpans: true,
 			});
 			$('img').each(function(){$(this).attr('src', path + $(this).attr('src'))});
 		});
