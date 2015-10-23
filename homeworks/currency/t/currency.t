@@ -6,9 +6,9 @@ use Test::More tests => 3;
 use Local::Currency qw(set_rate);
 
 set_rate({
-    'rur' => 1,
-    'usd' => 60,
-    'eur' => 70,
+    rur => 1,
+    usd => 60,
+    eur => 70,
 });
 
 is(Local::Currency::rur_to_rur(42), 42, 'trivial');
