@@ -5,6 +5,8 @@
 `encode_jsonl` и `decode_jsonl`, которые кодируют и декодируют данные
 в формате <a href="http://jsonlines.org/">JSON Lines</a>.
 
+Для работы с JSON-ом можно (и нужно) использовать модуль [JSON](https://metacpan.org/pod/JSON).
+
 Пример
 ------
 
