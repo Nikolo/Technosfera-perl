@@ -1,5 +1,4 @@
 use Mojolicious::Lite;
-use lib '/Users/vpushtaev/Technosfera-perl/projects/lj/lib/';
 
 use Local::Hackathon::Client;
 my $STATUS = 'fetch';
