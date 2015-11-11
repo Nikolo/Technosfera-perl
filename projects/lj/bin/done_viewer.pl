@@ -1,13 +1,16 @@
 use Mojolicious::Lite;
+use lib '/Users/vpushtaev/Technosfera-perl/projects/lj/lib/';
+
 use Local::Hackathon::Client;
+my $STATUS = 'fetch';
 
 get '/' => {template => 'index'};
 
 websocket '/ws' => sub {
-  my ($c) = @_; 
+  my ($c) = @_;
 
   $c->on(drain => sub {
-    my ($c, $msg) = @_; 
+    my ($c, $msg) = @_;
 
     sleep(2);
 
@@ -16,18 +19,19 @@ websocket '/ws' => sub {
           #host => '192.168.0.39',
           host => '192.168.0.65',
           port => '3456',
-        );  
+        );
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };
         alarm(2);
-        my $data = $client->take('done');
+        my $data = $client->take($STATUS);
+        $client->release($data->{id}) if defined $data->{id};
         alarm(0);
         $c->send({json => (
             $data ? {data => $data} : {skip => 1}
         )});
     } or do {
         $c->send({json => {error => $@}});
-    };  
-  }); 
+    };
+  });
 };
 
 app->start;
