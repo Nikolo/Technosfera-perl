@@ -77,7 +77,7 @@
 <row name="faculty" null="1" autoincrement="0">
 <datatype>VARCHAR(512)</datatype>
 <default>NULL</default></row>
-<row name="group" null="1" autoincrement="0">
+<row name="class" null="1" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
