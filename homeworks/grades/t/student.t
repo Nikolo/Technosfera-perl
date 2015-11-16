@@ -9,13 +9,13 @@ my $teacher_rs  = Schema->resultset('Teacher');
 my $grade_rs    = Schema->resultset('Grade');
 my $homework_rs = Schema->resultset('Homework');
 
-my $student1 = $student_rs->create({human => {}});
-my $student2 = $student_rs->create({human => {}});
+my $student1 = $student_rs->create({});
+my $student2 = $student_rs->create({});
 
 my $homework1 = $homework_rs->create({name => 'A', max_points => 10});
 my $homework2 = $homework_rs->create({name => 'B', max_points => 6});
 
-my $teacher = $teacher_rs->create({human => {}});
+my $teacher = $teacher_rs->create({});
 
 $grade_rs->create({
     homework => $homework1,
