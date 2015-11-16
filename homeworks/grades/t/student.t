@@ -20,26 +20,26 @@ my $teacher = $teacher_rs->create({human => {}});
 $grade_rs->create({
     homework => $homework1,
     student  => $student1,
-    teacher => $teacher,
-    points => 7,
+    teacher  => $teacher,
+    points   => 7,
 });
 $grade_rs->create({
     homework => $homework2,
     student  => $student1,
-    teacher => $teacher,
-    points => 5,
+    teacher  => $teacher,
+    points   => 5,
 });
 $grade_rs->create({
     homework => $homework1,
     student  => $student2,
-    teacher => $teacher,
-    points => 12,
+    teacher  => $teacher,
+    points   => 12,
 });
 $grade_rs->create({
     homework => $homework2,
     student  => $student2,
-    teacher => $teacher,
-    points => 6,
+    teacher  => $teacher,
+    points   => 6,
 });
 
 my @overscored_hw1 = $student1->search_overscored_homeworks()->all();
