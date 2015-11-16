@@ -38,13 +38,13 @@
 		<type label="Bit" length="0" sql="bit" quote=""/>
 	</group>
 </datatypes><table x="307" y="289" name="human">
-<row name="id" null="1" autoincrement="1">
+<row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="first_name" null="0" autoincrement="0">
+<row name="first_name" null="1" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 </row>
-<row name="last_name" null="0" autoincrement="0">
+<row name="last_name" null="1" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 </row>
 <key type="PRIMARY" name="">
@@ -52,7 +52,7 @@
 </key>
 </table>
 <table x="110" y="292" name="teacher">
-<row name="id" null="1" autoincrement="1">
+<row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="human_id" null="0" autoincrement="0">
@@ -67,7 +67,7 @@
 </key>
 </table>
 <table x="510" y="290" name="student">
-<row name="id" null="1" autoincrement="1">
+<row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="human_id" null="0" autoincrement="0">
@@ -85,7 +85,7 @@
 </key>
 </table>
 <table x="107" y="87" name="homework">
-<row name="id" null="1" autoincrement="1">
+<row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
 <row name="name" null="0" autoincrement="0">
@@ -102,18 +102,18 @@
 </key>
 </table>
 <table x="306" y="88" name="grade">
-<row name="id" null="1" autoincrement="1">
+<row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
-<row name="homework_id" null="1" autoincrement="0">
+<row name="homework_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="homework" row="id" />
 </row>
-<row name="student_id" null="1" autoincrement="0">
+<row name="student_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="student" row="id" />
 </row>
-<row name="teacher_id" null="1" autoincrement="0">
+<row name="teacher_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="teacher" row="id" />
 </row>
