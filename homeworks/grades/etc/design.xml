@@ -37,27 +37,15 @@
 		<type label="SET" length="1" sql="SET" quote=""/>
 		<type label="Bit" length="0" sql="bit" quote=""/>
 	</group>
-</datatypes><table x="307" y="289" name="human">
+</datatypes><table x="505" y="236" name="teacher">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="first_name" null="1" autoincrement="0">
+</row>
+<row name="first_name" null="0" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 </row>
-<row name="last_name" null="1" autoincrement="0">
+<row name="last_name" null="0" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
-</row>
-<key type="PRIMARY" name="">
-<part>id</part>
-</key>
-</table>
-<table x="110" y="292" name="teacher">
-<row name="id" null="0" autoincrement="1">
-<datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="human_id" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<relation table="human" row="id" />
 </row>
 <row name="floor" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -66,13 +54,12 @@
 <part>id</part>
 </key>
 </table>
-<table x="510" y="290" name="student">
+<table x="505" y="83" name="student">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default></row>
-<row name="human_id" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<relation table="human" row="id" />
+</row>
+<row name="name" null="0" autoincrement="0">
+<datatype>VARCHAR(256)</datatype>
 </row>
 <row name="faculty" null="1" autoincrement="0">
 <datatype>VARCHAR(512)</datatype>
@@ -84,10 +71,10 @@
 <part>id</part>
 </key>
 </table>
-<table x="107" y="87" name="homework">
+<table x="130" y="149" name="homework">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default></row>
+</row>
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(256)</datatype>
 </row>
@@ -96,30 +83,30 @@
 <default>NULL</default></row>
 <row name="max_points" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>0</default></row>
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="306" y="88" name="grade">
+<table x="330" y="135" name="grade">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default></row>
+</row>
 <row name="homework_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="homework" row="id" />
+<relation table="homework" row="id" />
 </row>
 <row name="student_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="student" row="id" />
+<relation table="student" row="id" />
 </row>
 <row name="teacher_id" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="teacher" row="id" />
+<relation table="teacher" row="id" />
 </row>
 <row name="points" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<default>0</default></row>
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
