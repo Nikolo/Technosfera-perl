@@ -30,4 +30,4 @@
 
 ### Оценки
 
-Придумать и реализовать по одному методы в классах `Local::Schema::Result::Grade` и `Local::Schema::ResultSet::Grade`.
+Придумать и реализовать по одному методы в классах `Local::Schema::Result::Grade` и `Local::Schema::ResultSet::Grade`, дописав на них тесты в `t/grade.t`.
