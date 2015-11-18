@@ -11,4 +11,3 @@ our $VERSION = 1.00;
 __PACKAGE__->load_namespaces;
 
 1;
-
