@@ -667,3 +667,13 @@ $memd->set('nkey', 5, 60);
 $memd->incr('nkey');
 $memd->get('skey');
 ```
+
+---
+
+# ДЗ
+
+https://github.com/Nikolo/Technosfera-perl/
+
+`/homeworks/grades`
+
+
