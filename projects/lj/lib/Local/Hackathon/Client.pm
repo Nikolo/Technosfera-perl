@@ -1,5 +1,5 @@
 package Local::Hackathon::Client;
-
+use Data::Dumper;
 =for rem
 
 # prefork server: 15 min
@@ -81,16 +81,15 @@ sub request {
 
 	my $wr = syswrite $self->socket, $pkt_body;
 	if ($wr != length $pkt_body) {
+		warn $!;
 		croak "Failed to write to server ($wr): $!";
 	}
 
 	my $rd = read($self->socket, my $buf, 12);
-	# warn "read1: $rd";
 	if ($rd != 12) {
+		warn $!;
 		croak "Server reset connection ($rd/12): $!";
 	}
-
-	# p $buf;
 
 	my ($pkt_re, $id, $len) = unpack 'VVV', $buf;
 
@@ -100,18 +99,17 @@ sub request {
 
 	$rd = read($self->socket, $buf, $len);
 
-	# warn "read2: $rd";
-
 	if ($rd != $len) {
+		warn $!;
 		croak "Server reset connection ($rd/$len): $!";
 	}
-
-	# p $buf;
 
 	my $data;
 	eval {
 		$data = $JSON->decode( $buf );
 	1} or do {
+		warn $@;
+
 		croak "Failed to decode response JSON: $@";
 	};
 
@@ -124,8 +122,6 @@ sub request {
 	else {
 		croak $data;
 	}
-
-	# p $data;
 }
 
 
@@ -142,7 +138,9 @@ sub take {
 }
 
 sub ack {
-	...
+	my $self = shift;
+	my ($id) = @_;
+	return $self->request(PKT_ACK, [ $id ]);
 }
 
 sub release {
@@ -154,6 +152,7 @@ sub release {
 sub requeue {
 	my $self = shift;
 	my ($id, $newchannel, $task) = @_;
+	warn Dumper(keys %$task);
 	return $self->request(PKT_REQUEUE, [ $id, $newchannel, $task ]);
 }
 

@@ -1,7 +1,7 @@
 use Mojolicious::Lite;
 
 use Local::Hackathon::Client;
-my $STATUS = 'fetch';
+my $STATUS = 'done';
 
 get '/' => {template => 'index'};
 
@@ -11,22 +11,25 @@ websocket '/ws' => sub {
   $c->on(drain => sub {
     my ($c, $msg) = @_;
 
-    sleep(2);
-
     eval {
         my $client = Local::Hackathon::Client->new(
-          #host => '192.168.0.39',
           host => '192.168.0.65',
           port => '3456',
         );
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };
         alarm(2);
         my $data = $client->take($STATUS);
-        $client->release($data->{id}) if defined $data->{id};
+	#$client->requeue($data->{id}, 'og', $data->{task}) if defined $data->{id};
+	$client->release($data->{id}) if defined $data->{id} && $STATUS ne 'done';
+	$client->ack($data->{id}) if defined $data->{id} && $STATUS eq 'done';
         alarm(0);
+	if (exists $data->{task}){
+		delete $data->{task}->{$_} for grep {!$data->{task}->{$_}} keys %{$data->{task}};
+	}
+	sleep(1) unless exists $data->{id};
         $c->send({json => (
             $data ? {data => $data} : {skip => 1}
-        )});
+        )}) if $data->{task};
     } or do {
         $c->send({json => {error => $@}});
     };
@@ -97,6 +100,7 @@ $(document).ready(function() {
     var fields = [
         'URL',
         'HTML',
+	'og',
         'comments',
         'comments_info',
         'title',
