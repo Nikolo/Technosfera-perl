@@ -4,7 +4,7 @@ use strict;
 
 sub TYPE_CALC         {1}
 sub TYPE_NOTATION     {2}
-sub TPYE_BRACKETCHECK {3}
+sub TYPE_BRACKETCHECK {3}
 
 sub pack_header {
 	my $pkg = shift;
