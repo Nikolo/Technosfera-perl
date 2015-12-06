@@ -222,7 +222,7 @@ void  sv_setsv(SV*, SV*);
 SvIV(SV*)
 SvUV(SV*)
 SvNV(SV*)
-SvPV(SV*, STRLEN len)     //len - возвращается длинна строки 
+SvPV(SV*, STRLEN len) //возвращается длинна строки 
 SvPV_nolen(SV*)
 ```
 
@@ -252,8 +252,8 @@ SvEND(SV*) // Ссылка на последний байт в строке
 sv_setpvn(sv, "", 0);
 
 s = SvGROW(sv, needlen + 1);
-// something that modifies up to needlen bytes at s, but modifies
-// newlen bytes
+// something that modifies up to needlen bytes 
+// at s, but modifies newlen bytes
 // eg. newlen = read(fd, s, needlen); 
 
 s[newlen] = '\0';
