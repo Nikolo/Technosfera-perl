@@ -1,7 +1,7 @@
 ﻿class: center, middle
 layout:false
 # Ускоряем перл
-# Расширяем "С" 
+# Расширяем «C»
 
 ---
 
