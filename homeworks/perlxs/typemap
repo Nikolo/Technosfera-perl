@@ -1,0 +1,53 @@
+TYPEMAP
+GEOM_POINT* T_HVREF
+HV* T_HVREF_3D
+GEOM_POINT_3D* T_HVREF_3D
+
+INPUT
+T_HVREF 
+	{
+	double typemap_x, typemap_y;
+	if(!(SvOK($arg) && SvROK($arg))){ croak(\"Point must be a hashref\"); }
+	SV *typemap__point = SvRV($arg);
+	if( SvTYPE(typemap__point) != SVt_PVHV ){croak(\"Point must be a hashref\");}
+	HV *typemap_point = (HV*)typemap__point;
+	if(!(hv_exists(typemap_point, \"x\", 1) && hv_exists(typemap_point, \"y\", 1))){
+		croak(\"Point mush contain x and y keys\");
+	}
+	SV **typemap__x = hv_fetch(typemap_point, \"x\", 1, 0);
+	SV **typemap__y = hv_fetch(typemap_point, \"y\", 1, 0);
+	if( !(typemap__x && typemap__y) ){ croak(\"Non allow NULL in x and y coords\");}
+	typemap_x = SvNV(*typemap__x); typemap_y = SvNV(*typemap__y);
+	$type pt = malloc(sizeof(GEOM_POINT));
+	pt->x = typemap_x; pt->y = typemap_y;
+	$var = ($type)pt;
+	}
+
+T_HVREF_3D
+	{
+	double typemap_x, typemap_y, typemap_z;
+	if(!(SvOK($arg) && SvROK($arg))){ croak(\"Point must be a hashref\"); }
+	SV *typemap__point = SvRV($arg);
+	if( SvTYPE(typemap__point) != SVt_PVHV ){croak(\"Point must be a hashref\");}
+	HV *typemap_point = (HV*)typemap__point;
+	if(!(hv_exists(typemap_point, \"x\", 1) && hv_exists(typemap_point, \"y\", 1) && hv_exists(typemap_point, \"z\", 1))){
+		croak(\"Point mush contain x and y keys\");
+	}
+	SV **typemap__x = hv_fetch(typemap_point, \"x\", 1, 0);
+	SV **typemap__y = hv_fetch(typemap_point, \"y\", 1, 0);
+	SV **typemap__z = hv_fetch(typemap_point, \"z\", 1, 0);
+	if( !(typemap__x && typemap__y && typemap__z)){ croak(\"Non allow NULL in x or y or z coords\");}
+	typemap_x = SvNV(*typemap__x);
+	typemap_y = SvNV(*typemap__y);
+	typemap_z = SvNV(*typemap__z);
+	$type pt = malloc(sizeof(GEOM_POINT_3D));
+	pt->x = typemap_x; pt->y = typemap_y; pt->z = typemap_z;
+	$var = ($type)pt;
+	}
+
+OUTPUT
+T_HVREF
+	croak(\"Unimplemented output $type\");
+
+T_HVREF_3D
+	croak(\"Unimplemented output $type\");

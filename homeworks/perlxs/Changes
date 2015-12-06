@@ -1,0 +1,6 @@
+Revision history for Perl extension sferamail::perlxs.
+
+0.01  Wed Mar 25 23:43:01 2015
+	- original version; created by h2xs 1.23 with options
+		-b 5.10.1 -n sferamail::perlxs
+
