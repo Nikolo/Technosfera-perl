@@ -1,11 +1,12 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use Local::Iterator::Array;
 
-my $iterator = Local::Iterator::Array->new(array => [1, undef, 3]);
+my $array = [1, undef, 3];
+my $iterator = Local::Iterator::Array->new(array => $array);
 
 my ($next, $end);
 
@@ -18,3 +19,5 @@ is_deeply($iterator->all(), [undef, 3], 'all');
 ($next, $end) = $iterator->next();
 is($next, undef, 'no value');
 ok($end, 'end');
+
+is_deeply($array, [1, undef, 3], 'array is not corrupted');
