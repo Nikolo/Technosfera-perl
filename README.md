@@ -6,4 +6,4 @@
 Полезные ссылки
 ---------------
 
-* [Видео со второго прогона курса](https://www.youtube.com/playlist?list=PLwdkqrX_SAj_6pquf6zPFaRgbsnaIGheR)
+* [Видео со второго прогона курса](https://www.youtube.com/playlist?list=PLrCZzMib1e9pJchUR-KGNJvz2BA6XjIPr)
