@@ -101,7 +101,7 @@ $ find -type f
 ------
 
 ```
-$ find . -type f | ~/Technosfera-perl/homeworks/music_library/bin/music_library.pl --band 'Midas Fall' --sort track
+$ find . -type f | ~/.../music_library.pl --band 'Midas Fall' --sort track
 /------------------------------------------------------------------------------------\
 | Midas Fall | 2015 | The Menagerie Inside | A Song Built From Scraps of Paper | ogg |
 |------------+------+----------------------+-----------------------------------+-----|
