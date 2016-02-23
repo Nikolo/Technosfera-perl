@@ -27,6 +27,16 @@ OUTPUT
 ;
 
 test_bin
+'empty result', '--band UNKNOWN',
+<<INPUT
+./B/3210 - AlbumAlbum/x.format
+INPUT
+,
+<<OUTPUT
+OUTPUT
+;
+
+test_bin
 'filter', '--band B',
 <<INPUT
 ./Band/123 - Album/track.mp3
@@ -54,7 +64,7 @@ INPUT
 <<OUTPUT
 /------------------------------------\\
 | B | 0210 | AlbumAlbum | t | format |
-|---+------+------------+---+--------|
+|---+------+------------+---+--------l
 | B |  210 | AlbumAlbum | x | format |
 \\------------------------------------/
 OUTPUT
