@@ -109,7 +109,7 @@ OUTPUT
 ;
 
 test_bin
-'fields', '--columns year,band,year',
+'columns', '--columns year,band,year',
 <<INPUT
 ./B/1 - A/m.mp3
 ./B/2 - B/o.ogg
@@ -124,6 +124,18 @@ INPUT
 |---+---+---|
 | 3 | B | 3 |
 \\-----------/
+OUTPUT
+;
+
+test_bin
+'no columns', q{--columns ''},
+<<INPUT
+./B/1 - A/m.mp3
+./B/2 - B/o.ogg
+./B/3 - C/a.abc
+INPUT
+,
+<<OUTPUT
 OUTPUT
 ;
 
