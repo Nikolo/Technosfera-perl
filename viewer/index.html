@@ -69,25 +69,31 @@
             font-family: 'PTM55F';
             font-size: 24px;
             line-height: 1.15em;
+            background-color: #e8e8e8;
+        }
+        .hljs.remark-code, .hljs.remark-inline-code {
+            background-color: #e8e8e8;
         }
 
         .floatright {
             float: right;
             padding: 10px 10px 10px 16px;
+            width: 45%;
         }
 
         .floatleft {
             float: left;
             padding: 10px 10px 10px 16px;
+            width: 45%;
         }
  
-        .remark-code-span-highlighted {
+        /*.remark-code-span-highlighted {
             background: inherit;
-        }
+        }*/
  
-        .remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
+        /*.remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
             content: "`";
-        }
+        }*/
 
         .clear {
             clear: both;
@@ -147,6 +153,10 @@
             display:block;
             font-size: 18px;
         }
+
+        .remark-slide-content img {
+            width: 100%;
+        }
     
         table {
             width:95%;
@@ -205,11 +215,12 @@
                      return result;
 	}
 		$(document).ready(function(){
-			var path = '/lectures/' + parseGet('lect') + '/';
+			var path = '../lectures/' + parseGet('lect') + '/';
 			var slideshow = remark.create({
-				sourceUrl: path + 'slides.md',
+				sourceUrl: path + '/slides.md',
 				highlightStyle: 'github',
 				highlightLines: true,
+                highlightSpans: true,
 			});
 			$('img').each(function(){$(this).attr('src', path + $(this).attr('src'))});
 		});
