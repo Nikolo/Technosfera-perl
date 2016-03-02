@@ -32,11 +32,23 @@
 			vertical-align: bottom;
 			text-align: right;
 		}
-	
+		
 		.firstpage h1, .lastpage h1 {
 		    margin-bottom: 70px;
 		    color: #000000;
 		}
+		
+		.note_and_mark {
+			background-image: url('background.png');
+			text-align: center;
+			margin-top: 50%;
+		}
+		
+		.note_and_mark h1 {
+		    margin-top: 35%;
+		    color: #000000;
+		}
+	
 
         h1, h2, h3 {
             font-family: 'HelveticaNeueCyrBold';
@@ -57,25 +69,31 @@
             font-family: 'PTM55F';
             font-size: 24px;
             line-height: 1.15em;
+            background-color: #e8e8e8;
+        }
+        .hljs.remark-code, .hljs.remark-inline-code {
+            background-color: #e8e8e8;
         }
 
         .floatright {
             float: right;
             padding: 10px 10px 10px 16px;
+            width: 45%;
         }
 
         .floatleft {
             float: left;
             padding: 10px 10px 10px 16px;
+            width: 45%;
         }
  
-        .remark-code-span-highlighted {
+        /*.remark-code-span-highlighted {
             background: inherit;
-        }
+        }*/
  
-        .remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
+        /*.remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
             content: "`";
-        }
+        }*/
 
         .clear {
             clear: both;
@@ -134,6 +152,10 @@
         .note {
             display:block;
             font-size: 18px;
+        }
+
+        .remark-slide-content img {
+            width: 100%;
         }
     
         table {
@@ -195,9 +217,10 @@
 		$(document).ready(function(){
 			var path = '../lectures/' + parseGet('lect') + '/';
 			var slideshow = remark.create({
-				sourceUrl: path + 'slides.md',
+				sourceUrl: path + '/slides.md',
 				highlightStyle: 'github',
 				highlightLines: true,
+                highlightSpans: true,
 			});
 			$('img').each(function(){$(this).attr('src', path + $(this).attr('src'))});
 		});

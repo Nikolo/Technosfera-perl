@@ -2,9 +2,12 @@ class:firstpage
 # Программирование на Perl
 
 ---
-
 class:firstpage
 # Лекция 2: Синтаксис и данные
+
+---
+class:note_and_mark
+# Отметьтесь на портале!
 
 ---
 layout:false
@@ -170,7 +173,7 @@ for my $item ( @items ) {
 # Выбор - `given`/`when`
 
 ```perl
-*use feature 'switch'; # v5.10+
+*use feature 'switch'; # v5.10 - v5.18
 
 given ( EXPR ) {
     when ( undef )    { ... }
@@ -188,7 +191,7 @@ given ( EXPR ) {
 * `continue` для "проваливания"
 
 ---
-# Переход - `goto`
+# Переход - `goto` (обычный)
 
 ```perl
 *goto LABEL;
@@ -213,7 +216,7 @@ state 2
 
 ---
 
-# Переход - `goto`
+# Переход - `goto` (странный)
 .not[
 ```perl
 *goto EXPR; # DEPRECATED
@@ -238,7 +241,7 @@ goto(
 
 ---
 
-# Переход - `goto` - **tailcall**
+# Переход - `goto` - **хвостовой**
 
 ```perl
 *goto &NAME;
@@ -264,7 +267,7 @@ sub _fib { my ($n,$x,$y) = @_;
 
 ---
 
-# Переход - `goto` - **tailcall**
+# Переход - `goto` - **хвостовой**
 
 ```perl
 *goto &NAME;
@@ -290,7 +293,7 @@ sub _fib { my ($n,$x,$y) = @_;
 
 ---
 
-# Переход - `goto` - **tailcall**
+# Переход - `goto` - **хвостовой**
 
 ```perl
 *goto &NAME;
@@ -856,9 +859,13 @@ say "1+2 = ${{key=> 1+2 }}{key}";
 say "\$var = ${{key=> do{ $var } }}{key}";
 
 say "Now: ${\scalar localtime}";
-   # Now: Wed Sep 30 19:25:48 2015
+   # Now: Wed Mar  2 01:58:36 2016
 ```
-
+???
+use 5.010;
+use Time::Local;
+my $time = timelocal(30,25,19,3,2,16);
+say "Now: ${\scalar localtime}";
 ---
 layout:false
 # Содержание
@@ -1229,8 +1236,8 @@ say @a;
 * `gmtime`, `localtime`, `time`, `strftime`
 
 ```perl
-say time;         # 1443632440
-say ~~localtime;  # Wed Sep 30 20:00:40 2015
+say time;         # 1457022000
+say ~~localtime;  # Thu Mar  3 19:20:00 2016
 say ~~localtime 0;# Thu Jan  1 03:00:00 1970
 say ~~gmtime 0;   # Thu Jan  1 00:00:00 1970
 
@@ -1240,12 +1247,27 @@ printf "%04u-%02u-%02uT%02u:%02u:%02u",
    $Y+1900, $M+1, $D, $h, $m, $s; 
 printf "Day no: %u, Weekday: %u", $Yd, $Wd;
 
-# 2015-10-01T20:00:40
-# Day no: 273, Weekday: 4
+# 2016-03-04T19:20:00
+# Day no: 63, Weekday: 5
 
 use POSIX 'strftime';
-say strftime "%r",localtime(); # 08:00:40 PM
+say strftime "%r",localtime(); # 07:20:40 PM
 ```
+
+???
+
+use 5.010;
+use Time::Local;
+use POSIX 'strftime';
+my $time = timelocal(0,20,19,3,2,16);
+say "# ",~~ $time;
+say "# ",~~ localtime $time;
+($s,$m,$h,$D,$M,$Y,$Wd,$Yd,$dst) =
+    localtime( $time+86400 );
+printf "# %04u-%02u-%02uT%02u:%02u:%02u\n",
+   $Y+1900, $M+1, $D, $h, $m, $s; 
+printf "# Day no: %u, Weekday: %u\n", $Yd, $Wd;
+say strftime "%r",localtime($time+40);
 
 ---
 
@@ -1867,7 +1889,7 @@ say "A"..."Z";
 
 ---
 
-# Операторы диапазона
+# Операторы диапазона (flip-flop)
 
 > `..`, `...`<code><br></code>
 > range operators<code><br></code>
@@ -1875,96 +1897,16 @@ say "A"..."Z";
 > константный операнд
 
 ```perl
-for $. (1..5) { # $. - $INPUT_LINE_NUMBER
-    say "$. : ".(2..4);
+for $. (1,2,3,4,5) { # $. - $INPUT_LINE_NUMBER
+    say "$. : ".`(2..4)`;
 }
 ```
 ```perl
 1 : 
 2 : 1      # became true ($. == 2)
 3 : 2      # stay true, while $. != 4 
-4 : 3E0    # ret true, $. == 5, became false
+4 : 3E0    # ret true, $. == 4, became false
 5 : 
-```
-
----
-
-# Операторы диапазона
-
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
-> .red[скалярный (логический) контекст]
-> операнд - выражение
-
-```perl
-for $. (1..5) { print "$.";
-    do {
-        print "\tL,ret ".($.==2?"T":"F");
-        $. == 2;
-    } `..` do {
-        print "\tR,ret ".($.==4?"T":"F");
-        $. == 4;
-    };
-    say " : ".scalar(2..4);
-}
-```
-
----
-
-# Операторы диапазона
-
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
-> .red[скалярный (логический) контекст]
-> операнд - выражение
-
-```perl
-1   L,ret F : 
-2   L,ret T R,ret F : 1
-3   R,ret F : 2
-4   R,ret T : 3E0
-5   L,ret F : 
-
-```
-
----
-
-# Операторы диапазона
-
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
-> .red[скалярный (логический) контекст]
-> операнд - выражение
-
-```perl
-for $. (1..5) { print "$.";
-    do {
-        print "\tL,ret ".($.==2?"T":"F");
-        $. == 2;
-    } `...` do {
-        print "\tR,ret ".($.==4?"T":"F");
-        $. == 4;
-    };
-    say " : ".scalar(2...4);
-}
-
-```
-
----
-
-# Операторы диапазона
-
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
-> .red[скалярный (логический) контекст]
-> операнд - выражение
-
-```perl
-1   L,ret F : 
-2   L,ret T : 1
-3   R,ret F : 2
-4   R,ret T : 3E0
-5   L,ret F : 
 ```
 
 ---
@@ -2025,16 +1967,16 @@ use constant CONST => "some";
 * операторы с нижайшим приоритетом
 
 ```perl
+*open   $file, "<",  "0"   || die "Can't";
+open   $file, "<", ("0"   || die "Can't" );
 
-*open $file, "<", "0" || die "Can't";
-open $file, "<", ( "0"||die "Can't" );
-open $file, "<", "0" or die "Can't";
-open ( $file, "<", "0" ) or die "Can't";
+open   $file, "<",  "0"   or die "Can't";
+open ( $file, "<",  "0" ) or die "Can't";
 
 do_one() and do_two() or do_another();
 
 @info = stat($file) || say "error";
-#                    ^-cast scalar context
+#        ^----------^-cast scalar context on stat
 @info = stat($file) or say "error";
 #                    ^-keep list context
 ```
@@ -2084,6 +2026,7 @@ say qw(a b c);
 # say split / /, 'a b c';
 
 for (qw(/usr /var)) {
+#for ('/usr','/var') {
     say stat $_;
 }
 ```
@@ -2132,6 +2075,59 @@ THAT
 ```
 
 ---
+layout:true
+# Секретные операторы
+---
+
+```perl
+*0+           Venus              Приведение к числу
+say 0+"234asd"; # 234
+```
+
+```perl
+*!!           Bang bang          Приведение к bool
+say !! $string; # 1
+say !! undef; # ''
+```
+
+```perl
+*}{           Butterfly          END для one-liners
+
+perl -lne '}{ print$.'
+perl -le 'while (<>) { `}{` print$. }'
+```
+
+```perl
+*~~           Inchworm           Scalar context
+
+say scalar ~~localtime();
+#say scalar localtime();
+```
+
+---
+
+## Отвёртки
+
+```perl
+*-=! -=!!   Плоские             Условный декремент
+$x -=!! $y     # $x-- if $y;
+$x -=!  $y     # $x-- if not $y;
+
+*+=! +=!!   Крестовые           Условный инкремент
+$x +=!! $y     # $x++ if $y;
+$x +=!  $y     # $x++ if not $y;
+
+*x=! x=!!   Крестовые           Условный сброс в ''
+$x x=!! $y     # $x='' if not $y;
+$x x=!  $y     # $x='' if $y;
+
+**=! *=!!   Torx                Условный сброс в 0
+$x *=!! $y     # $x=0 if not $y;
+$x *=!  $y     # $x=0 if $y;
+```
+
+---
+
 layout:false
 # Содержание
 .small[
@@ -2169,41 +2165,250 @@ layout: false
 * [perlfunc](http://perldoc.perl.org/perlfunc.html)
 * [perlop](http://perldoc.perl.org/perlop.html)
 * [perlglossary](http://perldoc.perl.org/perlglossary.html)
+* [perlsecret](https://metacpan.org/pod/perlsecret)
+
+---
+layout:true
+# Домашнее задание
+---
+
+* Калькулятор
+    1. Синтаксический разбор
+    2. Преобразование в обратную польскую нотацию
+    3. Вычисление результата по обратной польской нотации
+* Программа должна читать выражения из стандартного ввода.
+* Одна строка - одно выражение. Пустые строки игнорировать
+* В ответ должна вывести 2 строки:
+    - обратную польскую нотацию
+    - вычисленное значение
+* В случае если выражение не удалось разобрать, вывести:
+    - Сообщение об ошибке в формате "Error: ..."
+    - NaN
+* Унарные '+' и '-' записывать как "U-" и "U+"
 
 ---
 
-# Домашнее задание
+```sh
+ - +      - унарные минус и минус,
+            приоритет 4, правоассоциативный
 
-* Калькулятор
-    1. Синтаксический разбор и выполнение арифметики
-    2. Преобразование в обратную польскую нотацию
+ ^        - возведение в степень,
+            приоритет 3, правоассоциативный
 
-```perl
+ * /      - умножение, деление,
+            приоритет 2, левоассоциативный
+
+ + -      - сложение, вычитание,
+            приоритет 1, левоассоциативный
+
  ( )      - приоритет 0
- -        - унарный минус, приоритет 1
- ** или ^ - возведение в степерь, приоритет 2
- * /      - умножение, приоритет 3
- + -      - сложение, приоритет 4
+
+
+1 / 2 / 3 -> ( 1 / 2 ) / 3 # левоассоциативный
+2 ^ 3 ^ 4 -> 2 ^ ( 3 ^ 4 ) # правоассоциативный
+
 ```
+
+
+---
 
 ```perl
 # входное выражение:
 - 16 + 2 * 0.3e+2 - .5 ^ ( 2 - 3 )
 # с расставленными скобками
-( -16 ) + ( 2 * ( 30.0 ) ) - ( 0.5 ^ ( 2 - 3 ) )
+( - 16 ) + ( 2 * ( 30.0 ) ) - ( 0.5 ^ ( 2 - 3 ) )
+# обратная польская нотация
+16 U- 2 30 * + 0.5 2 3 - ^ -
 # значение на выходе
 42
-# обратная польская нотация
--16 2 30 * + 0.5 2 3 - ^ -
 ```
 
+---
+
+```sh
+$ git clone \
+    git@github.com:Nikolo/Technosfera-perl.git \
+    sfera
+Cloning into 'sfera'...
+remote: Counting objects: 948, done.
+remote: Total 948 (delta 0), reused 0 (delta 0), pack-reused 948
+Receiving objects: 100% (948/948), 5.47 MiB | 888.00 KiB/s, done.
+Resolving deltas: 100% (447/447), done.
+Checking connectivity... done.
+
+$ cd sfera/homeworks/calculator
+```
+
+---
+
+```sh
+$ tree
+.
+├── Makefile.PL
+├── README.md
+├── bin
+│   └── calculator  # это основной файл
+├── lib
+│   ├── evaluate.pl # функция вычисления
+│   ├── rpn.pl      # построение польской нотации
+│   └── tokenize.pl # разбивка строки на части
+└── t # здесь тесты
+    ├── 00-run.t      # это основной тест
+    ├── 01-tokenize.t # вспомогательный тест
+    ├── 02-rpn.t      # тест функции для нотации
+    └── tests.pl      # тестовые наборы
+```
+
+---
+
+```sh
+$ perl Makefile.PL
+# Generating a Unix-style Makefile
+# Writing Makefile for Local::App::Calculator
+# Writing MYMETA.yml and MYMETA.json
+
+$ make test
+# dmake test для windows
+
+# ...
+
+```
+
+---
+
+```sh
+t/00-run.t .......
+t/00-run.t ....... 1/6
+#   Failed test 'Required good'
+...
+...
+# Looks like you failed 6 tests of 6.
+...
+...
+Test Summary Report
+-------------------
+t/00-run.t     (Wstat: 1536 Tests: 6 Failed: 6)
+  Failed tests:  1-6
+  Non-zero exit status: 6
+t/02-rpn.t     (Wstat: 768 Tests: 3 Failed: 3)
+  Failed tests:  1-3
+  Non-zero exit status: 3
+Files=3, Tests=32,  2 wallclock secs ( 0.06 usr  0.01 sys +  0.96 cusr  0.09 csys =  1.12 CPU)
+Result: FAIL
+Failed 2/3 test programs. 9/32 subtests failed.
+
+```
+
+---
+
+## Как должно работать
+```sh
+$ perl ./bin/calculator
+*1+1
+1 1 +
+2
+*1 + 2 * 3
+1 2 3 * +
+7
+*-(1+-2)*3/4
+1 2 U- + U- 3 * 4 /
+0.75
+*1*/1
+Error: Sequence of ops at tokenize.pl line 68...
+NaN
+```
+
+---
+
+## Как должно работать
+```sh
+$ make test
+t/00-run.t ....... ok
+t/01-tokenize.t .. ok
+t/02-rpn.t ....... ok
+All tests successful.
+
+Test Summary Report
+-------------------
+t/01-tokenize.t (Wstat: 0 Tests: 23 Failed: 0)
+  TODO passed:   1-23
+Files=3, Tests=32,  1 wallclock secs ( 0.05 usr  0.01 sys +  0.84 cusr  0.08 csys =  0.98 CPU)
+Result: `PASS`
+```
+
+---
+layout:true
+# Подсказки
+---
+
+```perl
+my $str = '1+1-1';
+
+my @chars = split //, $str;
+# '1','+','1','-','1'
+
+my @chunks = split m{[-+]}, $str;
+# '1','1','1';
+
+my @chunks = split m{([-+])}, $str;
+# '1','+','1','-','1';
+```
+
+---
+
+```perl
+for my $c (@chunks) {
+    next if $c =~ /^\s*$/;
+    # пропустить, если пустая строка или пробелы
+    given ($c) {
+        when (/^\s*$/) {} # то-же самое
+        when (/\d/) { # элемент содержит цифру
+            # ...
+        }
+        when ( '.' ) {} # элемент равен "."
+        when ([ '+','-' ]){ # элемент "+" или "-"
+            # ...
+        }
+        default {
+            die "Bad: '$_'";
+        }
+    }
+}
+```
+
+---
+
+## Venus!
+
+```perl
+my $str = "1e3";
+say $str;   # 1e3
+say 0+$str; # 1000
+
+my $str = ".5";
+say $str;   # .5
+say 0+$str; # 0.5
+
+my $str = "0.3e+2";
+say $str;   # 0.3e+2
+say 0+$str; # 30
+```
+
+---
+
+[Обратная польская запись](https://ru.wikipedia.org/wiki/%D0%9E%D0%B1%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D1%8C%D1%81%D0%BA%D0%B0%D1%8F_%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D1%8C)
+
+[Очерёдность_операций](https://ru.wikipedia.org/wiki/%D0%9E%D0%B1%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F_%D0%BF%D0%BE%D0%BB%D1%8C%D1%81%D0%BA%D0%B0%D1%8F_%D0%B7%D0%B0%D0%BF%D0%B8%D1%81%D1%8C)
+
+[Perl Operator Precedence and Associativity](http://perldoc.perl.org/perlop.html#Operator-Precedence-and-Associativity)
+
+[Разбор выражений. Обратная польская нотация](http://e-maxx.ru/algo/expressions_parsing)
 
 ---
 class: center, middle
+layout:false
 
 # \_\_END\_\_
-
----
 
 ---
 class: center, middle
@@ -2212,41 +2417,17 @@ class: center, middle
 
 ---
 
-# Запись однострочников в файл
-
->`sample.pl`
-
-```perl
-#!/usr/bin/env perl -pl00730012
-```
-
->`perl -MO=Deparse sample.pl`
-
-```perl
-BEGIN { $/ = "\n"; $\ = ";"; }
-LINE: while (defined($_ = <ARGV>)) {
-    chomp $_;
-}
-continue {
-    die "-p destination: $!\n" unless print $_;
-}
-sample.pl syntax OK
-```
-
-.footer[[perlrun](http://perldoc.perl.org/perlrun.html)]
-
----
-
-# Постфиксные циклы
+## Постфиксные циклы
 
 * Добавка внутреннего блока
 
 ```perl
-do {{
+do {`{`
     next if $cond1;
     redo if $cond2;
+    last if $cond3;
     ...
-}} while ( EXPR );
+`}`} while ( EXPR );
 ```
 
 * Работает `next`
@@ -2255,18 +2436,19 @@ do {{
 
 ---
 
-# Постфиксные циклы
+## Постфиксные циклы
 
 * Добавка внешнего блока
 
 ```perl
-LOOP: {
+`{`
     do {
         next if $cond1;
         redo if $cond2;
+        last if $cond3;
         ...
     } while ( EXPR );
-}
+`}`
 ```
 
 * Работает `last`
@@ -2277,19 +2459,19 @@ LOOP: {
 
 ---
 
-# Постфиксные циклы
+## Постфиксные циклы
 
 * Добавка внешнего и внутреннего блока
 
 ```perl
-LOOP: {
-    do {{
+`LOOP: {`
+    do {`{`
         next if $cond1;
         redo if $cond2;
-        last LOOP if $cond3;
+        last `LOOP` if $cond3;
         ...
-    }} while ( EXPR );
-}
+    `}`} while ( EXPR );
+`}`
 ```
 
 * Работает `last` (по внешней метке)
@@ -2297,25 +2479,36 @@ LOOP: {
 * Работает `next`
 
 .notes[.note[.txt[*] Главное не ошибиться с метками]]
+
 ---
-> ## Особенности perl 5.20: постфиксное разыменование
+
+![image]( dont1.jpg )
+
+---
+
+
+## Особенности perl 5.20: постфиксное разыменование
 
 ```perl
 use feature 'postderef';
 no warnings 'experimental::postderef';
 
 $sref->$*;  # same as  ${ $sref }
-$aref->@*;  # same as  @{ $aref }
-$aref->$#*; # same as $#{ $aref }
-$href->%*;  # same as  %{ $href }
-$cref->&*;  # same as  &{ $cref }
-$gref->**;  # same as  *{ $gref }
 
+$aref->@*;  # same as  @{ $aref }
+
+$aref->$#*; # same as $#{ $aref }
+
+$href->%*;  # same as  %{ $href }
+
+$cref->&*;  # same as  &{ $cref }
+
+$gref->**;  # same as  *{ $gref }
 ```
 
 ---
 
-> ## Особенности perl 5.20:<code><br></code> срезы ключ/значение
+## Особенности perl 5.20: срезы ключ/значение
 
 ```perl
 %hash = (
@@ -2331,12 +2524,12 @@ $gref->**;  # same as  *{ $gref }
 %sub = %hash{"key1","key3"};
        ^    ^             ^
        |    +-------------+--- на хэше
-       +----------------------- хэш-срез
+       +----- хэш-срез
 ```
 
 ---
 
-> ## Особенности perl 5.20:<code><br></code> срез ключ/значение на массиве
+## Особенности perl 5.20: срез ключ/значение на массиве
 
 ```perl
 @array = (
@@ -2352,12 +2545,12 @@ $gref->**;  # same as  *{ $gref }
 %sub = %array[ 1, 3 ];
        ^     ^      ^
        |     +------+--- на массиве
-       +----------------- хэш-срез
+       +----- хэш-срез
 ```
 
 ---
 
-> ## Особенности perl 5.20:<code><br></code> постфиксный срез
+## Особенности perl 5.20: постфиксный срез
 
 ```perl
 *($a,$b) = $aref->@[ 1,3 ];
@@ -2379,39 +2572,32 @@ $gref->**;  # same as  *{ $gref }
 
 ---
 
+## Сигнатуры в 5.20+
+
 ```perl
 use feature 'signatures';
+
 sub foo ($x, $y) {
     return $x**2+$y;
 }
 
 sub foo {
-    die "Too many arguments for subroutine"
-        unless @_ <= 2;
-    die "Too few arguments for subroutine"
-        unless @_ >= 2;
-    my $x = $_[0];
-    my $y = $_[1];
+*   die "Too many arguments for subroutine"
+*       unless @_ <= 2;
+*   die "Too few arguments for subroutine"
+*       unless @_ >= 2;
+*   my $x = $_[0];
+*   my $y = $_[1];
+
     return $x**2 + $y;
 }
 ```
 
 ---
+class:lastpage
 
-# Именованные унарные операторы
-> функции, имеющие строго 1 аргумент<code><br></code>
-> named unary operators
+# Оставьте отзыв на портале
 
-```perl
-chdir $foo    || die; # (chdir $foo) || die
-chdir($foo)   || die; # (chdir $foo) || die
-chdir ($foo)  || die; # (chdir $foo) || die
-chdir +($foo) || die; # (chdir $foo) || die
+Спасибо за внимание!
 
-rand 10 * 20;         # rand (10 * 20)
-rand(10) * 20;        # (rand 10) * 20
-rand (10) * 20;       # (rand 10) * 20
-rand +(10) * 20;      # rand (10 * 20)
-
--e($file).".ext"      # -e( ($file).".ext" )
-```
+Mons Anderson &lt;<mons@cpan.org>&gt;
