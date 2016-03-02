@@ -4,18 +4,25 @@ class: firstpage
 
 ---
 
-# Содержание
+# Как разбить по файлам?
 
-1. **"include"**
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
+```
+1234
+1235 sub deployed_sources
+1236 {
+1237   my ($self) = @_;
+1238
+1239   my $deploy_opts = $self->deploy_opts;
+1240
+1241   return $deploy_opts->{sources}
+1242     if exists $deploy_opts->{sources};
+1243   return $deploy_opts->{parser_args}->{sources}
+1244     if exists $deploy_opts->{parser_args}->{sources};
+1245
+1246   return [ $self->schema->sources ];
+1247 }
+1248
+```
 
 ---
 
@@ -121,21 +128,6 @@ $ perl -I /tmp/lib ...
 
 ---
 
-# Содержание
-
-1. "include"
-1. **Блоки фаз**
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
-
----
-
 # BEGIN
 
 .not[
@@ -210,18 +202,44 @@ my $load_time = time();
 
 ---
 
-# Содержание
+# Как разбить по файлам? (Итого)
 
-1. "include"
-1. Блоки фаз
-1. **`package`**
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
+```perl
+eval 'code';
+
+do 'file';
+
+require 'file';
+require Module::Name;
+
+use Module::Name;
+```
+
+---
+
+# Пространства имен?
+
+```perl
+require Some::Module;
+function(); # ?
+
+require Another::Module;
+another_function(); # ??
+
+require Another::Module2;
+another_function(); # again!?
+```
+
+```perl
+require Some::Module;
+Some::Module::function();
+
+require Another::Module;
+Another::Module::another_function();
+
+require Another::Module2;
+Another::Module2::another_function(); # np!
+```
 
 ---
 
@@ -258,16 +276,6 @@ print Local::Multiplier::m3(8); # 24
 }
 
 print Multiplier::m_4(8); # 32
-```
-
----
-
-# `__PACKAGE__`
-
-```perl
-package Some;
-
-print __PACKAGE__; # Some
 ```
 
 ---
@@ -333,6 +341,79 @@ main::print_size(); # 42
 
 ---
 
+# `__PACKAGE__`
+
+```perl
+package Some;
+
+print __PACKAGE__; # Some
+```
+
+---
+
+# package VS module
+
+```perl
+require 'Some/Module.pm';
+require Some::Module;
+```
+
+```perl
+package Some::Module;
+```
+
+```perl
+# :-O :-(
+
+use Some::Module;
+Some::Another::Module::function(); # surprise!
+```
+
+---
+
+# Пространства имен? (Итого)
+
+```
+Local/MusicLibrary/Table.pm
+```
+
+```
+use Local::MusicLibrary::Table;
+```
+
+```
+package
+use Local::MusicLibrary::Table;
+```
+
+---
+
+# Импорт?
+
+``` perl
+use Net::FaceBook::Feed::Post;
+
+Net::FaceBook::Feed::Post::download('...');
+```
+
+```perl
+use Net::FaceBook::Feed::Post 'download';
+
+download('...');
+```
+
+```cpp
+using namespace std;
+cout << endl;
+```
+
+```python
+from facebook.feed.post import download
+download('...')
+```
+
+---
+
 # use Module LIST;
 
 ```perl
@@ -354,31 +435,22 @@ use Module ();
 ```
 ---
 
-# Содержание
-
-1. "include"
-1. Блоки фаз
-1. `package`
-1. **Экспорт**
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
-
----
-
-# Экспорт
+# Пример
 
 ```perl
+package My::Package;
+
 use File::Path qw(make_path remove_tree);
 
 # File::Path::make_path
 make_path('foo/bar/baz', '/zug/zwang');
+File::Path::make_path('...');
+My::Package::make_path('...');
 
 # File::Path::remove_tree
 remove_tree('foo/bar/baz', '/zug/zwang');
+File::Path::remove_tree('...');
+My::Package::remove_tree('...');
 ```
 
 ---
@@ -446,20 +518,53 @@ use Local::Multiplier qw(:odd);
 
 print m3(5);
 ```
+
 ---
 
-# Содержание
+# import()
 
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. **Версии**
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
+* Не зарезервированное слово
+* Не обязан экспортировать функции пакета
+* Не обязан экспортировать в принципе
+
+```
+$ perl -e 'Lol->import();'
+$ perl -e 'Lol->method();'
+Can't locate object method "method" via package "Lol"
+(perhaps you forgot to load "Lol"?) at -e line 1.
+```
+
+---
+
+# Импорт? (Итого)
+
+```perl
+use Some::Module qw(some_function);
+some_function('...');
+```
+
+```perl
+package Some::Module;
+use Exporter 'import';
+our @EXPORT = qw(some_function);
+
+sub some_function {}
+```
+
+---
+
+# Контроль версий?
+
+```
+$ perl -we 'use File::Path qw(make_path);'
+"make_path" is not exported by the File::Path module
+Can't continue after import errors at -e line 1.
+BEGIN failed--compilation aborted at -e line 1.
+```
+
+```perl
+use File::Path 2.00 qw(make_path);
+```
 
 ---
 
@@ -527,20 +632,15 @@ use 5.012_001;
 $^V # v5.12.1
 $]  # 5.012001
 ```
+
 ---
 
-# Содержание
+# Контроль версий? (Итого)
 
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. **Pragmatic modules**
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. ДЗ
+```perl
+use Module v1.1.1;
+use 5.10;
+```
 
 ---
 
@@ -679,22 +779,20 @@ $ perl -E 'say 500**50'
 
 ---
 
-# Содержание
+# Pragmatic modules (Итого)
 
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. **`no`**
-1. Symbol Tables
-1. CPAN
-1. ДЗ
+```perl
+package Some::Module
+
+use strict;
+use warnings;
+
+1;
+```
 
 ---
 
-# no Module;
+# no
 
 ```perl
 no Local::Module LIST;
@@ -702,36 +800,21 @@ no Local::Module LIST;
 # Local::Module::unimport('Local::Module', LIST);
 ```
 
----
-
-# no VERSION;
-
 ```perl
 no 5.010;
 ```
-
----
-
-# no pragma;
 
 ```perl
 no strict;
 no feature;
 ```
+
 ---
 
-# Содержание
+# Как работает экспорт?
 
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. **Symbol Tables**
-1. CPAN
-1. ДЗ
+* Как копируются функции?
+* Как `Exporter` узнает, куда их копировать?
 
 ---
 
@@ -783,20 +866,21 @@ Foo:: -----> bar  -----+------> CODE   - &bar
 
 ```perl
  *Some::Package::foo = *Some::Package::var
- 
+
  *Some::Package::foo = \$bar;
  *Some::Package::foo = \@bar;
- 
- *Some::Packge::func = sub { ... }
+
+ *Some::Package::func = sub { ... }
+ *Some::Package::func = \&Another::Package::func;
 ```
 
 ---
 
-# caller
+# caller()
 
 ```perl
 # 0         1          2
-($package, $filename, $line) = caller;
+($package, $filename, $line) = caller();
 ```
 
 ```perl
@@ -810,25 +894,10 @@ Foo:: -----> bar  -----+------> CODE   - &bar
 
 ---
 
-# AUTOLOAD
+# Как работает экспорт? (Итого)
 
-```perl
-{
-  package Some::Package;
-
-  sub AUTOLOAD {
-    our $AUTOLOAD;
-    return $AUTOLOAD;
-    # return $Some::Package::AUTOLOAD;
-  }
-}
-
-print Some::Package::foo();
-# 'Some::Package::foo'
-
-print Some::Package::test();
-# 'Some::Package::test'
-```
+* Как копируются функции? — Таблица символов.
+* Как `Exporter` узнает, куда их копировать? — `caller()`
 
 ---
 
@@ -856,36 +925,21 @@ Test::bark(); # 123
 
 ```perl
 # localization of values
-local $foo;                # make $foo dynamically local
-local (@wid, %get);        # make list of variables local
-local $foo = "flurp";      # make $foo dynamic, and init it
-local @oof = @bar;         # make @oof dynamic, and init it
-local $hash{key} = "val";  # sets a local value for this hash entry
-delete local $hash{key};   # delete this entry for the current block
-local ($cond ? $v1 : $v2); # several types of lvalues support localization
+local $foo;
+local (@wid, %get);
+local $foo = "flurp";
+local @oof = @bar;
+local $hash{key} = "val";
+delete local $hash{key};
+local ($cond ? $v1 : $v2);
 
 # localization of symbols
-local *FH;                 # localize $FH, @FH, %FH, &FH  ...
-local *merlyn = *randal;   # now $merlyn is really $randal, plus
-                           #     @merlyn is really @randal, etc
-local *merlyn = 'randal';  # SAME THING: promote 'randal' to *randal
-local *merlyn = \$randal;  # just alias $merlyn, not @merlyn etc
+local *FH;
+local *merlyn = *randal;
+
+local *merlyn = 'randal';
+local *merlyn = \$randal;
 ```
-
----
-
-# Содержание
-
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. **CPAN**
-1. ДЗ
 
 ---
 
@@ -1079,60 +1133,14 @@ WriteMakefile(
   ./Build test
   ./Build install
 ```
----
-
-# Содержание
-
-1. "include"
-1. Блоки фаз
-1. `package`
-1. Экспорт
-1. Версии
-1. Pragmatic modules
-1. `no`
-1. Symbol Tables
-1. CPAN
-1. **ДЗ**
-
 
 ---
 
 # ДЗ 3.1
 
-```perl
-# http://jsonlines.org/
-# use JSON;
+*Упражнение, баллов не дает*
 
-use Local::JSONL qw(
-  encode_jsonl
-  decode_jsonl
-);
-
-$string = encode_jsonl($array_ref);
-$array_ref = decode_jsonl($string);
-```
-
----
-
-# ДЗ 3.2
-
-```perl
-use Local::Currency qw(set_rate);
-
-set_rate(
-  usd => 1,
-  rur => 65.44,
-  eur => 1.2,
-  # ...
-);
-
-$rur = Local::Currency::usd_to_rur(42);
-$cny = Local::Currency::gbp_to_cny(30);
-```
-
----
-
-# ДЗ 3.3
+`homeworks/getset`
 
 ```perl
 package Local::SomePackage;
@@ -1147,4 +1155,28 @@ our $y = 42;
 get_y(); # 42
 set_y(11);
 get_y(); # 11
+```
+
+---
+
+# ДЗ 3.2
+
+*8 баллов*
+
+`homeworks/music_library`
+
+```
+./Midas Fall/2015 - The Menagerie Inside/Low.ogg
+./Midas Fall/2015 - The Menagerie Inside/Holes.ogg
+./Midas Fall/2015 - The Menagerie Inside/Push.ogg
+```
+
+```
+/--------------------------\
+| Midas Fall |   Low | ogg |
+|------------+-------+-----|
+| Midas Fall | Holes | ogg |
+|------------+-------+-----|
+| Midas Fall |  Push | ogg |
+\--------------------------/
 ```
