@@ -1,0 +1,10 @@
+Changes
+Makefile.PL
+MANIFEST
+perlxs.xs
+ppport.h
+README
+t/Local-perlxs.t
+fallback/const-c.inc
+fallback/const-xs.inc
+lib/Local/perlxs.pm
