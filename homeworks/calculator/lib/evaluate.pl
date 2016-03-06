@@ -31,32 +31,32 @@ sub evaluate {
 			}
 			when ('U+') { next;}
 			when ('^') {
-				if (@stack && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $#stack >= 1 && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+				if (&& $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
 					splice (@stack, $#stack-1, 2, $stack[$#stack-1]**$stack[$#stack]);
 				} else {return 'Err';}
 				next;
 			}
 			when ('*') {
-				if (@stack && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $#stack >= 1 && $stack[$#stack-1] =~ /\-?\d+|\d*.\d+/) {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\d*.\d+/) {
 					splice (@stack, $#stack-1, 2, $stack[$#stack-1]*$stack[$#stack]);
 				} else {return 'Err';}
 				next;
 			}
 			when ('/') {
-				if (@stack && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $#stack >= 1 && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
 					if ($stack[$#stack] == 0) {return 'NaN';} 
 					splice (@stack, $#stack-1, 2, $stack[$#stack-1]/$stack[$#stack]);
 				} else {return 'Err';}
 				next;
 			}
 			when ('+') {
-				if (@stack && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $#stack >= 1 && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
 					splice (@stack, $#stack-1, 2, $stack[$#stack-1]+$stack[$#stack]);
 				} else {return 'Err';}
 				next;
 			}
 			when ('-') {
-				if (@stack && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $#stack >= 1 && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
 					splice (@stack, $#stack-1, 2, $stack[$#stack-1]-$stack[$#stack]);
 				} else {return 'Err';}
 				next;
