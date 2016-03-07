@@ -55,7 +55,6 @@ for (my $iter = 0; $iter < $len; $iter += 2) {
 Как итерироваться по массиву, в случае когда вам нужно удалять из него элементы:
 
 ```perl
-my $iter = 0;
 while (@arr) {
   my $ent = shift(@arr)
   # ...$ent...
