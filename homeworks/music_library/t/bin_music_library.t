@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 8;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -27,7 +27,7 @@ OUTPUT
 ;
 
 test_bin
-'empty result', '--band UNKNOWN',
+'no rows', '--band UNKNOWN',
 <<INPUT
 ./B/3210 - AlbumAlbum/x.format
 INPUT
@@ -138,5 +138,3 @@ INPUT
 <<OUTPUT
 OUTPUT
 ;
-
-done_testing();
