@@ -382,8 +382,7 @@ use Local::MusicLibrary::Table;
 ```
 
 ```
-package
-use Local::MusicLibrary::Table;
+package Local::MusicLibrary::Table;
 ```
 
 ---
