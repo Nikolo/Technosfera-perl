@@ -17,7 +17,7 @@ class: firstpage
 1241   return $deploy_opts->{sources}
 1242     if exists $deploy_opts->{sources};
 1243   return $deploy_opts->{parser_args}->{sources}
-1244     if exists $deploy_opts->{parser_args}->{sources};
+1244     if exists $deploy_opts->{args}->{sources};
 1245
 1246   return [ $self->schema->sources ];
 1247 }
@@ -102,7 +102,7 @@ m_3(2); # 6
 
 ```perl
 require Module; # Module.pm
-require Module::My # Module/My.pm
+require Module::My; # Module/My.pm
 ```
 
 ---
@@ -344,9 +344,9 @@ main::print_size(); # 42
 # `__PACKAGE__`
 
 ```perl
-package Some;
+package Some::Module::Lala;
 
-print __PACKAGE__; # Some
+print __PACKAGE__; # Some::Module::Lala
 ```
 
 ---
@@ -672,8 +672,8 @@ print $$ref;  # runtime error; normally ok
 use strict 'vars';
 
 $Module::a;
-my  $a = 4;
-our $b = 5;
+my  $x = 4;
+our $y = 5;
 ```
 
 ---
@@ -745,7 +745,7 @@ BEGIN { unshift(@INC, '/tmp/lib') }
 # FindBin
 
 ```perl
-use FindBin qw($Bin);
+use FindBin '$Bin';
 use lib "$Bin/../lib";
 ```
 
@@ -782,7 +782,7 @@ $ perl -E 'say 500**50'
 # Pragmatic modules (Итого)
 
 ```perl
-package Some::Module
+package Some::Module;
 
 use strict;
 use warnings;
@@ -797,7 +797,7 @@ use warnings;
 ```perl
 no Local::Module LIST;
 
-# Local::Module::unimport('Local::Module', LIST);
+# Local::Module->unimport(LIST);
 ```
 
 ```perl
@@ -865,7 +865,7 @@ Foo:: -----> bar  -----+------> CODE   - &bar
 # Typeglob — операции
 
 ```perl
- *Some::Package::foo = *Some::Package::var
+ *Some::Package::foo = *Some::Package::var;
 
  *Some::Package::foo = \$bar;
  *Some::Package::foo = \@bar;
@@ -972,7 +972,7 @@ libjson-pp-perl - module for manipulating
 libjson-xs-perl - module for manipulating
   JSON-formatted data (C/XS-accelerated)
 
-$ apt-get install libjson-perl
+# apt-get install libjson-perl
 ```
 
 ---
@@ -1113,18 +1113,17 @@ WriteMakefile(
 # Module::Build
 
 ```perl
-  use Module::Build;
-  my $build = Module::Build->new
-    (
-     module_name => 'Foo::Bar',
-     license  => 'perl',
-     requires => {
-                  'perl'          => '5.6.1',
-                  'Some::Module'  => '1.23',
-                  'Other::Module' => '>= 1.2, != 1.5, < 2.0',
-                 },
-    );
-  $build->create_build_script;
+use Module::Build;
+my $build = Module::Build->new(
+  module_name => 'Foo::Bar',
+  license  => 'perl',
+  requires => {
+    'perl'          => '5.6.1',
+    'Some::Module'  => '1.23',
+    'Other::Module' => '>= 1.2, != 1.5, < 2.0',
+  },
+);
+$build->create_build_script;
 ```
 
 ```sh
