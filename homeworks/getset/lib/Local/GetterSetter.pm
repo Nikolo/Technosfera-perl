@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use Data::Dumper; 
 sub import {
-	shift;
+	my ($class, @vars) = @_;
 	my ($package, $filename, $line) = caller();
-	for my $key (@_) {
+	for my $key (@vars) {
 		no strict 'refs';
 		*{$package.'::'."set_$key"} = sub {
 			${$package.'::'.$key} = shift;
