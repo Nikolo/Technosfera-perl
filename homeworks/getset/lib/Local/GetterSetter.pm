@@ -2,34 +2,19 @@ package Local::GetterSetter;
 
 use strict;
 use warnings;
+no strict 'refs';
 
-=encoding utf8
-
-=head1 NAME
-
-Local::GetterSetter - getters/setters generator
-
-=head1 VERSION
-
-Version 1.00
-
-=cut
-
-our $VERSION = '1.00';
-
-=head1 SYNOPSIS
-
-    package Local::SomePackage;
-    use Local::GetterSetter qw(x y);
-
-    set_x(50);
-    print our $x; # 50
-
-    our $y = 42;
-    print get_y(); # 42
-    set_y(11);
-    print get_y(); # 11
-
-=cut
-
+sub import {
+(my $package, my $filename, my $line) = caller(1);
+for my $key (@_) {
+	my $strset = $package.'::'."set_$key";
+	*{$strset} = sub {
+		${*{$package.'::'.$key}} = shift;
+	};
+	my $strget = $package.'::'."get_$key";
+	*{$strget} = sub {
+		  return ${*{$package.'::'.$key}};
+	};
+	}
+}
 1;
