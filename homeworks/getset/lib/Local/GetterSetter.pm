@@ -2,12 +2,12 @@ package Local::GetterSetter;
 
 use strict;
 use warnings;
-
+use Data::Dumper; 
 sub import {
-	no strict 'refs';
+	shift;
 	my ($package, $filename, $line) = caller();
 	for my $key (@_) {
-		print "$key\n";
+		no strict 'refs';
 		*{$package.'::'."set_$key"} = sub {
 			${$package.'::'.$key} = shift;
 		};
