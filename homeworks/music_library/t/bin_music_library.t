@@ -10,7 +10,7 @@ sub test_bin {
     $input_fh->print($input);
     $input_fh->close();
 
-    system("perl bin/music_library.pl $params < input.tmp > output.tmp");
+    system("$^X bin/music_library.pl $params < input.tmp > output.tmp");
 
     my $real_output;
     {
