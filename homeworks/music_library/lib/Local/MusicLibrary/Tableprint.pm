@@ -45,7 +45,7 @@ sub tableprint {					#\@database, \@columns, %hash
 		if ($hash{$key}[1] == 1) {
 			my $number = $hash{$key}[0];
 			for my $it1 (0..@$dataref-1) {
-				if (length $$dataref[$it1][$number] > $hash{$key}[1]) {$hash{$key}[1] = length $$dataref[$it1][$number];}
+				$hash{$key}[1] = length $$dataref[$it1][$number] if length $$dataref[$it1][$number] > $hash{$key}[1];
 			}
 			$hash{$key}[1]+=2;
 		}

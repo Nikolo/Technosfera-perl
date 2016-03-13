@@ -24,14 +24,22 @@ sub options {
 	or return die ("wrong args");
 	my $flag_sort = -1;
 	my $flag_columns = -1;
-	$flag_sort = 0 if $$hashref{'sort'} ne '';
+	$flag_sort = 0 if $$hashref{sort} ne '';
 	for $it (@sortfields){
-		if ($$hashref{'sort'} eq $it) {$flag_sort = 1; last;}
+		if ($$hashref{sort} eq $it) {
+			$flag_sort = 1; 
+			last;
+		}
 	}
-	return 'Error sort' if (!$flag_sort);
-	if (@{$$hashref{columns}} && ${$$hashref{columns}}[0] eq '') { return ;}	#--columns with no args => nothing to print
-	unless (@{$$hashref{columns}}) {@{$$hashref{columns}} = @sortfields; return undef;}
-	if ($$hashref{columns}[0] ne '') {@{$$hashref{columns}} = split m/,/, $$hashref{columns}[0];}
+	return 'Error sort' if !$flag_sort;
+	return undef if @{$$hashref{columns}} && ${$$hashref{columns}}[0] eq '';	#--columns with no args => nothing to print
+	unless (@{$$hashref{columns}}) {
+		@{$$hashref{columns}} = @sortfields; 
+		return undef;
+	}
+	if ($$hashref{columns}[0] ne '') {
+		@{$$hashref{columns}} = split m/,/, $$hashref{columns}[0];
+	} 
 	else {return undef;}
 	for $it (@{$$hashref{columns}}) {
 		$flag_columns = 0;
