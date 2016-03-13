@@ -1,28 +1,10 @@
-use lib qw(/home/Vyacheslav/Modules);
+
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
-use Local::Filter;
-use Local::Options;
-use Local::Sort;
-use Local::Tableprint;
-use Data::Dumper;
-use Getopt::Long;
-my $sort;
-my @columns;
-my $errcheck;
-my %parameters = (
-	'band' => '',
-	'year' => '',
-	'album' => '',
-	'track' => '',
-	'format' => '',
-	'sort' => '',
-	'columns' => \@columns);
-my @database; 					#arrays of arrays such as band:year:album:track:format
-$errcheck = Options(\%parameters);
-if (defined $errcheck) {die ($errcheck)};
-Filter(\@database, \%parameters);
-$sort = $parameters{'sort'};
-Sort(\@database, $sort);
-Tableprint(\@database, \@columns);
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+use Local::MusicLibrary qw(printlibrary);
 
+printlibrary;
