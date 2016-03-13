@@ -8,11 +8,11 @@ our @EXPORT_OK = ('Sort');
 
 sub Sort {
 	my ($dataref, $sort) = @_;
-	my %hash = ( 'band' => 1,
-		'year' => 2,
-		'album' => 3,
-		'track' => 4,
-		'format' =>5);
+	my %hash = ( band => 1,
+		year => 2,
+		album => 3,
+		track => 4,
+		format =>5);
 	if ($sort eq '') {return -1;}
 	if ($sort eq 'year') {
 		@$dataref = sort {$a->[1] <=> $b->[1]} @$dataref;
