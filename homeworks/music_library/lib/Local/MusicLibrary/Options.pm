@@ -7,7 +7,7 @@ use Data::Dumper;
 use Exporter 'import';
 
 our @EXPORT = ('options');
-my @sortfields = ('band', 'year', 'album', 'track', 'format');
+my @sortfields = qw(band year album track format);
 
 sub options {
 	my $hashref = shift;
@@ -29,8 +29,8 @@ sub options {
 		if ($$hashref{'sort'} eq $it) {$flag_sort = 1; last;}
 	}
 	return 'Error sort' if (!$flag_sort);
-	if (@{$$hashref{'columns'}} && ${$$hashref{'columns'}}[0] eq '') { return exit;}	#--columns with no args => nothing to print
-	unless (@{$$hashref{columns}}) {@{$$hashref{'columns'}} = @sortfields; return undef;}
+	if (@{$$hashref{columns}} && ${$$hashref{columns}}[0] eq '') { return ;}	#--columns with no args => nothing to print
+	unless (@{$$hashref{columns}}) {@{$$hashref{columns}} = @sortfields; return undef;}
 	if ($$hashref{columns}[0] ne '') {@{$$hashref{columns}} = split m/,/, $$hashref{columns}[0];}
 	else {return undef;}
 	for $it (@{$$hashref{columns}}) {
