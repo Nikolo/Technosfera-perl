@@ -24,7 +24,7 @@ sub filter {									#Filter(\@database, \%parameters);
 	my $it = 0;
 	my $flag = 0;
 	my $number;
-	my @keyarr = ('band', 'year', 'album', 'track', 'format');
+	my @keyarr = qw(band year album track format);
 	my @record;
 	my ($dataref, $paramref) = @_;
 	while (<>){
