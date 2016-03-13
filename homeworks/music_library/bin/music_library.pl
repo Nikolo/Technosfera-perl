@@ -1,4 +1,3 @@
-#!/usr/bin/env perl
 use lib qw(/home/Vyacheslav/Modules);
 use strict;
 use warnings;
@@ -8,7 +7,6 @@ use Local::Sort;
 use Local::Tableprint;
 use Data::Dumper;
 use Getopt::Long;
-#Here come default values
 my $sort;
 my @columns;
 my $errcheck;
