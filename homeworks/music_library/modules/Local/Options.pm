@@ -20,8 +20,9 @@ sub Options {
 	'track=s',
 	'format=s',
 	'sort=s',
-	'columns:s{,}')
+	'columns=s')
 	or return exit;
+	@{$$hashref{'columns'}} = split m/,/, $$hashref{'columns'}[0];
 	my $flag_sort = -1;
 	my $flag_columns = -1;
 	$flag_sort = 0 if $$hashref{'sort'} ne '';
