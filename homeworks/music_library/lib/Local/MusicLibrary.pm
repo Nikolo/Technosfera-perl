@@ -16,23 +16,22 @@ sub printlibrary {
 	my @columns;
 	my $errcheck;
 	my %parameters = (
-		'band' => '',
-		'year' => '',
-		'album' => '',
-		'track' => '',
-		'format' => '',
+		band => '',
+		year => '',
+		album => '',
+		track => '',
+		format => '',
 		'sort' => '',
-		'columns' => \@columns);
+		columns => \@columns);
 	my %hash = (
-		'band' => 0,
-		'year' => 1,
-		'album' => 2,
-		'track' => 3,
-		'format' => 4
-	);
+		band => 0,
+		year => 1,
+		album => 2,
+		track => 3,
+		format => 4);
 	my @database; 					#arrays of arrays such as band:year:album:track:format
 	$errcheck = options(\%parameters);
-	if (defined $errcheck) {die ($errcheck)};
+	die ($errcheck) if defined $errcheck;
 	filter(\@database, \%parameters);
 	$sort = $parameters{'sort'};
 	Sort(\@database, $sort);
