@@ -23,7 +23,7 @@ sub tableprint {					#\@database, \@columns, %hash
 	my $curlength;
 	my $namelength;
 	my $sumlength;
-	my $sumwidth;
+	my $height;
 	my ($dataref, $colref, %hash) = @_;
 	for my $key (keys %hash) {
 		$hash{$key} = [$hash{$key}, 0];
@@ -54,15 +54,15 @@ sub tableprint {					#\@database, \@columns, %hash
 		$sumlength += $hash{$revhash{$number}}[1];
 	}
 	$sumlength = $sumlength+$#colnumb+2;
-	$sumwidth = 2 * @$dataref + 1;
-	for my $it (1..$sumwidth) {
+	$height = 2 * @$dataref + 1;
+	for my $it (1..$height) {
 		if ($it == 1) {
 			print '/';
 			print '-' x ($sumlength - 2);
 			print '\\';
 			next;
 		}
-		if ($it % 2 == 1 && $it != $sumwidth) {
+		if ($it % 2 == 1 && $it != $height) {
 			print '|';
 			my $count = 0;
 			for my $number (@colnumb) {
@@ -88,7 +88,7 @@ sub tableprint {					#\@database, \@columns, %hash
 				print ' |';
 			}
 		}
-		if ($it == $sumwidth) {
+		if ($it == $height) {
 			print '\\';
 #			for my $it1 (1..$sumlength-2) {
 #				print '-';
