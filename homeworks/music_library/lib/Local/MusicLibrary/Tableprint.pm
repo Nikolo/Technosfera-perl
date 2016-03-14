@@ -31,12 +31,6 @@ sub tableprint {					#\@database, \@columns, %hash
 	}
 	if ($$colref[0] eq '') {return 1;}
 	unless (@$dataref) {return 1;}
-#	for my $it (0..@$colref-1) {
-#		unless (defined $hash{$$colref[$it]}) {
-#			$hash{$$colref[$it]} = [$it, 0];
-#			$revhash{$it} = $$colref[$it];
-#		}
-#	}
 	for my $it (@$colref) {
 		push @colnumb, $hash{$it}[0];
 		$hash{$it}[1] = 1;			#means it will be printed
@@ -90,9 +84,6 @@ sub tableprint {					#\@database, \@columns, %hash
 		}
 		if ($it == $height) {
 			print '\\';
-#			for my $it1 (1..$sumlength-2) {
-#				print '-';
-#			}
 			print '-' x ($sumlength-2);
 			print '/';
 			next;
