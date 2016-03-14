@@ -20,29 +20,16 @@ sub parser {									#Parser($string, \@record)
 }
 
 sub filter {									#Filter(\@database, \%parameters, %hash);
-	#my $first = 0; #for skipping ./main.pl
 	my $it = 0;
 	my $flag = 0;
 	my $number;
-	#my @keyarr = qw(band year album track format);
 	my @record;
 	my ($dataref, $paramref, %hash) = @_;
 	while (<>){
 		chomp;
-		#if (!$first) {$first = 1; next;} #for skipping ./main.pl
 		$flag = 0;
 		parser($_, \@record);
 		if ($#record < 4) {next;}
-#		for $number (0..$#keyarr) {
-#			if ($number == 1 && $$paramref{$keyarr[$number]} ne '' && $record[$number] != $$paramref{$keyarr[$number]}) {
-#				$flag = 1;
-#				last;
-#			}
-#			if ($number != 1 && $$paramref{$keyarr[$number]} ne '' && $record[$number] ne $$paramref{$keyarr[$number]}) {
-#				$flag = 1;
-#				last;
-#			}
-#		}
 		for my $key (keys %hash) {
 			no warnings 'experimental';
 			given ($hash{$key}[1]) {
