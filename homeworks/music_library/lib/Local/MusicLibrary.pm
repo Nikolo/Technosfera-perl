@@ -21,20 +21,20 @@ sub printlibrary {
 		album => '',
 		track => '',
 		format => '',
-		'sort' => '',
+		sort => '',
 		columns => \@columns);
 	my %hash = (
-		band => 0,
-		year => 1,
-		album => 2,
-		track => 3,
-		format => 4);
+		band => [0, 'str'],
+		year => [1, 'int'],
+		album => [2, 'str'],
+		track => [3, 'str'],
+		format => [4, 'str']);
 	my @database; 					#arrays of arrays such as band:year:album:track:format
 	$errcheck = options(\%parameters);
 	die ($errcheck) if defined $errcheck;
-	filter(\@database, \%parameters);
-	$sort = $parameters{'sort'};
-	Sort(\@database, $sort);
+	filter(\@database, \%parameters, %hash);
+	$sort = $parameters{sort};
+	Sort(\@database, $sort, %hash);
 	tableprint(\@database, \@columns, %hash);
 }
 1;
