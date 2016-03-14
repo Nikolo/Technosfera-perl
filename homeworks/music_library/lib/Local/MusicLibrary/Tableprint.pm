@@ -26,7 +26,7 @@ sub tableprint {					#\@database, \@columns, %hash
 	my $height;
 	my ($dataref, $colref, %hash) = @_;
 	for my $key (keys %hash) {
-		$hash{$key} = [$hash{$key}, 0];
+		$hash{$key} = [$hash{$key}[0], 0];
 		$revhash{$hash{$key}[0]} = $key;
 	}
 	if ($$colref[0] eq '') {return 1;}
