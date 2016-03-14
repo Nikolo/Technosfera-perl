@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More tests => 8;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -27,7 +27,7 @@ OUTPUT
 ;
 
 test_bin
-'empty result', '--band UNKNOWN',
+'no rows', '--band UNKNOWN',
 <<INPUT
 ./B/3210 - AlbumAlbum/x.format
 INPUT
@@ -64,7 +64,7 @@ INPUT
 <<OUTPUT
 /------------------------------------\\
 | B | 0210 | AlbumAlbum | t | format |
-|---+------+------------+---+--------l
+|---+------+------------+---+--------|
 | B |  210 | AlbumAlbum | x | format |
 \\------------------------------------/
 OUTPUT
@@ -108,4 +108,33 @@ INPUT
 OUTPUT
 ;
 
-done_testing();
+test_bin
+'columns', '--columns year,band,year',
+<<INPUT
+./B/1 - A/m.mp3
+./B/2 - B/o.ogg
+./B/3 - C/a.abc
+INPUT
+,
+<<OUTPUT
+/-----------\\
+| 1 | B | 1 |
+|---+---+---|
+| 2 | B | 2 |
+|---+---+---|
+| 3 | B | 3 |
+\\-----------/
+OUTPUT
+;
+
+test_bin
+'no columns', q{--columns ''},
+<<INPUT
+./B/1 - A/m.mp3
+./B/2 - B/o.ogg
+./B/3 - C/a.abc
+INPUT
+,
+<<OUTPUT
+OUTPUT
+;
