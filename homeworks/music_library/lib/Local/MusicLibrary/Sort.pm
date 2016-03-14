@@ -19,11 +19,5 @@ sub Sort {
 		}
 	}
 	return $hash{$sort}[0];
-#	if ($sort eq 'year') {
-#		@$dataref = sort {$a->[1] <=> $b->[1]} @$dataref;
-#		return 1;
-#	}
-#	@$dataref = sort {$a->[$hash{$sort}-1] cmp $b->[$hash{$sort}-1]} @$dataref;
-#	return $hash{$sort};
 }
 1;
