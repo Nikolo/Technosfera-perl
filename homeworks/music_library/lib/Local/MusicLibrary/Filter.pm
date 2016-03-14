@@ -19,8 +19,7 @@ sub parser {									#Parser($string, \@record)
 	$$aref[4] = $format;
 }
 
-sub filter {									#Filter(\@database, \%parameters, %hash);
-	my $it = 0;
+sub filter {
 	my $flag = 0;
 	my $number;
 	my @record;
@@ -49,7 +48,6 @@ sub filter {									#Filter(\@database, \%parameters, %hash);
 		}
 		next if $flag;
 		push @$dataref, [@record];
-		$it++;
 	}
 }
 1;
