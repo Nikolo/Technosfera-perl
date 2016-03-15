@@ -71,10 +71,10 @@ print "$simpson says \"I didn't do it!\"";
 
 Хорошо:
 ```perl
-my $fullname = join(' ', $title, $name, $surname, $father_name, $extra_name);
+my $fullname = join("\t", $title, $name, $surname, $father_name, $extra_name);
 ```
 
-Плохо:
+Плохо :
 ```perl
-my $fullname = "$title $name $surname $father_name $extra_name";
+my $fullname = "$title\t$name\t$surname\t$father_name\t$extra_name";
 ```
