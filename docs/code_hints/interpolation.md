@@ -25,6 +25,14 @@ my $fullname = sprintf("$name %s", get_surname()); # :(
 ```perl
 print 'My name is ' . $name . ' and surname is '. $surname . ' !';
 ```
+
+Избегайте экранирования в строках, в качестве кавычки можно использовать любой другой символ (отдавайте предпочтение `{}`):
+
+```perl
+print q{Bart says "I didn't do it!"};
+print qq{$simpson says "I didn't do it!"};
+```
+
 Часто примитивный шаблон можно заменить на `join`:
 
 ```perl
