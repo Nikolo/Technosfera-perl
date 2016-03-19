@@ -83,10 +83,10 @@ $regex = qr{
 
 $string =~ $regex;
 my $hash = {
-    band => $+{band},
-    year => $+{year},
-    album => $+{album},
-    track => $+{track},
+    band   => $+{band},
+    year   => $+{year},
+    album  => $+{album},
+    track  => $+{track},
     format => $+{format},
 };
 ```
