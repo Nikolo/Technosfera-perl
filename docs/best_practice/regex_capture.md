@@ -7,10 +7,10 @@
 
 ```perl
 {
-    band => 'Artist',
-    year => 2010,
-    album => 'Album',
-    track => 'track',
+    band   => 'Artist',
+    year   => 2010,
+    album  => 'Album',
+    track  => 'track',
     format => 'mp3',
 }
 ```
