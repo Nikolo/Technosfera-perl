@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION = '1.0';
 
-our $status_file = '/tmp/calc_status.txt';
+our $status_file = './calc_status.txt';
 
 #Определение обрабатываемых сигналов
 $SIG{...} = \&...;
