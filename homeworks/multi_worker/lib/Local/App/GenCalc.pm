@@ -2,23 +2,23 @@ package Local::App::GenCalc;
 
 use strict;
 
-my $file_path = '/tmp/calcs.txt';
+my $file_path = './calcs.txt';
 
 sub new_one {
     # Функция вызывается по таймеру каждые 100
-    my $new_row = join $/, rand(5).' + '.rand(5), 
-                  rand(2).' + '.rand(5).' * '.rand(10), 
-                  '('.rand(10).' + '.rand(8).') * '.rand(7), 
-                  rand(5).' + '.rand(6).' * '.rand(8).' ^ '.rand(12), 
-                  rand(20).' + '.rand(40).' * '.rand(45).' ^ '.rand(12), 
-                  (rand(12)/(rand(17)+1)).' * ('.(rand(14)/(rand(30)+1)).' - '.rand(10).') / '.rand(10).'.0 ^ 0.'.rand(6),  
-                  rand(8).' + 0.'.rand(10), 
-                  rand(10).' + .5',
-                  rand(10).' + .5e0',
-                  rand(10).' + .5e1',
-                  rand(10).' + .5e+1', 
-                  rand(10).' + .5e-1', 
-                  rand(10).' + .5e+1 * 2';
+    my $new_row = join $/, int(rand(5)).' + '.int(rand(5)), 
+                  int(rand(2)).' + '.int(rand(5)).' * '.int(int(rand(10))), 
+                  '('.int(rand(10)).' + '.int(rand(8)).') * '.int(rand(7)), 
+                  int(rand(5)).' + '.int(rand(6)).' * '.int(rand(8)).' ^ '.int(rand(12)), 
+                  int(rand(20)).' + '.int(rand(40)).' * '.int(rand(45)).' ^ '.int(rand(12)), 
+                  (int(rand(12))/(int(rand(17))+1)).' * ('.(int(rand(14))/(int(rand(30))+1)).' - '.int(rand(10)).') / '.rand(10).'.0 ^ 0.'.int(rand(6)),  
+                  int(rand(8)).' + 0.'.int(rand(10)), 
+                  int(rand(10)).' + .5',
+                  int(rand(10)).' + .5e0',
+                  int(rand(10)).' + .5e1',
+                  int(rand(10)).' + .5e+1', 
+                  int(rand(10)).' + .5e-1', 
+                  int(rand(10)).' + .5e+1 * 2';
     # Далее происходить запись в файл очередь
     ...
     return;
