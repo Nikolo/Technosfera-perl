@@ -9,24 +9,24 @@ use JSON::XS;
 
 our $JSON = JSON::XS->new->utf8;
 
-use Test::More tests => 1;
+use Test::More tests => 16;
 BEGIN { use_ok('Local::JSONParser') };
 
 diag "Positive tests";
 
 for my $source (
 	'[]',
-	# '[ ]',
-	# '[ 1 ]',
-	# '{}',
-	# '{ }',
-	# "{\n}",
-	# '[{}]',
-	# q/[{ "a":[ "\t\u0451\",","\"," ] }]/,
+	'[ ]',
+	'[ 1 ]',
+	'{}',
+	'{ }',
+	"{\n}",
+	'[{}]',
+	q/[{ "a":[ "\t\u0451\",","\"," ] }]/,
 
-	# '{ "key1": "string value", "key2": -3.1415, "key3": ["nested array"], "key4": { "nested": "object" } }',
-	# qq/{\n\t"key1" : "string value",\n\t"key2" : -3.1415,\n\t"key3" : ["nested array"],\n\t"key4":{"nested":"object"}\n}\n/,
-	# qq/ { "key1":\n"string value",\n"key2":\n-3.1415,\n"key3"\n: ["nested array"],\n"key4"\n:\n{"nested":"object"}}/,
+	'{ "key1": "string value", "key2": -3.1415, "key3": ["nested array"], "key4": { "nested": "object" } }',
+	qq/{\n\t"key1" : "string value",\n\t"key2" : -3.1415,\n\t"key3" : ["nested array"],\n\t"key4":{"nested":"object"}\n}\n/,
+	qq/ { "key1":\n"string value",\n"key2":\n-3.1415,\n"key3"\n: ["nested array"],\n"key4"\n:\n{"nested":"object"}}/,
 ) {
 	my $expect = $JSON->decode( $source );
 	my $data = parse_json($source);
