@@ -1,0 +1,854 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" width="1200" height="322" onload="init(evt)" viewBox="0 0 1200 322" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs >
+	<linearGradient id="background" y1="0" y2="1" x1="0" x2="0" >
+		<stop stop-color="#eeeeee" offset="5%" />
+		<stop stop-color="#eeeeb0" offset="95%" />
+	</linearGradient>
+</defs>
+<style type="text/css">
+	.func_g:hover { stroke:black; stroke-width:0.5; }
+</style>
+<script type="text/ecmascript">
+<![CDATA[
+	var details;
+	function init(evt) { details = document.getElementById("details").firstChild; }
+	function s(info) { details.nodeValue = "sub " + info; }
+	function c() { details.nodeValue = ' '; }
+]]>
+</script>
+<rect x="0.0" y="0" width="1200.0" height="322.0" fill="url(#background)"  />
+<text text-anchor="middle" x="600" y="24" font-size="17" font-family="Verdana" fill="rgb(0,0,0)"  >Flame Graph</text>
+<text text-anchor="" x="10" y="305" font-size="12" font-family="Verdana" fill="rgb(0,0,0)" id="details" > </text>
+<g class="func_g" onmouseover="s('Carp::caller_info (11,142 microseconds, 7.89%)')" onmouseout="c()">
+<title>Carp::caller_info (11,142 microseconds, 7.89%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#67" target="_top"><rect x="685.8" y="113" width="93.1" height="15.0" fill="rgb(238,3,16)" rx="2" ry="2" />
+<text text-anchor="" x="688.79234091329" y="123.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::caller..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::protocols_allowed (483 microseconds, 0.34%)')" onmouseout="c()">
+<title>LWP::UserAgent::protocols_allowed (483 microseconds, 0.34%)</title><a xlink:href="UserAgent-pm-2-line.html#571" target="_top"><rect x="1160.6" y="193" width="4.0" height="15.0" fill="rgb(205,29,7)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::message (851 microseconds, 0.60%)')" onmouseout="c()">
+<title>HTTP::Response::message (851 microseconds, 0.60%)</title><a xlink:href="Response-pm-30-line.html#62" target="_top"><rect x="645.9" y="193" width="7.1" height="15.0" fill="rgb(222,86,28)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:match (121 microseconds, 0.09%)')" onmouseout="c()">
+<title>URI::CORE:match (121 microseconds, 0.09%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_match" target="_top"><rect x="1183.1" y="161" width="1.0" height="15.0" fill="rgb(226,108,36)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::init_header (1,310 microseconds, 0.93%)')" onmouseout="c()">
+<title>HTTP::Headers::init_header (1,310 microseconds, 0.93%)</title><a xlink:href="Headers-pm-8-line.html#109" target="_top"><rect x="501.2" y="177" width="11.0" height="15.0" fill="rgb(248,124,8)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:match (16 microseconds, 0.01%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:match (16 microseconds, 0.01%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_match" target="_top"><rect x="512.1" y="145" width="0.1" height="15.0" fill="rgb(248,187,4)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::headers (400 microseconds, 0.28%)')" onmouseout="c()">
+<title>HTTP::Message::headers (400 microseconds, 0.28%)</title><a xlink:href="Message-pm-7-line.html#106" target="_top"><rect x="1118.3" y="161" width="3.3" height="15.0" fill="rgb(224,59,36)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:match (162 microseconds, 0.11%)')" onmouseout="c()">
+<title>URI::CORE:match (162 microseconds, 0.11%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_match" target="_top"><rect x="94.6" y="161" width="1.3" height="15.0" fill="rgb(211,82,18)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::Common::_simple_req (25,243 microseconds, 17.87%)')" onmouseout="c()">
+<title>HTTP::Request::Common::_simple_req (25,243 microseconds, 17.87%)</title><a xlink:href="Common-pm-3-line.html#104" target="_top"><rect x="53.2" y="225" width="210.9" height="15.0" fill="rgb(212,35,24)" rx="2" ry="2" />
+<text text-anchor="" x="56.2384588521554" y="235.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Request::Common::_simpl..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Date::time2str (472 microseconds, 0.33%)')" onmouseout="c()">
+<title>HTTP::Date::time2str (472 microseconds, 0.33%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-HTTP-Date-pm-31-line.html#22" target="_top"><rect x="599.9" y="193" width="3.9" height="15.0" fill="rgb(229,21,31)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('DB::disable_profile (1,113 microseconds, 0.79%)')" onmouseout="c()">
+<title>DB::disable_profile (1,113 microseconds, 0.79%)</title><a xlink:href="e-1-line.html#DB__disable_profile" target="_top"><rect x="10.0" y="257" width="9.3" height="15.0" fill="rgb(254,17,2)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::_header (863 microseconds, 0.61%)')" onmouseout="c()">
+<title>HTTP::Headers::_header (863 microseconds, 0.61%)</title><a xlink:href="Headers-pm-8-line.html#149" target="_top"><rect x="440.3" y="177" width="7.2" height="15.0" fill="rgb(250,56,10)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::content_type (788 microseconds, 0.56%)')" onmouseout="c()">
+<title>HTTP::Headers::content_type (788 microseconds, 0.56%)</title><a xlink:href="Headers-pm-8-line.html#329" target="_top"><rect x="611.9" y="177" width="6.6" height="15.0" fill="rgb(254,7,41)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_set_content (647 microseconds, 0.46%)')" onmouseout="c()">
+<title>HTTP::Message::_set_content (647 microseconds, 0.46%)</title><a xlink:href="Message-pm-7-line.html#141" target="_top"><rect x="635.8" y="177" width="5.4" height="15.0" fill="rgb(239,30,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_query::BEGIN@5 (86 microseconds, 0.06%)')" onmouseout="c()">
+<title>URI::_query::BEGIN@5 (86 microseconds, 0.06%)</title><a xlink:href="_query-pm-16-line.html#5" target="_top"><rect x="262.3" y="145" width="0.7" height="15.0" fill="rgb(220,65,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::CORE:regcomp (32 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_server::CORE:regcomp (32 microseconds, 0.02%)</title><a xlink:href="_server-pm-13-line.html#URI___server__CORE_regcomp" target="_top"><rect x="121.1" y="129" width="0.3" height="15.0" fill="rgb(239,195,15)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::Protocol::create (33,286 microseconds, 23.57%)')" onmouseout="c()">
+<title>LWP::Protocol::create (33,286 microseconds, 23.57%)</title><a xlink:href="Protocol-pm-22-line.html#33" target="_top"><rect x="657.1" y="193" width="278.1" height="15.0" fill="rgb(253,120,46)" rx="2" ry="2" />
+<text text-anchor="" x="660.078929797654" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::Protocol::create</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::uri (158 microseconds, 0.11%)')" onmouseout="c()">
+<title>HTTP::Request::uri (158 microseconds, 0.11%)</title><a xlink:href="Request-pm-6-line.html#59" target="_top"><rect x="517.5" y="193" width="1.3" height="15.0" fill="rgb(215,223,16)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (428 microseconds, 0.30%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (428 microseconds, 0.30%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="649.4" y="177" width="3.6" height="15.0" fill="rgb(215,147,34)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (239 microseconds, 0.17%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (239 microseconds, 0.17%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="75.4" y="177" width="2.0" height="15.0" fill="rgb(207,164,8)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::Common::BEGIN@3 (54 microseconds, 0.04%)')" onmouseout="c()">
+<title>HTTP::Request::Common::BEGIN@3 (54 microseconds, 0.04%)</title><a xlink:href="Common-pm-3-line.html#3" target="_top"><rect x="50.1" y="241" width="0.4" height="15.0" fill="rgb(239,205,54)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::implementor (8,118 microseconds, 5.75%)')" onmouseout="c()">
+<title>URI::implementor (8,118 microseconds, 5.75%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#99" target="_top"><rect x="196.3" y="161" width="67.8" height="15.0" fill="rgb(250,225,54)" rx="2" ry="2" />
+<text text-anchor="" x="199.310930957424" y="171.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI::imp..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@14 (72 microseconds, 0.05%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@14 (72 microseconds, 0.05%)</title><a xlink:href="_punycode-pm-18-line.html#14" target="_top"><rect x="165.8" y="97" width="0.6" height="15.0" fill="rgb(233,88,45)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::CORE:subst (233 microseconds, 0.16%)')" onmouseout="c()">
+<title>LWP::UserAgent::CORE:subst (233 microseconds, 0.16%)</title><a xlink:href="UserAgent-pm-2-line.html#LWP__UserAgent__CORE_subst" target="_top"><rect x="935.2" y="193" width="1.9" height="15.0" fill="rgb(227,86,15)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::_process_colonic_headers (281 microseconds, 0.20%)')" onmouseout="c()">
+<title>LWP::UserAgent::_process_colonic_headers (281 microseconds, 0.20%)</title><a xlink:href="UserAgent-pm-2-line.html#447" target="_top"><rect x="264.1" y="241" width="2.4" height="15.0" fill="rgb(221,106,19)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::BEGIN@6 (41 microseconds, 0.03%)')" onmouseout="c()">
+<title>URI::_idna::BEGIN@6 (41 microseconds, 0.03%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#6" target="_top"><rect x="134.3" y="113" width="0.4" height="15.0" fill="rgb(246,2,35)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@3 (18 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@3 (18 microseconds, 0.01%)</title><a xlink:href="_punycode-pm-18-line.html#3" target="_top"><rect x="167.8" y="97" width="0.2" height="15.0" fill="rgb(210,150,43)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_UNAUTHORIZED (44 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_UNAUTHORIZED (44 microseconds, 0.03%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_UNAUTHORIZED" target="_top"><rect x="353.5" y="225" width="0.4" height="15.0" fill="rgb(208,132,26)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::uri (146 microseconds, 0.10%)')" onmouseout="c()">
+<title>HTTP::Request::uri (146 microseconds, 0.10%)</title><a xlink:href="Request-pm-6-line.html#59" target="_top"><rect x="644.7" y="193" width="1.2" height="15.0" fill="rgb(235,99,13)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:subst (287 microseconds, 0.20%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:subst (287 microseconds, 0.20%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_subst" target="_top"><rect x="1112.2" y="129" width="2.4" height="15.0" fill="rgb(210,203,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('vars::import (56 microseconds, 0.04%)')" onmouseout="c()">
+<title>vars::import (56 microseconds, 0.04%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-vars-pm-5-line.html#10" target="_top"><rect x="760.9" y="49" width="0.4" height="15.0" fill="rgb(248,162,54)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::uri (22,348 microseconds, 15.82%)')" onmouseout="c()">
+<title>HTTP::Request::uri (22,348 microseconds, 15.82%)</title><a xlink:href="Request-pm-6-line.html#59" target="_top"><rect x="77.4" y="193" width="186.7" height="15.0" fill="rgb(251,229,27)" rx="2" ry="2" />
+<text text-anchor="" x="80.4254286565945" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Request::uri</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('XSLoader::load (1,411 microseconds, 1.00%)')" onmouseout="c()">
+<title>XSLoader::load (1,411 microseconds, 1.00%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-XSLoader-pm-132-line.html#22" target="_top"><rect x="764.2" y="65" width="11.8" height="15.0" fill="rgb(244,156,13)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::protocols_forbidden (359 microseconds, 0.25%)')" onmouseout="c()">
+<title>LWP::UserAgent::protocols_forbidden (359 microseconds, 0.25%)</title><a xlink:href="UserAgent-pm-2-line.html#572" target="_top"><rect x="1164.6" y="193" width="3.0" height="15.0" fill="rgb(253,67,21)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::run_handlers (6,209 microseconds, 4.40%)')" onmouseout="c()">
+<title>LWP::UserAgent::run_handlers (6,209 microseconds, 4.40%)</title><a xlink:href="UserAgent-pm-2-line.html#840" target="_top"><rect x="353.9" y="225" width="51.8" height="15.0" fill="rgb(248,15,17)" rx="2" ry="2" />
+<text text-anchor="" x="356.869184881599" y="235.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (24 microseconds, 0.02%)')" onmouseout="c()">
+<title>constant::import (24 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="167.2" y="81" width="0.2" height="15.0" fill="rgb(208,176,37)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@15 (26 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@15 (26 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#15" target="_top"><rect x="166.4" y="97" width="0.2" height="15.0" fill="rgb(230,53,7)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:match (114 microseconds, 0.08%)')" onmouseout="c()">
+<title>URI::CORE:match (114 microseconds, 0.08%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_match" target="_top"><rect x="562.4" y="161" width="0.9" height="15.0" fill="rgb(232,147,22)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (21 microseconds, 0.01%)')" onmouseout="c()">
+<title>constant::import (21 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="166.9" y="81" width="0.2" height="15.0" fill="rgb(243,146,20)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::Protocol::implementor (7,442 microseconds, 5.27%)')" onmouseout="c()">
+<title>LWP::Protocol::implementor (7,442 microseconds, 5.27%)</title><a xlink:href="Protocol-pm-22-line.html#46" target="_top"><rect x="873.0" y="177" width="62.2" height="15.0" fill="rgb(209,84,33)" rx="2" ry="2" />
+<text text-anchor="" x="875.992185409863" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::Pr..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::new (933 microseconds, 0.66%)')" onmouseout="c()">
+<title>HTTP::Message::new (933 microseconds, 0.66%)</title><a xlink:href="Message-pm-7-line.html#31" target="_top"><rect x="65.6" y="193" width="7.8" height="15.0" fill="rgb(210,73,47)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::BEGIN@7 (3,990 microseconds, 2.82%)')" onmouseout="c()">
+<title>URI::_idna::BEGIN@7 (3,990 microseconds, 2.82%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#7" target="_top"><rect x="134.7" y="113" width="33.3" height="15.0" fill="rgb(213,183,19)" rx="2" ry="2" />
+<text text-anchor="" x="137.683490986636" y="123.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('utf8::downgrade (58 microseconds, 0.04%)')" onmouseout="c()">
+<title>utf8::downgrade (58 microseconds, 0.04%)</title><a xlink:href="e-1-line.html#utf8__downgrade" target="_top"><rect x="1130.8" y="129" width="0.5" height="15.0" fill="rgb(234,36,17)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_query::BEGIN@3 (51 microseconds, 0.04%)')" onmouseout="c()">
+<title>URI::_query::BEGIN@3 (51 microseconds, 0.04%)</title><a xlink:href="_query-pm-16-line.html#3" target="_top"><rect x="261.8" y="145" width="0.4" height="15.0" fill="rgb(233,14,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('utf8::is_utf8 (106 microseconds, 0.08%)')" onmouseout="c()">
+<title>utf8::is_utf8 (106 microseconds, 0.08%)</title><a xlink:href="e-1-line.html#utf8__is_utf8" target="_top"><rect x="776.0" y="81" width="0.9" height="15.0" fill="rgb(228,95,6)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::request (379 microseconds, 0.27%)')" onmouseout="c()">
+<title>HTTP::Response::request (379 microseconds, 0.27%)</title><a xlink:href="Response-pm-30-line.html#64" target="_top"><rect x="1155.0" y="177" width="3.1" height="15.0" fill="rgb(227,203,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:substcont (449 microseconds, 0.32%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:substcont (449 microseconds, 0.32%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_substcont" target="_top"><rect x="1114.6" y="129" width="3.7" height="15.0" fill="rgb(207,207,34)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::get (139,584 microseconds, 98.83%)')" onmouseout="c()">
+<title>LWP::UserAgent::get (139,584 microseconds, 98.83%)</title><a xlink:href="UserAgent-pm-2-line.html#407" target="_top"><rect x="19.3" y="257" width="1166.2" height="15.0" fill="rgb(212,191,2)" rx="2" ry="2" />
+<text text-anchor="" x="22.3010098039039" y="267.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::get</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_FOUND (40 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_FOUND (40 microseconds, 0.03%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_FOUND" target="_top"><rect x="351.5" y="225" width="0.3" height="15.0" fill="rgb(228,57,19)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (25 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (25 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="563.3" y="161" width="0.2" height="15.0" fill="rgb(239,33,40)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (18 microseconds, 0.01%)')" onmouseout="c()">
+<title>constant::import (18 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="167.7" y="81" width="0.1" height="15.0" fill="rgb(232,171,21)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (12 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (12 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="1184.1" y="161" width="0.1" height="15.0" fill="rgb(209,141,46)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (244 microseconds, 0.17%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (244 microseconds, 0.17%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="1149.5" y="145" width="2.1" height="15.0" fill="rgb(217,141,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:match (24 microseconds, 0.02%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:match (24 microseconds, 0.02%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_match" target="_top"><rect x="631.5" y="145" width="0.2" height="15.0" fill="rgb(235,193,31)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('utf8::downgrade (39 microseconds, 0.03%)')" onmouseout="c()">
+<title>utf8::downgrade (39 microseconds, 0.03%)</title><a xlink:href="e-1-line.html#utf8__downgrade" target="_top"><rect x="640.9" y="145" width="0.3" height="15.0" fill="rgb(218,206,49)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:match (84 microseconds, 0.06%)')" onmouseout="c()">
+<title>URI::CORE:match (84 microseconds, 0.06%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_match" target="_top"><rect x="105.2" y="145" width="0.7" height="15.0" fill="rgb(205,180,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@19 (29 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@19 (29 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#19" target="_top"><rect x="167.4" y="97" width="0.2" height="15.0" fill="rgb(246,37,14)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::new (238 microseconds, 0.17%)')" onmouseout="c()">
+<title>HTTP::Headers::new (238 microseconds, 0.17%)</title><a xlink:href="Headers-pm-8-line.html#67" target="_top"><rect x="71.4" y="177" width="2.0" height="15.0" fill="rgb(241,41,43)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Scalar::Util::blessed (141 microseconds, 0.10%)')" onmouseout="c()">
+<title>Scalar::Util::blessed (141 microseconds, 0.10%)</title><a xlink:href="Util-pm-26-line.html#Scalar__Util__blessed" target="_top"><rect x="761.5" y="65" width="1.2" height="15.0" fill="rgb(212,57,10)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::new (288 microseconds, 0.20%)')" onmouseout="c()">
+<title>HTTP::Headers::new (288 microseconds, 0.20%)</title><a xlink:href="Headers-pm-8-line.html#67" target="_top"><rect x="1144.9" y="145" width="2.4" height="15.0" fill="rgb(250,116,38)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (21 microseconds, 0.01%)')" onmouseout="c()">
+<title>constant::import (21 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="166.7" y="81" width="0.1" height="15.0" fill="rgb(215,224,18)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@17 (27 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@17 (27 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#17" target="_top"><rect x="166.8" y="97" width="0.3" height="15.0" fill="rgb(254,153,42)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::header_field_names (5,810 microseconds, 4.11%)')" onmouseout="c()">
+<title>HTTP::Headers::header_field_names (5,810 microseconds, 4.11%)</title><a xlink:href="Headers-pm-8-line.html#215" target="_top"><rect x="447.5" y="193" width="48.5" height="15.0" fill="rgb(237,116,30)" rx="2" ry="2" />
+<text text-anchor="" x="450.465765349663" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP:..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::new (2,837 microseconds, 2.01%)')" onmouseout="c()">
+<title>HTTP::Response::new (2,837 microseconds, 2.01%)</title><a xlink:href="Response-pm-30-line.html#13" target="_top"><rect x="1131.3" y="177" width="23.7" height="15.0" fill="rgb(224,83,48)" rx="2" ry="2" />
+<text text-anchor="" x="1134.27253068125" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >H..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::str_len_trim (371 microseconds, 0.26%)')" onmouseout="c()">
+<title>Carp::str_len_trim (371 microseconds, 0.26%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#267" target="_top"><rect x="735.4" y="81" width="3.1" height="15.0" fill="rgb(242,226,46)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::scheme (4,061 microseconds, 2.88%)')" onmouseout="c()">
+<title>URI::scheme (4,061 microseconds, 2.88%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#194" target="_top"><rect x="529.6" y="193" width="33.9" height="15.0" fill="rgb(218,195,42)" rx="2" ry="2" />
+<text text-anchor="" x="532.61090044073" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:25] (227 microseconds, 0.16%)')" onmouseout="c()">
+<title>HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:25] (227 microseconds, 0.16%)</title><a xlink:href="Message-pm-7-line.html#22" target="_top"><rect x="639.3" y="161" width="1.9" height="15.0" fill="rgb(225,44,51)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:sort (105 microseconds, 0.07%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:sort (105 microseconds, 0.07%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_sort" target="_top"><rect x="495.1" y="161" width="0.9" height="15.0" fill="rgb(240,201,29)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:match (20 microseconds, 0.01%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:match (20 microseconds, 0.01%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_match" target="_top"><rect x="447.3" y="161" width="0.2" height="15.0" fill="rgb(243,60,50)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::CORE:match (112 microseconds, 0.08%)')" onmouseout="c()">
+<title>URI::_idna::CORE:match (112 microseconds, 0.08%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#URI___idna__CORE_match" target="_top"><rect x="185.2" y="81" width="1.0" height="15.0" fill="rgb(237,72,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('utf8::downgrade (61 microseconds, 0.04%)')" onmouseout="c()">
+<title>utf8::downgrade (61 microseconds, 0.04%)</title><a xlink:href="e-1-line.html#utf8__downgrade" target="_top"><rect x="195.8" y="113" width="0.5" height="15.0" fill="rgb(232,212,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:match (29 microseconds, 0.02%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:match (29 microseconds, 0.02%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_match" target="_top"><rect x="494.9" y="161" width="0.2" height="15.0" fill="rgb(251,77,54)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::CORE:subst (52 microseconds, 0.04%)')" onmouseout="c()">
+<title>URI::_server::CORE:subst (52 microseconds, 0.04%)</title><a xlink:href="_server-pm-13-line.html#URI___server__CORE_subst" target="_top"><rect x="121.4" y="129" width="0.4" height="15.0" fill="rgb(214,195,30)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::previous (410 microseconds, 0.29%)')" onmouseout="c()">
+<title>HTTP::Response::previous (410 microseconds, 0.29%)</title><a xlink:href="Response-pm-30-line.html#63" target="_top"><rect x="348.1" y="209" width="3.4" height="15.0" fill="rgb(215,195,6)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (21 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (21 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="260.9" y="145" width="0.2" height="15.0" fill="rgb(251,96,30)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('vars::import (70 microseconds, 0.05%)')" onmouseout="c()">
+<title>vars::import (70 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-vars-pm-5-line.html#10" target="_top"><rect x="50.6" y="225" width="0.6" height="15.0" fill="rgb(248,63,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@18 (34 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@18 (34 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#18" target="_top"><rect x="167.1" y="97" width="0.3" height="15.0" fill="rgb(206,54,40)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::run_handlers (1,148 microseconds, 0.81%)')" onmouseout="c()">
+<title>LWP::UserAgent::run_handlers (1,148 microseconds, 0.81%)</title><a xlink:href="UserAgent-pm-2-line.html#840" target="_top"><rect x="1167.6" y="193" width="9.6" height="15.0" fill="rgb(218,182,48)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::request (109,999 microseconds, 77.88%)')" onmouseout="c()">
+<title>LWP::UserAgent::request (109,999 microseconds, 77.88%)</title><a xlink:href="UserAgent-pm-2-line.html#279" target="_top"><rect x="266.5" y="241" width="919.0" height="15.0" fill="rgb(217,154,22)" rx="2" ry="2" />
+<text text-anchor="" x="269.472442171081" y="251.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::request</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (182 microseconds, 0.13%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (182 microseconds, 0.13%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="1156.6" y="161" width="1.5" height="15.0" fill="rgb(248,28,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('List::Util::BEGIN@11 (22 microseconds, 0.02%)')" onmouseout="c()">
+<title>List::Util::BEGIN@11 (22 microseconds, 0.02%)</title><a xlink:href="Util-pm-27-line.html#11" target="_top"><rect x="760.1" y="65" width="0.2" height="15.0" fill="rgb(252,92,4)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::Protocol::CORE:subst (43 microseconds, 0.03%)')" onmouseout="c()">
+<title>LWP::Protocol::CORE:subst (43 microseconds, 0.03%)</title><a xlink:href="Protocol-pm-22-line.html#LWP__Protocol__CORE_subst" target="_top"><rect x="934.8" y="161" width="0.4" height="15.0" fill="rgb(253,121,23)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::Common::GET (25,489 microseconds, 18.05%)')" onmouseout="c()">
+<title>HTTP::Request::Common::GET (25,489 microseconds, 18.05%)</title><a xlink:href="Common-pm-3-line.html#20" target="_top"><rect x="51.2" y="241" width="212.9" height="15.0" fill="rgb(248,69,15)" rx="2" ry="2" />
+<text text-anchor="" x="54.184099460455" y="251.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Request::Common::GET</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (12,666 microseconds, 8.97%)')" onmouseout="c()">
+<title>HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (12,666 microseconds, 8.97%)</title><a xlink:href="Message-pm-7-line.html#644" target="_top"><rect x="1015.8" y="177" width="105.8" height="15.0" fill="rgb(250,90,18)" rx="2" ry="2" />
+<text text-anchor="" x="1018.82739111934" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Message:..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:subst (68 microseconds, 0.05%)')" onmouseout="c()">
+<title>URI::CORE:subst (68 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_subst" target="_top"><rect x="195.2" y="113" width="0.6" height="15.0" fill="rgb(224,150,22)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::send_request (74,295 microseconds, 52.60%)')" onmouseout="c()">
+<title>LWP::UserAgent::send_request (74,295 microseconds, 52.60%)</title><a xlink:href="UserAgent-pm-2-line.html#132" target="_top"><rect x="563.5" y="209" width="620.7" height="15.0" fill="rgb(246,139,16)" rx="2" ry="2" />
+<text text-anchor="" x="566.537488703259" y="219.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::send_request</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@20 (27 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@20 (27 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#20" target="_top"><rect x="167.6" y="97" width="0.2" height="15.0" fill="rgb(253,95,24)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (64 microseconds, 0.05%)')" onmouseout="c()">
+<title>constant::import (64 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="165.9" y="81" width="0.5" height="15.0" fill="rgb(223,125,5)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::shortmess_heavy (24,309 microseconds, 17.21%)')" onmouseout="c()">
+<title>Carp::shortmess_heavy (24,309 microseconds, 17.21%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#254" target="_top"><rect x="669.9" y="145" width="203.1" height="15.0" fill="rgb(251,156,47)" rx="2" ry="2" />
+<text text-anchor="" x="672.903846846044" y="155.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::shortmess_heavy</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (23 microseconds, 0.02%)')" onmouseout="c()">
+<title>constant::import (23 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="167.4" y="81" width="0.2" height="15.0" fill="rgb(244,206,37)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::CORE:subst (808 microseconds, 0.57%)')" onmouseout="c()">
+<title>Carp::CORE:subst (808 microseconds, 0.57%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#Carp__CORE_subst" target="_top"><rect x="728.7" y="81" width="6.7" height="15.0" fill="rgb(242,73,45)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_generic::BEGIN@7 (37 microseconds, 0.03%)')" onmouseout="c()">
+<title>URI::_generic::BEGIN@7 (37 microseconds, 0.03%)</title><a xlink:href="_generic-pm-15-line.html#7" target="_top"><rect x="261.3" y="145" width="0.3" height="15.0" fill="rgb(217,81,28)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('UNIVERSAL::can (146 microseconds, 0.10%)')" onmouseout="c()">
+<title>UNIVERSAL::can (146 microseconds, 0.10%)</title><a xlink:href="e-1-line.html#UNIVERSAL__can" target="_top"><rect x="1184.2" y="209" width="1.3" height="15.0" fill="rgb(215,54,35)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::new (21,718 microseconds, 15.38%)')" onmouseout="c()">
+<title>URI::new (21,718 microseconds, 15.38%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#36" target="_top"><rect x="82.7" y="177" width="181.4" height="15.0" fill="rgb(225,145,4)" rx="2" ry="2" />
+<text text-anchor="" x="85.6837198364895" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI::new</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::content (892 microseconds, 0.63%)')" onmouseout="c()">
+<title>HTTP::Message::content (892 microseconds, 0.63%)</title><a xlink:href="Message-pm-7-line.html#121" target="_top"><rect x="633.8" y="193" width="7.4" height="15.0" fill="rgb(208,39,38)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::message (407 microseconds, 0.29%)')" onmouseout="c()">
+<title>HTTP::Response::message (407 microseconds, 0.29%)</title><a xlink:href="Response-pm-30-line.html#62" target="_top"><rect x="1151.6" y="161" width="3.4" height="15.0" fill="rgb(251,15,51)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::CORE:match (224 microseconds, 0.16%)')" onmouseout="c()">
+<title>Carp::CORE:match (224 microseconds, 0.16%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#Carp__CORE_match" target="_top"><rect x="726.8" y="81" width="1.9" height="15.0" fill="rgb(210,23,5)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::handlers (181 microseconds, 0.13%)')" onmouseout="c()">
+<title>LWP::UserAgent::handlers (181 microseconds, 0.13%)</title><a xlink:href="UserAgent-pm-2-line.html#828" target="_top"><rect x="404.2" y="209" width="1.5" height="15.0" fill="rgb(220,213,45)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:subst (46 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:subst (46 microseconds, 0.03%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_subst" target="_top"><rect x="618.1" y="161" width="0.4" height="15.0" fill="rgb(240,85,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_scheme (596 microseconds, 0.42%)')" onmouseout="c()">
+<title>URI::_scheme (596 microseconds, 0.42%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#162" target="_top"><rect x="558.6" y="177" width="4.9" height="15.0" fill="rgb(207,44,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('vars::CORE:match (16 microseconds, 0.01%)')" onmouseout="c()">
+<title>vars::CORE:match (16 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-vars-pm-5-line.html#vars__CORE_match" target="_top"><rect x="51.1" y="209" width="0.1" height="15.0" fill="rgb(226,169,5)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:match (71 microseconds, 0.05%)')" onmouseout="c()">
+<title>URI::CORE:match (71 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_match" target="_top"><rect x="260.3" y="145" width="0.6" height="15.0" fill="rgb(253,218,25)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::http::BEGIN@6 (28 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::http::BEGIN@6 (28 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-http-pm-12-line.html#6" target="_top"><rect x="263.9" y="145" width="0.2" height="15.0" fill="rgb(213,222,33)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@10 (392 microseconds, 0.28%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@10 (392 microseconds, 0.28%)</title><a xlink:href="_punycode-pm-18-line.html#10" target="_top"><rect x="162.5" y="97" width="3.3" height="15.0" fill="rgb(211,176,11)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::new (942 microseconds, 0.67%)')" onmouseout="c()">
+<title>HTTP::Message::new (942 microseconds, 0.67%)</title><a xlink:href="Message-pm-7-line.html#31" target="_top"><rect x="1139.5" y="161" width="7.8" height="15.0" fill="rgb(243,29,35)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_generic::CORE:subst (16 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::_generic::CORE:subst (16 microseconds, 0.01%)</title><a xlink:href="_generic-pm-15-line.html#URI___generic__CORE_subst" target="_top"><rect x="261.6" y="145" width="0.2" height="15.0" fill="rgb(247,66,37)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::new (24,691 microseconds, 17.48%)')" onmouseout="c()">
+<title>HTTP::Request::new (24,691 microseconds, 17.48%)</title><a xlink:href="Request-pm-6-line.html#12" target="_top"><rect x="57.9" y="209" width="206.2" height="15.0" fill="rgb(209,135,47)" rx="2" ry="2" />
+<text text-anchor="" x="60.8509510040779" y="219.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Request::new</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::Common::BEGIN@4 (78 microseconds, 0.06%)')" onmouseout="c()">
+<title>HTTP::Request::Common::BEGIN@4 (78 microseconds, 0.06%)</title><a xlink:href="Common-pm-3-line.html#4" target="_top"><rect x="50.5" y="241" width="0.7" height="15.0" fill="rgb(222,24,25)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::_sorted_field_names (5,400 microseconds, 3.82%)')" onmouseout="c()">
+<title>HTTP::Headers::_sorted_field_names (5,400 microseconds, 3.82%)</title><a xlink:href="Headers-pm-8-line.html#206" target="_top"><rect x="450.9" y="177" width="45.1" height="15.0" fill="rgb(230,192,42)" rx="2" ry="2" />
+<text text-anchor="" x="453.893596412756" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::header (1,585 microseconds, 1.12%)')" onmouseout="c()">
+<title>HTTP::Headers::header (1,585 microseconds, 1.12%)</title><a xlink:href="Headers-pm-8-line.html#76" target="_top"><rect x="618.5" y="177" width="13.2" height="15.0" fill="rgb(233,2,7)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::_uric_escape (10,800 microseconds, 7.65%)')" onmouseout="c()">
+<title>URI::_server::_uric_escape (10,800 microseconds, 7.65%)</title><a xlink:href="_server-pm-13-line.html#8" target="_top"><rect x="106.1" y="145" width="90.2" height="15.0" fill="rgb(215,68,53)" rx="2" ry="2" />
+<text text-anchor="" x="109.086206733728" y="155.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI::_serve..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::CORE:match (71 microseconds, 0.05%)')" onmouseout="c()">
+<title>HTTP::Headers::CORE:match (71 microseconds, 0.05%)</title><a xlink:href="Headers-pm-8-line.html#HTTP__Headers__CORE_match" target="_top"><rect x="1111.6" y="129" width="0.6" height="15.0" fill="rgb(217,100,9)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::check_size (309 microseconds, 0.22%)')" onmouseout="c()">
+<title>URI::_idna::check_size (309 microseconds, 0.22%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#43" target="_top"><rect x="187.6" y="81" width="2.6" height="15.0" fill="rgb(212,31,38)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::Protocol::CORE:match (202 microseconds, 0.14%)')" onmouseout="c()">
+<title>LWP::Protocol::CORE:match (202 microseconds, 0.14%)</title><a xlink:href="Protocol-pm-22-line.html#LWP__Protocol__CORE_match" target="_top"><rect x="933.1" y="161" width="1.7" height="15.0" fill="rgb(247,78,2)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::_host_escape (8,244 microseconds, 5.84%)')" onmouseout="c()">
+<title>URI::_server::_host_escape (8,244 microseconds, 5.84%)</title><a xlink:href="_server-pm-13-line.html#21" target="_top"><rect x="121.8" y="129" width="68.9" height="15.0" fill="rgb(234,138,13)" rx="2" ry="2" />
+<text text-anchor="" x="124.83518147669" y="139.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI::_se..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::BEGIN@5 (20 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::_server::BEGIN@5 (20 microseconds, 0.01%)</title><a xlink:href="_server-pm-13-line.html#5" target="_top"><rect x="263.0" y="145" width="0.2" height="15.0" fill="rgb(250,92,40)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::_new_response (26,457 microseconds, 18.73%)')" onmouseout="c()">
+<title>LWP::UserAgent::_new_response (26,457 microseconds, 18.73%)</title><a xlink:href="UserAgent-pm-2-line.html#1038" target="_top"><rect x="937.1" y="193" width="221.0" height="15.0" fill="rgb(213,73,36)" rx="2" ry="2" />
+<text text-anchor="" x="940.111757981481" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::_new_response</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Exporter::import (60 microseconds, 0.04%)')" onmouseout="c()">
+<title>Exporter::import (60 microseconds, 0.04%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Exporter-pm-14-line.html#28" target="_top"><rect x="162.0" y="97" width="0.5" height="15.0" fill="rgb(232,99,14)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:subst (222 microseconds, 0.16%)')" onmouseout="c()">
+<title>URI::CORE:subst (222 microseconds, 0.16%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_subst" target="_top"><rect x="96.2" y="161" width="1.8" height="15.0" fill="rgb(237,72,36)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (241 microseconds, 0.17%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (241 microseconds, 0.17%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="515.5" y="177" width="2.0" height="15.0" fill="rgb(244,136,20)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::_header (959 microseconds, 0.68%)')" onmouseout="c()">
+<title>HTTP::Headers::_header (959 microseconds, 0.68%)</title><a xlink:href="Headers-pm-8-line.html#149" target="_top"><rect x="623.7" y="161" width="8.0" height="15.0" fill="rgb(215,223,39)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (17 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (17 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="105.9" y="145" width="0.2" height="15.0" fill="rgb(229,149,18)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::content (1,153 microseconds, 0.82%)')" onmouseout="c()">
+<title>HTTP::Message::content (1,153 microseconds, 0.82%)</title><a xlink:href="Message-pm-7-line.html#121" target="_top"><rect x="1121.6" y="177" width="9.7" height="15.0" fill="rgb(226,161,12)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('constant::import (21 microseconds, 0.01%)')" onmouseout="c()">
+<title>constant::import (21 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-constant-pm-20-line.html#42" target="_top"><rect x="166.5" y="81" width="0.1" height="15.0" fill="rgb(218,16,2)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::headers (140 microseconds, 0.10%)')" onmouseout="c()">
+<title>HTTP::Message::headers (140 microseconds, 0.10%)</title><a xlink:href="Message-pm-7-line.html#106" target="_top"><rect x="512.2" y="177" width="1.2" height="15.0" fill="rgb(254,212,47)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::handlers (438 microseconds, 0.31%)')" onmouseout="c()">
+<title>LWP::UserAgent::handlers (438 microseconds, 0.31%)</title><a xlink:href="UserAgent-pm-2-line.html#828" target="_top"><rect x="524.5" y="177" width="3.7" height="15.0" fill="rgb(244,177,28)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::ToASCII (1,536 microseconds, 1.09%)')" onmouseout="c()">
+<title>URI::_idna::ToASCII (1,536 microseconds, 1.09%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#50" target="_top"><rect x="177.3" y="97" width="12.9" height="15.0" fill="rgb(212,35,51)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::BEGIN@6 (87 microseconds, 0.06%)')" onmouseout="c()">
+<title>URI::_server::BEGIN@6 (87 microseconds, 0.06%)</title><a xlink:href="_server-pm-13-line.html#6" target="_top"><rect x="263.2" y="145" width="0.7" height="15.0" fill="rgb(241,63,13)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::progress (294 microseconds, 0.21%)')" onmouseout="c()">
+<title>LWP::UserAgent::progress (294 microseconds, 0.21%)</title><a xlink:href="UserAgent-pm-2-line.html#507" target="_top"><rect x="1158.1" y="193" width="2.5" height="15.0" fill="rgb(245,16,14)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::simple_request (93,328 microseconds, 66.08%)')" onmouseout="c()">
+<title>LWP::UserAgent::simple_request (93,328 microseconds, 66.08%)</title><a xlink:href="UserAgent-pm-2-line.html#249" target="_top"><rect x="405.7" y="225" width="779.8" height="15.0" fill="rgb(254,89,29)" rx="2" ry="2" />
+<text text-anchor="" x="408.744474718463" y="235.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::simple_request</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (195 microseconds, 0.14%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (195 microseconds, 0.14%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="654.8" y="177" width="1.6" height="15.0" fill="rgb(246,183,19)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::_header (8,909 microseconds, 6.31%)')" onmouseout="c()">
+<title>HTTP::Headers::_header (8,909 microseconds, 6.31%)</title><a xlink:href="Headers-pm-8-line.html#149" target="_top"><rect x="1043.9" y="145" width="74.4" height="15.0" fill="rgb(216,14,36)" rx="2" ry="2" />
+<text text-anchor="" x="1046.87161074545" y="155.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Hea..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Scalar::Util::BEGIN@10 (62 microseconds, 0.04%)')" onmouseout="c()">
+<title>Scalar::Util::BEGIN@10 (62 microseconds, 0.04%)</title><a xlink:href="Util-pm-26-line.html#10" target="_top"><rect x="760.8" y="65" width="0.5" height="15.0" fill="rgb(208,225,39)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (28 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (28 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="95.9" y="161" width="0.3" height="15.0" fill="rgb(236,18,42)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::method (416 microseconds, 0.29%)')" onmouseout="c()">
+<title>HTTP::Request::method (416 microseconds, 0.29%)</title><a xlink:href="Request-pm-6-line.html#53" target="_top"><rect x="641.2" y="193" width="3.5" height="15.0" fill="rgb(246,148,13)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::header (10,650 microseconds, 7.54%)')" onmouseout="c()">
+<title>HTTP::Headers::header (10,650 microseconds, 7.54%)</title><a xlink:href="Headers-pm-8-line.html#76" target="_top"><rect x="1029.3" y="161" width="89.0" height="15.0" fill="rgb(248,207,29)" rx="2" ry="2" />
+<text text-anchor="" x="1032.32818321771" y="171.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HTTP::Heade..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::CORE:match (64 microseconds, 0.05%)')" onmouseout="c()">
+<title>URI::_server::CORE:match (64 microseconds, 0.05%)</title><a xlink:href="_server-pm-13-line.html#URI___server__CORE_match" target="_top"><rect x="190.2" y="113" width="0.5" height="15.0" fill="rgb(219,152,5)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Exporter::import (73 microseconds, 0.05%)')" onmouseout="c()">
+<title>Exporter::import (73 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Exporter-pm-14-line.html#28" target="_top"><rect x="263.3" y="129" width="0.6" height="15.0" fill="rgb(235,193,20)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_set_content (850 microseconds, 0.60%)')" onmouseout="c()">
+<title>HTTP::Message::_set_content (850 microseconds, 0.60%)</title><a xlink:href="Message-pm-7-line.html#141" target="_top"><rect x="1124.2" y="161" width="7.1" height="15.0" fill="rgb(221,164,31)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::code (390 microseconds, 0.28%)')" onmouseout="c()">
+<title>HTTP::Response::code (390 microseconds, 0.28%)</title><a xlink:href="Response-pm-30-line.html#61" target="_top"><rect x="341.6" y="225" width="3.2" height="15.0" fill="rgb(212,80,35)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (164 microseconds, 0.12%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (164 microseconds, 0.12%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="343.5" y="209" width="1.3" height="15.0" fill="rgb(206,93,15)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_TEMPORARY_REDIRECT (41 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_TEMPORARY_REDIRECT (41 microseconds, 0.03%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_TEMPORARY_REDIRECT" target="_top"><rect x="353.2" y="225" width="0.3" height="15.0" fill="rgb(245,140,21)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::_header (1,002 microseconds, 0.71%)')" onmouseout="c()">
+<title>HTTP::Headers::_header (1,002 microseconds, 0.71%)</title><a xlink:href="Headers-pm-8-line.html#149" target="_top"><rect x="503.8" y="161" width="8.4" height="15.0" fill="rgb(251,50,39)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_server::CORE:match (206 microseconds, 0.15%)')" onmouseout="c()">
+<title>URI::_server::CORE:match (206 microseconds, 0.15%)</title><a xlink:href="_server-pm-13-line.html#URI___server__CORE_match" target="_top"><rect x="119.4" y="129" width="1.7" height="15.0" fill="rgb(222,82,30)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::redirects (797 microseconds, 0.56%)')" onmouseout="c()">
+<title>HTTP::Response::redirects (797 microseconds, 0.56%)</title><a xlink:href="Response-pm-30-line.html#101" target="_top"><rect x="344.8" y="225" width="6.7" height="15.0" fill="rgb(223,216,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::croak (25,338 microseconds, 17.94%)')" onmouseout="c()">
+<title>Carp::croak (25,338 microseconds, 17.94%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#62" target="_top"><rect x="661.3" y="177" width="211.7" height="15.0" fill="rgb(245,188,46)" rx="2" ry="2" />
+<text text-anchor="" x="664.30795266906" y="187.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::croak</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (181 microseconds, 0.13%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (181 microseconds, 0.13%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="350.0" y="193" width="1.5" height="15.0" fill="rgb(253,21,50)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::CORE:regcomp (21 microseconds, 0.01%)')" onmouseout="c()">
+<title>URI::CORE:regcomp (21 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#URI__CORE_regcomp" target="_top"><rect x="195.1" y="113" width="0.1" height="15.0" fill="rgb(249,228,17)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Scalar::Util::reftype (108 microseconds, 0.08%)')" onmouseout="c()">
+<title>Scalar::Util::reftype (108 microseconds, 0.08%)</title><a xlink:href="Util-pm-26-line.html#Scalar__Util__reftype" target="_top"><rect x="763.3" y="65" width="0.9" height="15.0" fill="rgb(212,11,47)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_generic::BEGIN@6 (22 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_generic::BEGIN@6 (22 microseconds, 0.02%)</title><a xlink:href="_generic-pm-15-line.html#6" target="_top"><rect x="261.1" y="145" width="0.2" height="15.0" fill="rgb(214,181,6)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::trusts_directly (737 microseconds, 0.52%)')" onmouseout="c()">
+<title>Carp::trusts_directly (737 microseconds, 0.52%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#301" target="_top"><rect x="866.8" y="81" width="6.2" height="15.0" fill="rgb(252,217,4)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('vars::import (55 microseconds, 0.04%)')" onmouseout="c()">
+<title>vars::import (55 microseconds, 0.04%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-vars-pm-5-line.html#10" target="_top"><rect x="760.4" y="49" width="0.4" height="15.0" fill="rgb(245,219,40)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::request (405 microseconds, 0.29%)')" onmouseout="c()">
+<title>HTTP::Response::request (405 microseconds, 0.29%)</title><a xlink:href="Response-pm-30-line.html#64" target="_top"><rect x="653.0" y="193" width="3.4" height="15.0" fill="rgb(236,16,22)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::trusts (9,596 microseconds, 6.79%)')" onmouseout="c()">
+<title>Carp::trusts (9,596 microseconds, 6.79%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#282" target="_top"><rect x="792.8" y="113" width="80.2" height="15.0" fill="rgb(208,15,16)" rx="2" ry="2" />
+<text text-anchor="" x="795.819536095049" y="123.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::trusts</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('overload::AddrRef (4,486 microseconds, 3.18%)')" onmouseout="c()">
+<title>overload::AddrRef (4,486 microseconds, 3.18%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-overload-pm-25-line.html#89" target="_top"><rect x="738.5" y="81" width="37.5" height="15.0" fill="rgb(222,188,11)" rx="2" ry="2" />
+<text text-anchor="" x="741.515607481579" y="91.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >ove..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::scheme (839 microseconds, 0.59%)')" onmouseout="c()">
+<title>URI::scheme (839 microseconds, 0.59%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#194" target="_top"><rect x="1177.2" y="193" width="7.0" height="15.0" fill="rgb(214,62,14)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::CORE:regcomp (170 microseconds, 0.12%)')" onmouseout="c()">
+<title>URI::_idna::CORE:regcomp (170 microseconds, 0.12%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#URI___idna__CORE_regcomp" target="_top"><rect x="186.2" y="81" width="1.4" height="15.0" fill="rgb(249,149,34)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (195 microseconds, 0.14%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (195 microseconds, 0.14%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="643.1" y="177" width="1.6" height="15.0" fill="rgb(218,157,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('all (141,242 microseconds, 100%)')" onmouseout="c()">
+<title>all (141,242 microseconds, 100%)</title><rect x="10.0" y="273" width="1180.0" height="15.0" fill="rgb(248,65,36)" rx="2" ry="2" />
+<text text-anchor="" x="13" y="283.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  ></text>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (2,066 microseconds, 1.46%)')" onmouseout="c()">
+<title>HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (2,066 microseconds, 1.46%)</title><a xlink:href="Message-pm-7-line.html#644" target="_top"><rect x="496.1" y="193" width="17.3" height="15.0" fill="rgb(218,149,53)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::_elem (195 microseconds, 0.14%)')" onmouseout="c()">
+<title>HTTP::Message::_elem (195 microseconds, 0.14%)</title><a xlink:href="Message-pm-7-line.html#654" target="_top"><rect x="1153.3" y="145" width="1.7" height="15.0" fill="rgb(208,41,46)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_uric_escape (671 microseconds, 0.48%)')" onmouseout="c()">
+<title>URI::_uric_escape (671 microseconds, 0.48%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#90" target="_top"><rect x="190.7" y="129" width="5.6" height="15.0" fill="rgb(233,159,35)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::BEGIN@8 (44 microseconds, 0.03%)')" onmouseout="c()">
+<title>URI::_idna::BEGIN@8 (44 microseconds, 0.03%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#8" target="_top"><rect x="168.0" y="113" width="0.4" height="15.0" fill="rgb(219,223,23)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::run_handlers (1,122 microseconds, 0.79%)')" onmouseout="c()">
+<title>LWP::UserAgent::run_handlers (1,122 microseconds, 0.79%)</title><a xlink:href="UserAgent-pm-2-line.html#840" target="_top"><rect x="518.8" y="193" width="9.4" height="15.0" fill="rgb(239,13,41)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::short_error_loc (11,265 microseconds, 7.98%)')" onmouseout="c()">
+<title>Carp::short_error_loc (11,265 microseconds, 7.98%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#229" target="_top"><rect x="778.9" y="129" width="94.1" height="15.0" fill="rgb(252,119,2)" rx="2" ry="2" />
+<text text-anchor="" x="781.880135342499" y="139.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::short_..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Scalar::Util::refaddr (72 microseconds, 0.05%)')" onmouseout="c()">
+<title>Scalar::Util::refaddr (72 microseconds, 0.05%)</title><a xlink:href="Util-pm-26-line.html#Scalar__Util__refaddr" target="_top"><rect x="762.7" y="65" width="0.6" height="15.0" fill="rgb(211,75,20)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Headers::header (1,519 microseconds, 1.08%)')" onmouseout="c()">
+<title>HTTP::Headers::header (1,519 microseconds, 1.08%)</title><a xlink:href="Headers-pm-8-line.html#76" target="_top"><rect x="434.8" y="193" width="12.7" height="15.0" fill="rgb(233,135,11)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_scheme (546 microseconds, 0.39%)')" onmouseout="c()">
+<title>URI::_scheme (546 microseconds, 0.39%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#162" target="_top"><rect x="1179.7" y="177" width="4.5" height="15.0" fill="rgb(233,73,52)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::MemberMixin::_elem (232 microseconds, 0.16%)')" onmouseout="c()">
+<title>LWP::MemberMixin::_elem (232 microseconds, 0.16%)</title><a xlink:href="MemberMixin-pm-21-line.html#4" target="_top"><rect x="1162.7" y="177" width="1.9" height="15.0" fill="rgb(223,10,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_NOT_IMPLEMENTED (81 microseconds, 0.06%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_NOT_IMPLEMENTED (81 microseconds, 0.06%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_NOT_IMPLEMENTED" target="_top"><rect x="656.4" y="193" width="0.7" height="15.0" fill="rgb(237,121,10)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_MOVED_PERMANENTLY (69 microseconds, 0.05%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_MOVED_PERMANENTLY (69 microseconds, 0.05%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_MOVED_PERMANENTLY" target="_top"><rect x="351.8" y="225" width="0.6" height="15.0" fill="rgb(226,25,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::method (486 microseconds, 0.34%)')" onmouseout="c()">
+<title>HTTP::Request::method (486 microseconds, 0.34%)</title><a xlink:href="Request-pm-6-line.html#53" target="_top"><rect x="73.4" y="193" width="4.0" height="15.0" fill="rgb(233,103,39)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Request::method (494 microseconds, 0.35%)')" onmouseout="c()">
+<title>HTTP::Request::method (494 microseconds, 0.35%)</title><a xlink:href="Request-pm-6-line.html#53" target="_top"><rect x="513.4" y="193" width="4.1" height="15.0" fill="rgb(209,83,50)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Scalar::Util::BEGIN@9 (22 microseconds, 0.02%)')" onmouseout="c()">
+<title>Scalar::Util::BEGIN@9 (22 microseconds, 0.02%)</title><a xlink:href="Util-pm-26-line.html#9" target="_top"><rect x="761.3" y="65" width="0.2" height="15.0" fill="rgb(234,192,10)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::headers (245 microseconds, 0.17%)')" onmouseout="c()">
+<title>HTTP::Message::headers (245 microseconds, 0.17%)</title><a xlink:href="Message-pm-7-line.html#106" target="_top"><rect x="631.7" y="177" width="2.1" height="15.0" fill="rgb(224,19,32)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::prepare_request (17,893 microseconds, 12.67%)')" onmouseout="c()">
+<title>LWP::UserAgent::prepare_request (17,893 microseconds, 12.67%)</title><a xlink:href="UserAgent-pm-2-line.html#227" target="_top"><rect x="414.1" y="209" width="149.4" height="15.0" fill="rgb(230,154,14)" rx="2" ry="2" />
+<text text-anchor="" x="417.054646686434" y="219.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >LWP::UserAgent::prep..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Exporter::import (30 microseconds, 0.02%)')" onmouseout="c()">
+<title>Exporter::import (30 microseconds, 0.02%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Exporter-pm-14-line.html#28" target="_top"><rect x="261.3" y="129" width="0.3" height="15.0" fill="rgb(222,40,48)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Exporter::import (73 microseconds, 0.05%)')" onmouseout="c()">
+<title>Exporter::import (73 microseconds, 0.05%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Exporter-pm-14-line.html#28" target="_top"><rect x="262.4" y="129" width="0.6" height="15.0" fill="rgb(224,127,12)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/URI.pm:24] (171 microseconds, 0.12%)')" onmouseout="c()">
+<title>URI::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/URI.pm:24] (171 microseconds, 0.12%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#24" target="_top"><rect x="528.2" y="193" width="1.4" height="15.0" fill="rgb(206,206,0)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::get_status (2,378 microseconds, 1.68%)')" onmouseout="c()">
+<title>Carp::get_status (2,378 microseconds, 1.68%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#130" target="_top"><rect x="853.1" y="97" width="19.9" height="15.0" fill="rgb(212,133,30)" rx="2" ry="2" />
+<text text-anchor="" x="856.121124762612" y="107.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >C..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::UserAgent::handlers (412 microseconds, 0.29%)')" onmouseout="c()">
+<title>LWP::UserAgent::handlers (412 microseconds, 0.29%)</title><a xlink:href="UserAgent-pm-2-line.html#828" target="_top"><rect x="1173.8" y="177" width="3.4" height="15.0" fill="rgb(211,207,27)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::ret_summary (12,552 microseconds, 8.89%)')" onmouseout="c()">
+<title>Carp::ret_summary (12,552 microseconds, 8.89%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#213" target="_top"><rect x="674.0" y="129" width="104.9" height="15.0" fill="rgb(209,185,9)" rx="2" ry="2" />
+<text text-anchor="" x="677.013401074501" y="139.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::ret_sum..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_init (11,766 microseconds, 8.33%)')" onmouseout="c()">
+<title>URI::_init (11,766 microseconds, 8.33%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-pm-9-line.html#77" target="_top"><rect x="98.0" y="161" width="98.3" height="15.0" fill="rgb(252,165,41)" rx="2" ry="2" />
+<text text-anchor="" x="101.015807496711" y="171.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >URI::_init</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('Exporter::import (36 microseconds, 0.03%)')" onmouseout="c()">
+<title>Exporter::import (36 microseconds, 0.03%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Exporter-pm-14-line.html#28" target="_top"><rect x="168.1" y="97" width="0.3" height="15.0" fill="rgb(237,128,17)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('List::Util::BEGIN@12 (61 microseconds, 0.04%)')" onmouseout="c()">
+<title>List::Util::BEGIN@12 (61 microseconds, 0.04%)</title><a xlink:href="Util-pm-27-line.html#12" target="_top"><rect x="760.3" y="65" width="0.5" height="15.0" fill="rgb(237,80,13)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_punycode::BEGIN@16 (26 microseconds, 0.02%)')" onmouseout="c()">
+<title>URI::_punycode::BEGIN@16 (26 microseconds, 0.02%)</title><a xlink:href="_punycode-pm-18-line.html#16" target="_top"><rect x="166.6" y="97" width="0.2" height="15.0" fill="rgb(228,201,18)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('vars::CORE:match (12 microseconds, 0.01%)')" onmouseout="c()">
+<title>vars::CORE:match (12 microseconds, 0.01%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-vars-pm-5-line.html#vars__CORE_match" target="_top"><rect x="760.7" y="33" width="0.1" height="15.0" fill="rgb(239,18,26)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::shortmess (24,961 microseconds, 17.67%)')" onmouseout="c()">
+<title>Carp::shortmess (24,961 microseconds, 17.67%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#56" target="_top"><rect x="664.5" y="161" width="208.5" height="15.0" fill="rgb(216,112,10)" rx="2" ry="2" />
+<text text-anchor="" x="667.457580528641" y="171.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::shortmess</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:25] (314 microseconds, 0.22%)')" onmouseout="c()">
+<title>HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:25] (314 microseconds, 0.22%)</title><a xlink:href="Message-pm-7-line.html#22" target="_top"><rect x="1128.7" y="145" width="2.6" height="15.0" fill="rgb(210,13,3)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::get_subname (240 microseconds, 0.17%)')" onmouseout="c()">
+<title>Carp::get_subname (240 microseconds, 0.17%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#139" target="_top"><rect x="776.9" y="97" width="2.0" height="15.0" fill="rgb(254,112,16)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Date::time2str (574 microseconds, 0.41%)')" onmouseout="c()">
+<title>HTTP::Date::time2str (574 microseconds, 0.41%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-HTTP-Date-pm-31-line.html#22" target="_top"><rect x="1010.9" y="177" width="4.8" height="15.0" fill="rgb(226,69,20)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('URI::_idna::encode (2,606 microseconds, 1.85%)')" onmouseout="c()">
+<title>URI::_idna::encode (2,606 microseconds, 1.85%)</title><a xlink:href="opt-local-lib-perl5-site_perl-5-12-5-URI-_idna-pm-17-line.html#19" target="_top"><rect x="168.4" y="113" width="21.8" height="15.0" fill="rgb(240,72,26)" rx="2" ry="2" />
+<text text-anchor="" x="171.3987116501" y="123.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >U..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (3,576 microseconds, 2.53%)')" onmouseout="c()">
+<title>HTTP::Message::__ANON__[/opt/local/lib/perl5/site_perl/5.12.5/HTTP/Message.pm:644] (3,576 microseconds, 2.53%)</title><a xlink:href="Message-pm-7-line.html#644" target="_top"><rect x="603.9" y="193" width="29.9" height="15.0" fill="rgb(217,23,20)" rx="2" ry="2" />
+<text text-anchor="" x="606.883636772955" y="203.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >HT..</text>
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_SEE_OTHER (42 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_SEE_OTHER (42 microseconds, 0.03%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_SEE_OTHER" target="_top"><rect x="352.8" y="225" width="0.4" height="15.0" fill="rgb(233,119,53)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('LWP::MemberMixin::_elem (151 microseconds, 0.11%)')" onmouseout="c()">
+<title>LWP::MemberMixin::_elem (151 microseconds, 0.11%)</title><a xlink:href="MemberMixin-pm-21-line.html#4" target="_top"><rect x="1166.4" y="177" width="1.2" height="15.0" fill="rgb(231,76,16)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Status::HTTP_PROXY_AUTHENTICATION_REQUIRED (48 microseconds, 0.03%)')" onmouseout="c()">
+<title>HTTP::Status::HTTP_PROXY_AUTHENTICATION_REQUIRED (48 microseconds, 0.03%)</title><a xlink:href="Status-pm-131-line.html#HTTP__Status__HTTP_PROXY_AUTHENTICATION_REQUIRED" target="_top"><rect x="352.4" y="225" width="0.4" height="15.0" fill="rgb(254,156,50)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('HTTP::Response::code (509 microseconds, 0.36%)')" onmouseout="c()">
+<title>HTTP::Response::code (509 microseconds, 0.36%)</title><a xlink:href="Response-pm-30-line.html#61" target="_top"><rect x="1147.3" y="161" width="4.3" height="15.0" fill="rgb(220,101,18)" rx="2" ry="2" />
+</a>
+</g>
+<g class="func_g" onmouseover="s('Carp::format_arg (8,004 microseconds, 5.67%)')" onmouseout="c()">
+<title>Carp::format_arg (8,004 microseconds, 5.67%)</title><a xlink:href="opt-local-lib-perl5-5-12-5-Carp-pm-24-line.html#103" target="_top"><rect x="710.0" y="97" width="66.9" height="15.0" fill="rgb(240,68,16)" rx="2" ry="2" />
+<text text-anchor="" x="713.008551294675" y="107.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)"  >Carp::fo..</text>
+</a>
+</g>
+</svg>
