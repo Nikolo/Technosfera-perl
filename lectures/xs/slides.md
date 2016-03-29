@@ -1,5 +1,9 @@
-﻿class: center, middle
-layout:false
+﻿class:firstpage
+# Программирование на Perl
+
+---
+
+class: firstpage
 # Ускоряем перл
 # Расширяем «C»
 
