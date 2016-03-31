@@ -363,10 +363,10 @@ $obj->VERSION(5.12);
 # SUPER
 
 ```perl
-sub method {
+sub foo {
   my ($self, %params) = @_;
 
-  $self->SUPER::method(%params);
+  $self->SUPER::foo(%params);
 
   return;
 }
@@ -488,6 +488,7 @@ sub new {
 }
 
 sub DESTROY {
+  my ($self) = @_;
   print 'D';
 }
 ```
@@ -755,7 +756,7 @@ has password => (
 
 ```perl
 has age      => (is => 'ro', isa => 'Int');
-has is_adult => (is => 'ro', isa => 'Bool');
+has is_adult => (is => 'rw', isa => 'Bool');
 
 sub BUILD {
   my ($self) = @_;
