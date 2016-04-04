@@ -1,0 +1,30 @@
+\documentclass{article}
+% ВНИМАНИЕ: Используйте LuaLatex для сборки этого документа
+\usepackage{expl3,xargs,comment,enumitem,subcaption,graphicx,float}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[margin=2cm]{geometry}
+\usepackage{alltt, xcolor,fontspec,luacode,polyglossia}
+\setdefaultlanguage[spelling = modern]{russian}
+\setotherlanguage{english}
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\usepackage[unicode]{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{fadings,scopes,decorations}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{angles,calc,quotes,positioning}
+\usepackage{pgfplots,unicode-math,wasysym}
+\usepackage{minted}
+%\usepackage[outputdir=build]{minted}
+% ВНИМАНИЕ: УДАЛИТЕ [outputdir=build], если сборка идет в корневой директории, иначе будут ошибки.
+% ВНИМАНИЕ: Команда для сборки в директории build:
+% lualatex -synctex=1 -shell-escape -output-directory=build -interaction=nonstopmode %.tex
+\usepackage{enumitem}
+\def\pr<#1>{\input{#1}}
+\def\lasttiming{0}
+
+\begin{document}
+	\tableofcontents
+	\input{L1.tex}
+\end{document}

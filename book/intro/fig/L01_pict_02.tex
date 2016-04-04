@@ -1,0 +1,72 @@
+\begin{tikzpicture}
+\def\setpoints#1(#2)#3<#4,#5>#6 at (#7);{
+	\path[shift={(#7)}]
+	( 0     , 0      ) coordinate (#2)
+	( 0.5*#4, 0      ) coordinate (#2_east)
+	( 0     , 0.5*#5 ) coordinate (#2_north)
+	(-0.5*#4, 0      ) coordinate (#2_west)
+	( 0     ,-0.5*#5 ) coordinate (#2_south)
+	( 0.5*#4, 0.5*#5 ) coordinate (#2_north_east)
+	(-0.5*#4, 0.5*#5 ) coordinate (#2_north_west)
+	( 0.5*#4,-0.5*#5 ) coordinate (#2_south_east)
+	(-0.5*#4,-0.5*#5 ) coordinate (#2_south_west);
+}
+
+
+
+\path (0,0) coordinate (current) (1.25,-2.1) coordinate (s) (7.5,-3.4);
+
+\def\doit{\draw[latex-] (box_west) -- (s); \draw[-latex] (box_east) -- (e);}
+\def\stepbl{\path (current)+(0,-7mm) coordinate (current);}
+\def\dblock<#1>(#2){
+	\setpoints (box) <30mm,6mm> at (current);
+	\draw[fill={#1}] (box_south_west) rectangle (box_north_east) (box) node {#2};
+	\doit\stepbl }
+
+
+\def\dsmallblock<#1><#2> (#3) at (#4);{ \setpoints (box) <#1> at (#4);
+	\draw[fill={#2}] (box_south_west) rectangle (box_north_east);
+	\draw (box) node {#3}; }
+
+\def\block (#1) <#2> [#3] <#4> at (#5);{
+	\setpoints (#1) <#2> at (#5);
+	\draw[fill=#3] (#1_south_west) rectangle (#1_north_east) (#1) node {\texttt{#4}};
+}
+
+
+\draw (-2.3,0.2) node[below right]{Context} rectangle (1.8,-4.3);
+
+\foreach \n/\l in {$\$$/Scalar,$@$/Array,$\%$/Last elt, $\&$/Hash, $*$/Code} {\stepbl
+	\dsmallblock<5mm,6mm><gray!20> (\n) at (current);
+	\draw[latex-] (box_east) -- (s); 
+	\draw (box_west)+(-1cm,0) coordinate (temp);
+	\dsmallblock<15mm,6mm><gray!20> (\l) at (temp);
+	\draw[latex-] (box_east) --+ (0.25cm,0); }
+
+
+\foreach \place/\up/\down/\n/\name in {(5cm,-0.5cm)/Digits/Stmt/up/Array|ArrayRef,(5cm,-4cm)/BareW/Stmt/down/Hash|HashRef}{
+	\begin{scope}[shift={\place}]
+	\draw (-0.3, 1.3) node[below right]{\name }  rectangle (3.3,-1);
+	\path (0,0) coordinate (current);
+	\block (l\n) <4mm,6mm> [red!20] <[> at (current);
+	\block (r\n) <4mm,6mm> [red!20] <]> at ($(current)+(3,0)$);
+	\block (u\n) <14mm,6mm> [gray!20] <\up> at ($(current)+(1.5, 0.4)$);
+	\block (d\n) <14mm,6mm> [gray!20] <\down> at ($(current)+(1.5,-0.4)$);
+	\begin{scope}
+	\draw[-latex] (l\n_east) -- (u\n_west); 
+	\draw[-latex] (l\n_east)+(0,-0.1) -- (d\n_west); 
+	\draw[latex-] (r\n_west)+(0, 0.1) -- (u\n_east); 
+	\draw[latex-] (r\n_west)+(0,-0.1) -- (d\n_east); 
+	\end{scope}
+	
+	\end{scope}}
+
+\dsmallblock<10mm,6mm><gray!20> (Sigil) at (1.2,-2.1);
+\draw[-latex] (box_east)--+(0.3cm,0);
+\dsmallblock<10mm,6mm><green!20> (ID) at (2.5,-2.1);
+\draw[-latex] (box_east)--+(0.3cm,0);
+\draw[-latex] (box_north)--(lup_west); \draw[-latex] (box_south)--(ldown_west);
+\dsmallblock<10mm,6mm><green!20> (\texttt{->}) at (3.8,-2.1);
+\draw[-latex] (box_north)--(lup_south); \draw[-latex] (box_south)--(ldown_north);
+
+\end{tikzpicture}

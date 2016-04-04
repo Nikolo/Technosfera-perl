@@ -1,0 +1,24 @@
+\begin{tikzpicture}[scale=1.4] \input{preamble_add.tex}
+\path (0,0) coordinate (current) 
+	  (1.5,-2.1) coordinate (s) 
+	  (7.5,-3.4) node[circle] (e) {\}};
+
+	\foreach \n in {$\$$,$@$,$\%$, $\&$, $*$} {\stepbl
+		\dsmallblock<5mm,6mm><gray!20> (\n) at (current);
+		\draw[latex-] (box_east) -- (s);	}
+	\path (4.5,0) coordinate (current);
+	\dblock<green!20>(BAREWORD)
+	\draw[-latex] (box_west) --+ (-3mm,0);
+	\draw (box_north_west) + (-3mm,0) rectangle ($(box_south_west)+(-32.5mm,0)$);
+	\draw (box_west) + (-17.5mm,0) node{[A-Za-z\_]+[A-Za-z0-9\_]*};
+	\dblockl<red!15>(Letter)
+	\dblock<red!15>(Punctuation)
+	\dblock<red!15>(Digits)
+	\path (2,-3.4) coordinate (s) (current)+(0,-3mm) coordinate (current);
+	\dblock<yellow!15>(statement)
+	\dblockl<red!15>(BAREWORD)
+	\dsmallblock<5mm,6mm><gray!20> ($\{$) at (2,-3.4);
+	\draw[-latex] (1.5,-2.1) -- (box_north);
+	\dsmallblock<5mm,6mm><gray!20> ($\}$) at (7.4,-3.4);
+	\dsmallblock<10mm,6mm><gray!20> (Sigil) at (1.5,-2.1);
+\end{tikzpicture}

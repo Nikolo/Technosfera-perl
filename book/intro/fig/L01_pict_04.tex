@@ -1,0 +1,28 @@
+\begin{tikzpicture}[line width=1pt] \input{preamble_add.tex}
+\block (c) <3.4cm,1cm>[\%hash] at (0, 0);
+\block (u) <3.4cm,1cm>[@hash\h<k,k,...>] at (0, 2.7);
+\block (d) <3.4cm,1cm>[\$hash\h<k>]       at (0,-2.7);
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (u) <3.4cm,1cm>[\textbackslash\%hash] at (5, 1.3);
+\block (d) <3.4cm,1cm>[\%\curv<\ \$href >]       at (5,-1.3);
+\draw[-latex] (c_north)+(1,0) -- (u_west);
+\draw[-latex] (c_south)+(1,0) -- (d_west);
+\block (c) <3.4cm,1cm>[\$href]       at (10,0);
+\draw[latex-] (c_north)+(-1,0) -- (u_east);
+\draw[latex-] (c_south)+(-1,0) -- (d_east);
+
+\block (ct) <3.4cm,1cm>[\h<...>] at (5, 0);
+\draw[latex-] (c_west) -- (ct_east);
+
+\block (u) <3.4cm,1cm>[@\curv<\$href>\h<k,k,...>]       at (10,2.7);
+\block (d) <3.4cm,1cm>[\$href\red|->|\h<k>]       at (10,-2.7);
+
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (d) <3.4cm,1cm>[\$\curv<\ \$href >\h<k>]       at (6,-2.7);
+\draw[-latex] (c_south)+(-0.3,0) -- ($(d_north_east)+(-0.5,0)$);
+
+\end{tikzpicture}

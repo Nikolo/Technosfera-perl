@@ -1,0 +1,16 @@
+\begin{minted}{sh}
+	sample.pl
+
+#!/usr/bin/env perl -pl00730012
+
+	perl -MO=Deparse sample.pl
+
+BEGIN { $/ = "\n"; $\ = ";"; }
+LINE: while (defined($_ = <ARGV>)) {
+	chomp $_;
+}
+continue {
+	die "-p destination: $!\n" unless print $_;
+}
+sample.pl syntax OK
+\end{minted}
