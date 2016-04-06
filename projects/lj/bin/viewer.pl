@@ -98,14 +98,17 @@ $(document).ready(function() {
 
     var div = $('<div class="ui-corner-all ui-widget-content"></div>');
     var fields = [
-        'URL',
+        'url',
         'HTML',
-	'og',
-        'comments',
-        'comments_info',
         'title',
-        'links',
-        'images',
+        'description',
+        'author',
+	'links',
+	'image_links',
+	'collage',
+	'tags',
+	'words',
+	'og',
     ];
 
     if (skip) {
