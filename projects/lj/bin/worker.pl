@@ -1,7 +1,8 @@
 #!/usr/bin/env perl
 
 use strict;
-use lib::abs '../lib';
+use FindBin;
+use lib "$FindBin::Bin/../lib";
 #BEGIN{GetOptions}
 use Local::Hackathon::Worker $ARGV[0];
 
