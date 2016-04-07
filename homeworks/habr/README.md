@@ -46,6 +46,16 @@
 | `self_commentors` | Информация по всем известным пользователям, которые хоть раз комментировали свои посты | — | R | — |
 | `desert_posts --n XXX` | Информация по всем известным постам, где меньше XXX комментариев | — | R | — |
 
+Пример
+------
+
+```bash
+$ bin/habr.pl commenters --post 274771 --format jsonl
+{"username": "pushtaev", "karma": 19, "rating": 0}
+{"username": "nickolas_v", "karma": 0, "rating": 0}
+...
+```
+
 Дополнительные задания
 ----------------------
 
