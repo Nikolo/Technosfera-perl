@@ -1,7 +1,10 @@
 use Mojolicious::Lite;
 
 use Local::Hackathon::Client;
-my $STATUS = 'done';
+my $STATUS = 'view';
+my $DONE_STATUS = 'view';
+my $FAKE_SERVER = '100.100.159.176';
+my $REAL_SERVER = '100.100.148.90';
 
 get '/' => {template => 'index'};
 
@@ -13,23 +16,25 @@ websocket '/ws' => sub {
 
     eval {
         my $client = Local::Hackathon::Client->new(
-          host => '192.168.0.65',
+          #host => $FAKE_SERVER,
+          host => $REAL_SERVER,
           port => '3456',
         );
         local $SIG{ALRM} = sub { die "TIMEOUT\n" };
-        alarm(2);
+        alarm(5);
         my $data = $client->take($STATUS);
 	#$client->requeue($data->{id}, 'og', $data->{task}) if defined $data->{id};
-	$client->release($data->{id}) if defined $data->{id} && $STATUS ne 'done';
-	$client->ack($data->{id}) if defined $data->{id} && $STATUS eq 'done';
+	$client->release($data->{id}) if defined $data->{id} && $STATUS ne $DONE_STATUS;
+	$client->ack($data->{id}) if defined $data->{id} && $STATUS eq $DONE_STATUS;
         alarm(0);
 	if (exists $data->{task}){
 		delete $data->{task}->{$_} for grep {!$data->{task}->{$_}} keys %{$data->{task}};
 	}
-	sleep(1) unless exists $data->{id};
         $c->send({json => (
             $data ? {data => $data} : {skip => 1}
         )}) if $data->{task};
+#	sleep(1);
+	1;
     } or do {
         $c->send({json => {error => $@}});
     };
@@ -119,7 +124,7 @@ $(document).ready(function() {
         div.append(result);
     }
     else {
-      div.append('[' + result.id + '] ' + result.task.URL + '<br>');
+      div.append('[' + result.id + '] ' + result.task.url + '<br>');
       $.each(fields, function(index, field) {
         var status = $('<span>' + field + '</span>');
         if (field in result.task && result[field] !== '') {

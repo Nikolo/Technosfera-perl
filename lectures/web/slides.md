@@ -119,13 +119,13 @@ DELETE | удаляет ресурс с сервера.
 - SOAP
 - WebSocket
 
-![Right-aligned image](websockets.png)
+.center[.normal-width[![image](websockets.png)]]
 
 ---
 
 **Безопасность**
 
-![Right-aligned image](security.jpg)
+.center[.normal-width[![image](security.jpg)]]
 
 ---
 
@@ -225,7 +225,7 @@ sub handler {
 
 Приложение запускается отдельно от сервера
 
-![Right-aligned image](fcgi.png)
+.center[.normal-width[![image](fcgi.png)]]
 
 ---
 
@@ -309,7 +309,7 @@ layout: true
 
 Веб-фреймворк vs CMS
 
-![Right-aligned image](webframework.png)
+.center[.normal-width[![image](webframework.png)]]
 
 Программная платформа, определяющая структуру программной системы
 
@@ -317,9 +317,21 @@ layout: true
 
 Веб-фреймворк vs CMS
 
-![Right-aligned image](CMS.png)
+.center[.normal-width[![image](CMS.png)]]
 
 Система управления содержимым
+
+---
+
+MVC (Модель-Представление-Контроллер)
+
+.center[.normal-width[![image](True_MVC.png)]]
+
+Модель живёт сама по себе и содержит бизнеслогику
+
+За формат результата отвечает представление
+
+Контроллер обрабатывает запрос пользователя, занимается аутентификацией/авторизацией
 
 ---
 
@@ -835,7 +847,7 @@ layout: true
 
 *XSS - Cross-site scripting*
 
-![Right-aligned image](XSS.gif)
+.center[.normal-width[![image](XSS.gif)]]
 
 ---
 
