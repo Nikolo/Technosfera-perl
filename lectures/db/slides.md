@@ -4,29 +4,6 @@ class: center, middle
 
 ---
 
-# SQL
-
-```sql
-SELECT name, surname
-FROM users
-WHERE age > 18;
-```
-
-```sql
-SELECT balance
-FROM account
-WHERE user_id = 81858
-```
-
-```sql
-SELECT *
-FROM users u JOIN accounts a
-  ON u.id = a.user_id
-WHERE account.balance > 0
-```
-
----
-
 # DBI
 
 ```perl
@@ -674,6 +651,6 @@ $memd->get('skey');
 
 https://github.com/Nikolo/Technosfera-perl/
 
-`/homeworks/grades`
+`/homeworks/habr`
 
 
