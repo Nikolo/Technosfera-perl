@@ -3,6 +3,12 @@
 
 ---
 
+class:note_and_mark
+
+# Отметьтесь на портале!
+ 
+---
+
 class: firstpage
 # Ускоряем перл
 # Расширяем «C»
@@ -32,13 +38,13 @@ layout: true
 
 make='dmake';
 
-% h2xs -b 5.10.1 -n sferamail::perlxs
+% h2xs -b 5.10.1 -n local::sferamail::perlxs
 ```
 
 C::Scan - модуль для парсинга хеадер-файла для генерации xsubs
 
 ```bash
-h2xs -n sferamail::locale -O -x "F:\locale.h"
+h2xs -n local::sferamail::locale -O -x "F:\locale.h"
 ```
 
 ???
@@ -53,16 +59,16 @@ h2xs -n sferamail::locale -O -x "F:\locale.h"
 Базовый набор файлов, необходимых для создания модуля.
 
 ```bash
-Writing sferamail-perlxs/ppport.h
-Writing sferamail-perlxs/lib/sferamail/perlxs.pm
-Writing sferamail-perlxs/perlxs.xs
-Writing sferamail-perlxs/fallback/const-c.inc
-Writing sferamail-perlxs/fallback/const-xs.inc
-Writing sferamail-perlxs/Makefile.PL
-Writing sferamail-perlxs/README
-Writing sferamail-perlxs/t/sferamail-perlxs.t
-Writing sferamail-perlxs/Changes
-Writing sferamail-perlxs/MANIFEST
+Writing local-sferamail-perlxs/ppport.h
+Writing local-sferamail-perlxs/lib/local/sferamail/perlxs.pm
+Writing local-sferamail-perlxs/perlxs.xs
+Writing local-sferamail-perlxs/fallback/const-c.inc
+Writing local-sferamail-perlxs/fallback/const-xs.inc
+Writing local-sferamail-perlxs/Makefile.PL
+Writing local-sferamail-perlxs/README
+Writing local-sferamail-perlxs/t/local-sferamail-perlxs.t
+Writing local-sferamail-perlxs/Changes
+Writing local-sferamail-perlxs/MANIFEST
 ```
 
 ---
@@ -154,40 +160,40 @@ layout: true
  - NV - double
  - PV - pointer value
  - SV
- 
-![Right-aligned image](flags.png)
+
+.center[.normal-width[![image](flags.png)]] 
 
 ---
 
 SvPV
 
-![Right-aligned image](svpv-14.png)
+.center[.normal-width[![image](svpv-14.png)]] 
 
 SvOOK
 
-![Right-aligned image](ook-14.png)
+.center[.normal-width[![image](ook-14.png)]] 
 
 ---
 
 SvPVMG
 
-![Right-aligned image](svpvmg-14.png)
+.center[.normal-width[![image](svpvmg-14.png)]] 
 
 ---
 
 SvRV
 
-![Right-aligned image](svrv.png)
+.center[.normal-width[![image](svrv.png)]] 
 
 SvAV
 
-![Right-aligned image](av-14.png)
+.center[.normal-width[![image](av-14.png)]] 
 
 ---
 
 SvHV
 
-![Right-aligned image](hv-14.png)
+.center[.normal-width[![image](hv-14.png)]] 
 
 ---
 
@@ -214,7 +220,7 @@ void  sv_setuv(SV*, UV);
 void  sv_setnv(SV*, double);
 void  sv_setpv(SV*, const char*);
 void  sv_setpvn(SV*, const char*, STRLEN)
-void  sv_setpvf(SV*, const char*, ...);   //sprintf
+void  sv_setpvf(SV*, const char*, ...); //sprintf
 void  sv_setsv(SV*, SV*);
 ```
 
@@ -380,7 +386,7 @@ void distance_ext_point(x1,y1,x2,y2)
 
 ---
 
-![Right-aligned image](stack.png)
+.center[.normal-width[![image](stack.png)]] 
 
 ---
 
@@ -405,7 +411,7 @@ return;
 
 ---
 
-![Right-aligned image](scope.png)
+.center[.normal-width[![image](scope.png)]] 
 
 ---
 
@@ -626,23 +632,25 @@ INPUT
 T_HVREF
   {
   double typemap_x, typemap_y;
-  if (!SvOK($arg) || !SvROK($arg))
-    croak(\"Point must be a hashref\");
-  HV *typemap__point = SvRV($arg);
-  if (SvTYPE(typemap__point)!=SVt_PVHV)
-    croak(\"Point must be a hashref\");
-  SV* typemap_point = (HV*)typemap__point;
-  if (!hv_exists(typemap_point,\"x\",1) 
-     || !hv_exists(typemap_point,\"y\",1))
-      croak(\"Point must contain x and y keys\");
-  SV **tm__x=hv_fetch(typemap_point,\"x\",1,0);
-  SV **tm__y=hv_fetch(typemap_point,\"y\",1,0);
+  if (!SvOK($arg) || !SvROK($arg)) croak(\"Ref?\");
+  HV *tm__p = SvRV($arg);
+  if (SvTYPE(tm__p)!=SVt_PVHV) croak(\"Not hash\");
+  SV* tm_p = (HV*)tm__p;
+  if (!hv_exists(tm_p,\"x\",1)) croak(\"No 'x'\");
+  if (!hv_exists(tm_p,\"y\",1)) croak(\"No 'y'\");
+  SV **tm__x=hv_fetch(tm_p,\"x\",1,0);
+  SV **tm__y=hv_fetch(tm_p,\"y\",1,0);
   if(!tm__x || !tm__y) croak(\"x and y required\");
   typemap_x=SvNV(*tm__x); typemap_y=SvNV(*tm__y);
   $type pt = malloc(sizeof(GEOM_POINT));
   pt->x = typemap_x; pt->y = typemap_y;
   $var = ($type)pt;
   }
+```
+
+---
+
+```c
 OUTPUT
 T_HVREF
   croak(\"Unimplemented output $type\");
