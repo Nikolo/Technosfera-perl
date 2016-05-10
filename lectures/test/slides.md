@@ -1,26 +1,12 @@
-class: center, middle
+class: firstpage
 
 # Тестирование
 
 ---
 
-# Объект тестирования
+class: center, middle
 
-* Функциональное тестирование
-* Тестирование производительности
-* Нагрузочное тестирование
-* Юзабилити-тестирование
-* Тестирование интерфейса пользователя
-* Тестирование безопасности
-* Тестирование локализации
-* Тестирование совместимости
-
----
-
-# Степень автоматизации
-
-* Ручное тестирование
-* Автоматизированное тестирование
+.center[.normal-width[![image](book.jpg)]]
 
 ---
 
@@ -32,9 +18,27 @@ class: center, middle
 
 ---
 
+# Goals of Test Automation
+
+* Tests should help us improve quality.
+* Tests should help us understand the SUT.
+* Tests should reduce (and not introduce) risk.
+* Tests should be easy to run.
+* Tests should be easy to write and maintain.
+* Tests should require minimal maintenance as the system evolves around them.
+
+---
+
 class: center, middle
 
 # Are tests QA?
+
+---
+
+class: center, middle
+
+# Test the interface,
+# not the implementation
 
 ---
 
@@ -837,10 +841,10 @@ $superuser->insert();
 
 # Test Double
 
-* Stub
-* Spy
-* Mock
-* Double
+* Dummy object
+* Tets Stub
+* Test Spy
+* Mock Object
 
 ---
 
