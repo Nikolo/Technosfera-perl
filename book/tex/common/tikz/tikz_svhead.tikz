@@ -1,0 +1,106 @@
+%% --- svblock definition
+
+% Переключатели режимов отображения ячеек
+\newif\ifsvblockdwpointed
+\newif\ifsvblocktoright
+\newif\ifsvblockflags
+
+\pgfkeys{/svblock/.cd, %
+    pos/.code            = \def\svblock@Position{#1},
+    point/.is if         = svblockdwpointed,
+    toright/.is if       = svblocktoright,
+		flags/.is if         = svblockflags,
+    %----------------------------------------------------
+    start/.code          = \def\svblock@Start{#1},
+    width/.code          = \def\svblock@Width{#1},
+    height/.code         = \def\svblock@Height{#1},
+    color/.code          = \def\svblock@Color{#1},
+    font/.code           = \def\svblock@Font{#1},
+    align/.code          = \def\svblock@Align{#1},
+    point offset/.code   = \def\svblock@PointOffset{#1},
+    %----------------------------------------------------
+    defaults/.code       = \pgfkeys{/svblock/.cd,
+      toright = false, point = false,
+      flags = false,   align = left,
+      point offset=0.125*3cm,  width = 3cm,
+      height = 0.7cm, color = white,
+      font = {}
+    }
+}
+
+\newenvironment{simpleblock}[1][]{
+  \pgfkeys{	/svblock/.cd, defaults}
+
+  %--------------------------------------------------------------
+  \def\setconfig##1{ \pgfkeys{/svblock/.cd, ##1}	}
+  \def\setdefaults##1{
+    \pgfkeys{ /svblock/.cd, defaults/.code = \pgfkeys{/svblock/.cd, ##1} } }
+
+  %--------------------------------------------------------------
+  \newcommand\add[2][]{  % Add new textblock to svblock
+    \pgfkeys{/svblock/.cd,defaults, ##1 }
+		\def\svblock@Text{##2}
+
+    \svblock@setcurrentpoint
+    \svblock@setreferencepoints
+    \svblock@draw
+		\svblock@drawflagdecorations
+
+    \debugpoint at (point); % DEBUG
+  }
+  %--------------------------------------------------------------
+
+  % Установка опорных точек по точке (current) и параметрам -----
+  \newcommand\svblock@setreferencepoints{ \path (current)
+       +(  \svblock@Width-\svblock@PointOffset,0 ) coordinate (point)
+       +( 0.5*\svblock@Width, 0                  ) coordinate (C)
+       +(   0              ,-0.5*\svblock@Height ) coordinate (LD)
+       +(    \svblock@Width, 0.5*\svblock@Height ) coordinate (RU)
+       +(   0              , 0.5*\svblock@Height ) coordinate (LU)
+       +(    \svblock@Width,-0.5*\svblock@Height ) coordinate (RD)
+       +(0, 0)              coordinate (L)
+       +(\svblock@Width, 0) coordinate (R);  }
+  %--------------------------------------------------------------
+
+  % Расчет положения точки (current)
+  \newcommand\svblock@setcurrentpoint{
+    \ifsvblocktoright
+      \path (next-right)         coordinate (current)
+         +( \svblock@Width, 0  ) coordinate (next-right);
+				 % Не трогать точке (next-down), чтобы не потерять начало "строки"
+    \else
+      \path (next-down)          coordinate (current)
+        + ( 0,-\svblock@Height ) coordinate (next-down)
+        + ( \svblock@Width, 0  ) coordinate (next-right);  \fi  }
+  %--------------------------------------------------------------
+
+  % Процедура для непосредственно отрисовки
+  \newcommand\svblock@draw{
+	  \draw[ fill=\svblock@Color,
+           text width=0.95*\svblock@Width,
+           align/.expand once=\svblock@Align]
+			    (LD)  rectangle (RU)         % Draw rectangle
+			    (C)   node {\svblock@Font\svblock@Text}; % Set text
+	  \ifsvblockdwpointed  \fill (point) circle (1.2mm); \fi	}
+  %--------------------------------------------------------------
+
+	\newcommand\svblock@drawflagdecorations{
+		\ifsvblockflags
+		\foreach \i in {0,0.333333333,...,1}  % = 1/3
+			\draw ($(LU)!\i!(RU)$) --+ (0,-0.2*\svblock@Height);
+		\foreach \i in {0,0.041666667,...,1}  % = 1/24
+			\draw ($(LU)!\i!(RU)$) --+ (0,-0.12*\svblock@Height);
+		\fi }
+  %--------------------------------------------------------------
+
+  \newcommand\saveReferencePointsAs[1]{
+    \foreach \label in {point, C, L, R, LD, LU, RD, RU}
+      \path (\label) coordinate (##1-\label);  }
+  %--------------------------------------------------------------
+
+\begin{scope}[#1]
+\path (0,0) coordinate (next-right) coordinate (next-down);
+}{
+  \debugpoint at (0,0); % DEBUG
+\end{scope}
+}

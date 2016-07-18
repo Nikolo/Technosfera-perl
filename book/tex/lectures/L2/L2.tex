@@ -1,0 +1,1617 @@
+\setcounter{chapter}{1}
+\chapter{Синтаксис и типы данных}
+Про язык Perl существует миф, что это write-only язык. Это связано с тем, что большинство использующих язык не всегда понимают, как он устроен.
+
+Основной принцип, заложенный в язык Perl, это TIMTOWTDI (There's More Than One Way To Do It), то есть существует множество вариантов, как реализовать одно и то же. Использовать при написании программы следует тот вариант, который лучше всего читается. В ином случае, действительно, получившуюся программу сможет прочесть только интерпретатор (<<The only thing can parse Perl (the language) is perl (the binary).>>).
+
+\section{Базовый синтаксис}
+\subsection{Блок}
+Блок --- последовательность утверждений, отделенная ограничителями (фигурными скобками):
+\begin{minted}{perl}
+{
+	statement;
+	statement;
+	...
+}
+\end{minted}
+
+Не всегда код, отделенный фигурными скобками, является блоком. Так, например, в случае оператора \verb|do {...}| фигурные скобки --- часть синтаксиса, а не выделение блока:
+\begin{minted}[escapeinside=||]{perl}
+do { ... } |$\ne$| { ... }
+\end{minted}
+Оператор \verb|do| выполняет код внутри фигурных скобок и возвращает значение:
+\begin{minted}{perl}
+$value = do { ... }
+\end{minted}
+Блок же никакое значение не возвращает:
+\begin{minted}{perl}
+# НЕВЕРНО: *$value = { ... };
+\end{minted}
+Блок может использоваться для задания области видимости переменных.
+
+\subsection{Управление циклами}
+Существуют следующие управляющие конструкции:
+\begin{itemize}
+  \item \verb|next| (аналог continue из C) позволяет пропустить оставшиеся в теле цикла утверждения и перейти к началу блока continue (если он есть) или к выполнению следующей итерации цикла.
+  \begin{minted}{perl}
+  for my $item ( @items ) {
+      my $success = prepare($item);
+
+      unless ($success) {
+          next;
+      }
+
+      process($item);
+  } continue {
+      # next переходит сюда
+      postcheck($item);
+  }
+  \end{minted}
+
+  \item \verb|last| (аналог break из C) немедленно прекращает выполнение цикла (без выполнения блока continue).
+  \begin{minted}{perl}
+  for my $item ( @items ) {
+      my $success = prepare($item);
+
+      unless ($success) {
+          last;
+      }
+
+      process($item);
+  } continue {
+      postcheck($item);
+  }
+  # last переходит сюда
+  \end{minted}
+
+  \item \verb|redo| начинает повторное выполнение тела цикла без изменения переменных состояния (не инициализируя следующую итерацию).
+  \begin{minted}{perl}
+  for my $item ( @items ) {
+      # redo переходит сюда
+      my $success = prepare($item);
+
+      unless ($success) {
+          redo;
+      }
+
+      process($item);
+  } continue {
+      postcheck($item);
+  }
+
+  \end{minted}
+\end{itemize}
+Блок идентичен одиночному циклу, а, следовательно, в нем работают эти же управляющие конструкции:
+\begin{minted}{perl}
+{
+    # redo
+    stmt;
+    if (...) { next; }
+
+    stmt;
+    if (...) { last; }
+
+    stmt;
+    if (...) { redo; }
+
+    stmt;
+    # next
+}
+# last
+\end{minted}
+
+\subsection{Оператор выбора}
+Пара \verb|given|/\verb|when| --- оператор выбора (в Си аналогичный оператор это switch/case). Оператор выбора доступен с версии 5.10.
+\begin{minted}{perl}
+use feature 'switch'; # v5.10 - v5.18
+
+given ( EXPR ) {
+    when ( undef )    { ... }
+    when ( "str" )    { ... }
+    when ( 42 )       { ... }
+    when ( [4,8,15] ) { ... }
+    when ( /regex/ )  { ... }
+    when ( \&sub )    { ... }
+    when ( $_ > 42 )  { ... }
+    default           { ... }
+}
+\end{minted}
+Внутри when (...) вызывается оператор smartmatch. Это позволяет использовать сложные конструкции при поиске совпадения. Подробнее смотрите \href{http://perldoc.perl.org/functions/given.html}{документацию}. В отличие от других языков, по умолчанию исполняется только часть кода, соответствующая подходящему условию. Не нужно использовать ключевое слово \verb|break| (как бы автоматически подразумевается в конце каждого \verb|when|), чтобы избежать <<проваливания>> в следуюющую за ней часть. Для такого <<проваливания в следующий when>> используется ключевое слово \verb|continue|.
+
+\subsection{Переход (goto)}
+Конструкция \verb|goto| имеет множественное поведение. В самом простом случае goto обеспечивает переход на метку:
+\begin{minted}{perl}
+goto LABEL;
+\end{minted}
+Например:
+\begin{minted}{perl}
+LABEL1:
+    say "state 1";
+    goto LABEL2;
+LABEL2:
+    say "state 2";
+    goto LABEL1;
+\end{minted}
+Получается бесконечная программа:
+\begin{minted}{bash}
+state 1
+state 2
+state 1
+state 2
+...
+\end{minted}
+Существует устаревший синтаксис (его не следует использовать в новых программах --- будет выводиться предупреждение об использовании устаревших возможностей):
+\begin{minted}{perl}
+goto EXPR; # DEPRECATED
+\end{minted}
+В этом случае в качестве параметра передается строка и имя строки будет воспринято как метка:
+\begin{minted}{perl}
+{
+EVEN:
+    say "even";
+    last;
+ODD:
+    say "odd";
+    last;
+}
+
+goto(
+    ("EVEN","ODD")[ int(rand 10) % 2 ]
+);
+\end{minted}
+
+\subsection{Хвостовой вызов}
+Также goto может использоваться для обеспечения хвостового вызова, который позволяет вызвать тело другой функции на месте данной с теми же аргументами, которые были переданы данной фунции.
+\begin{minted}{perl}
+goto &NAME;
+goto &$var;
+\end{minted}
+Например, следующий код вычисляет значение чисел Фибоначи с помощью рекурсии:
+\begin{minted}{perl}
+sub fib {
+    return 0 if $_[0] == 0;
+    return 1 if $_[0] == 1;
+    return _fib($_[0]-2,0,1);
+}
+
+sub _fib { my ($n,$x,$y) = @_;
+    if ($n) {
+        return _fib( $n-1, $y, $x+$y );
+    }
+    else {
+        return $x+$y;
+    }
+}
+\end{minted}
+Основная проблема с рекурсией --- слишком быстро заполняется стек. Этой проблемы можно избежать, если использовать хвостовой вызов:
+\begin{minted}{perl}
+sub fib {
+    return 0 if $_[0] == 0;
+    return 1 if $_[0] == 1;
+    return _fib($_[0]-2,0,1);
+}
+
+sub _fib { my ($n,$x,$y) = @_;
+    if ($n) {
+        @_ = ( $n-1, $y, $x+$y ); goto &_fib;
+    }
+    else {
+        return $x+$y;
+    }
+}
+\end{minted}
+Аналогичным образом можно написать код для расчета значения факториала:
+\begin{minted}{perl}
+sub fac {
+    my $n = shift;
+    return _fac($n,1);
+}
+
+sub _fac {
+    my ($n,$acc) = @_;
+    return $acc if $n == 0;
+    @_ = ($n-1,$n*$acc);
+    goto &_fac;
+}
+\end{minted}
+
+\subsection{Постфиксная нотация}
+Помимо классического синтаксиса для условий и циклов, в Perl доступна постфиксная нотация:
+\begin{minted}{perl}
+STMT if EXPR;
+STMT unless EXPR;
+STMT while EXPR;
+STMT until EXPR;
+STMT for LIST;
+STMT when EXPR;
+\end{minted}
+Такая запись обычно используется, чтобы подчеркнуть, что утверждение важнее условия (в случае \verb|if|), которое в постфиксной нотации идет после него.
+
+С помощью \verb|do| и \verb|while| (или \verb|until|) можно реализовать так называемый постфиксный цикл:
+\begin{minted}{perl}
+do {
+    ...;
+} while ( EXPR );
+
+do {
+    ...;
+} until ( EXPR );
+
+do {
+    ...;
+} for ( LIST );
+\end{minted}
+Однако в таком цикле не работаю функции управления циклом (\verb|next|,\verb|last|,\verb|redo|), а также нет блока continue. Это связано с тем, что фигурные скобки внутри \verb|do| --- не являются блоком.
+
+\section{Типы данных}
+\subsection{Идентификаторы переменных}
+\begin{figure}[H]\centering
+	  \begin{tikzpicture}[scale=1.4] \input{preamble_add.tex}
+	  \path (0,0) coordinate (current)
+	  (1.5,-2.1) coordinate (s)
+	  (7.5,-3.4) node[circle] (e) {\}};
+
+	  \foreach \n in {$\$$,$@$,$\%$, $\&$, $*$} {\stepbl
+	  	\dsmallblock<5mm,6mm><gray!20> (\n) at (current);
+	  	\draw[latex-] (box_east) -- (s);	}
+	  \path (4.5,0) coordinate (current);
+	  \dblock<green!20>(BAREWORD)
+	  \draw[-latex] (box_west) --+ (-3mm,0);
+	  \draw (box_north_west) + (-3mm,0) rectangle ($(box_south_west)+(-32.5mm,0)$);
+	  \draw (box_west) + (-17.5mm,0) node{[A-Za-z\_]+[A-Za-z0-9\_]*};
+	  \dblockl<red!15>(Letter)
+	  \dblock<red!15>(Punctuation)
+	  \dblock<red!15>(Digits)
+	  \path (2,-3.4) coordinate (s) (current)+(0,-3mm) coordinate (current);
+	  \dblock<yellow!15>(statement)
+	  \dblockl<red!15>(BAREWORD)
+	  \dsmallblock<5mm,6mm><gray!20> ($\{$) at (2,-3.4);
+	  \draw[-latex] (1.5,-2.1) -- (box_north);
+	  \dsmallblock<5mm,6mm><gray!20> ($\}$) at (7.4,-3.4);
+	  \dsmallblock<10mm,6mm><gray!20> (Sigil) at (1.5,-2.1);
+	  \end{tikzpicture}
+    \caption{Идентификатор переменной}
+\end{figure}
+Любой идентификатор переменной начитается с символа Sigil, который обозначает контекст обращения и может быть одним из следующих:
+\begin{itemize}
+  \item $\$$ соответствует скалярной переменной (скалярный контекст),
+  \item $@$  соответствует массиву (списковый контекст),
+  \item $\%$ соответствует ассоциативному массиву (хэшу),
+  \item $\&$ соответствует указателю на функцию,
+  \item $\$\#$ соответствует последнему элементу списка,
+  \item $^{\ast}$ означает специальный тип glob.
+\end{itemize}
+
+После Sigil идет имя переменной. Обычно оно представляет собой так называемый BAREWORD. BAREWORD --- любое, начинающееся не на цифру, сочетание больших и маленьких букв, символа подчеркивания и цифр. После Sigil могут идти фигурные скобки, внутри которых записывается какое-либо утверждение. Примеры обычных переменных:
+\begin{verbatim}
+  - $var, @array, %hash, &func, *glob
+  - ${var}, @{array}, %{hash}, &{func}, *{glob}
+  - ${ "scalar" . "name" }, %{ "hash".$id }
+\end{verbatim}
+Также переменная может быть одной из спецпеременных (на рисунке отмечены красным, полный список в \perldoc{perlvar}). Примеры специальных переменных:
+\begin{minted}{perl}
+  - $^W, $^O, $^X, ${^W}, ${^O}, ${^X}, ...
+  - $0, $1, $100, ${0}, ${1}, ${100}, ...
+  - ${^PREMATCH}, ${^MATCH}, ${^POSTMATCH}, ...
+  - $_, @_, $!, $@, $?, $", $/, $,, ...
+  - ${_}, @{_}, ${!}, ${@}, ${?}, ${"}, ${/}, ${,}, ...
+\end{minted}
+
+\subsection{SCALAR}
+Переменная может быть числом. Числа записываются множеством способов:
+\begin{minted}{perl}
+$int         = 12345;
+$pi          = 3.141592;
+$pi_readable = 3.14_15_92_65_35_89;
+$plank       = .6626E-33;
+$hex         = 0xFEFF;
+$bom         = 0xef_bb_bf;
+$octal       = 0751;
+$binary      = 0b10010011;
+\end{minted}
+В числе можно в любом месте (кроме как рядом с точной) вставлять символ подчеркивания (для повышения читаемости).
+
+Также переменная может быть строкой:
+\begin{minted}{perl}
+$one    = "string";
+\end{minted}
+Строки в одинарных кавычках неинтерполируемые, а в двойных --- интерполируемые (любой идентификатор будет развернут в свое значение).
+\begin{minted}{perl}
+$two    = 'quoted';
+$wrap   = "wrap
+           ped";
+$join   = "prefix:$one";
+\end{minted}
+Строки можно составлять из двух или более частей с помощью конкатенации:
+\begin{minted}{perl}
+$at     = __FILE__ .':'. __LINE__;
+\end{minted}
+В perl также есть специальные операторы q, qq, которые позволяют использовать любой разделитель вместо символов кавычек:
+\begin{minted}{perl}
+$q_1    = q/single-'quoted'/;
+$qq_2   = qq(double-"quoted"-$two);
+\end{minted}
+Также доступны возможности работы с юникодом (про это будет отдельная лекция) и специальный тип строки V-string (будет рассказано на лекции про модули):
+\begin{minted}{perl}
+$smile  = ":) -> \x{263A}";
+$ver    = v1.2.3.599;
+\end{minted}
+
+Переменная также может быть ссылкой. Ссылку можно взять при помощи оператора взятия ссылки (оператор слэш):
+\begin{minted}{perl}
+$scalarref = \$scalar;
+$arrayref  = \@array;
+$hashref   = \%hash;
+$coderef   = \&function;
+$globref   = \*FH;
+$refref    = \$scalarref;
+\end{minted}
+Также существуют так называемые анонимные конструкторы ссылок на массив (квадратные скобки) и на хэш (фигурные скобки), а также можно сделать анонимную функцию:
+\begin{minted}{perl}
+$arrayref  = [ 4,8,15,16 ];
+$hashref   = { one => 1, two => 2 };
+$coderef   = sub { ... };
+\end{minted}
+Также ссылки можно присваивать спискам. Следующие две строчки эквивалентны:
+\begin{minted}{perl}
+($a,$b)    = (\"one",\"two");
+($a,$b)    = \("one","two");
+\end{minted}
+
+\subsection{ARRAY} % 17-30
+Если после идентификатора переменной идет квадратная скобка, то идет обращение  к элементу массива, который содержится в этой переменной. Если же перед скобкой также стоит оператор разыменования, то переменная содержит ссылку на массив и происходит обращение к элементу массива, который доступен по этой ссылке.
+\begin{figure}[H] \centering
+  \begin{tikzpicture}[line width=1pt] \input{preamble_add.tex}
+\block (c) <3.4cm,1cm>[@arr] at (0, 0);
+\block (u) <3.4cm,1cm>[@arr\arr<i,j,...>] at (0, 2.7);
+\block (d) <3.4cm,1cm>[\$arr\arr<i>]       at (0,-2.7);
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (u) <3.4cm,1cm>[\textbackslash@arr] at (5, 1.3);
+\block (d) <3.4cm,1cm>[@\curv<\ \$aref >]       at (5,-1.3);
+\draw[-latex] (c_north)+(1,0) -- (u_west);
+\draw[-latex] (c_south)+(1,0) -- (d_west);
+\block (c) <3.4cm,1cm>[\$aref]       at (10,0);
+\draw[latex-] (c_north)+(-1,0) -- (u_east);
+\draw[latex-] (c_south)+(-1,0) -- (d_east);
+
+\block (ct) <3.4cm,1cm>[\arr<...>] at (5, 0);
+\draw[latex-] (c_west) -- (ct_east);
+
+\block (u) <3.4cm,1cm>[@\curv<\$aref>\arr<i,j,...>]       at (10,2.7);
+\block (d) <3.4cm,1cm>[\$aref\red|->|\arr<i>]       at (10,-2.7);
+
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (d) <3.4cm,1cm>[\$\curv<\ \$aref >\arr<i>]       at (6,-2.7);
+\draw[-latex] (c_south)+(-0.3,0) -- ($(d_north_east)+(-0.5,0)$);
+
+\end{tikzpicture}
+  \caption{Основные операции при работе с массивом}
+\end{figure}
+Список может быть создан с помощью оператора qw, который разделяет содержимое скобок по пробельным символам, а также инициализирован списком:
+\begin{minted}{perl}
+@simple = qw(1 2 3 bare);
+@array = (4,8,15,16,23,42,@simple);
+@array = (4,8,15,16,23,42,1,2,3,'bare');
+\end{minted}
+Можно получить ссылку на массив с помощью оператора слэш или же использовать конструктор:
+\begin{minted}{perl}
+$aref = \@array;
+$aref = [4,8,15,16,23,42,@simple];
+\end{minted}
+Ображение к элементу массива производится следующим образом:
+\begin{minted}{perl}
+say $array[2];   # 15
+say ${array}[2];
+say ${array[2]};
+\end{minted}
+Узнать значение последнего элемента можно следующим образом:
+\begin{minted}{perl}
+say "last i = ", $#array;
+say "last i = ", $#{array};
+\end{minted}
+Те же операции в случае ссылки на массив:
+\begin{minted}{perl}
+say $aref->[2];
+say $$aref[2];
+say ${$aref}[2];
+say "last i = ", $#$aref;
+say "last i = ", $#${aref};
+say "last i = ", $#{${aref}};
+\end{minted}
+
+Часть массива в виде списка можно извлечь с помощью среза:
+\begin{minted}{perl}
+@simple = qw(1 2 3 bare);
+@array = (4,8,15,16,23,42,@simple);
+$aref = \@array;
+
+say join ",", @array[0,2,4]; # 4,15,23
+say join ",", @{array}[0,2,4]; # 4,15,23
+say join ",", @{ array[0,2,4] }; # 4,15,23
+
+say join ",", @$aref[0,2,4]; # 4,15,23
+say join ",", @{ $aref }[0,2,4]; # 4,15,23
+say join ",", @{ ${aref} }[0,2,4]; # 4,15,23
+\end{minted}
+Следует обратить внимание на синтаксис, где квадратные скобки находятся внутри фигурных, а не вне.
+\newpage
+\subsection{HASH} % 24-00
+Если после идентификатора хэша идет фигурная скобка, то идет обращение к элементу хэша, который содержится в этой переменной. Разыменование ссылки на хэш происходит с помощью добавления символа процента:
+\begin{figure}[H] \centering
+\begin{tikzpicture}[line width=1pt] \input{preamble_add.tex}
+\block (c) <3.4cm,1cm>[\%hash] at (0, 0);
+\block (u) <3.4cm,1cm>[@hash\h<k,k,...>] at (0, 2.7);
+\block (d) <3.4cm,1cm>[\$hash\h<k>]       at (0,-2.7);
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (u) <3.4cm,1cm>[\textbackslash\%hash] at (5, 1.3);
+\block (d) <3.4cm,1cm>[\%\curv<\ \$href >]       at (5,-1.3);
+\draw[-latex] (c_north)+(1,0) -- (u_west);
+\draw[-latex] (c_south)+(1,0) -- (d_west);
+\block (c) <3.4cm,1cm>[\$href]       at (10,0);
+\draw[latex-] (c_north)+(-1,0) -- (u_east);
+\draw[latex-] (c_south)+(-1,0) -- (d_east);
+
+\block (ct) <3.4cm,1cm>[\h<...>] at (5, 0);
+\draw[latex-] (c_west) -- (ct_east);
+
+\block (u) <3.4cm,1cm>[@\curv<\$href>\h<k,k,...>]       at (10,2.7);
+\block (d) <3.4cm,1cm>[\$href\red|->|\h<k>]       at (10,-2.7);
+
+\draw[-latex] (c_north) -- (u_south);
+\draw[-latex] (c_south) -- (d_north);
+
+\block (d) <3.4cm,1cm>[\$\curv<\ \$href >\h<k>]       at (6,-2.7);
+\draw[-latex] (c_south)+(-0.3,0) -- ($(d_north_east)+(-0.5,0)$);
+
+\end{tikzpicture}
+  \caption{Основные операции при работе с хэшем}
+\end{figure}
+Создать хэш можно с помощью оператора qw (в этом случае нечетные элементы будут ключами, а четные --- значениями) или явно перечислить пары <<ключ-значение>>:
+\begin{minted}{perl}
+%simple = qw(k1 1 k2 2);
+%hash = (key3 => 3, 'key4',"four", %simple);
+$href = \%hash; $key = "key3";
+\end{minted}
+Специальный оператор <<Жирная>> запятая (стрелка $=>$), в отличие от обычной запятой, влияет на свой левый оперант. Если левый оперант является BAREWORD, то вокруг него ставятся кавычки. Это позволяет не ставить лишние кавычки, если при инициализации хэша ключ является BAREWORD.
+
+Обращение к элементу хэша происходит в скалярном контексте:
+\begin{minted}{perl}
+say $hash{key3};
+say $hash{"key3"};
+say $hash{ $key };
+say ${hash}{key3};
+say ${ hash{key3} };
+say ${ hash{$key} };
+\end{minted}
+Обращение к элементу хэша по ссылке также происходит в скалярном контексте:
+\begin{minted}{perl}
+say $href->{key3};
+say $href->{"key3"};
+say $href->{$key};
+say ${href}->{key3};
+say $${href}{key3};
+say ${$href}{key3};
+say ${${href}}{key3};
+\end{minted}
+Срез хэша происходит в списковом контексте и происходит аналогично срезу списков.
+
+Хэш можно развернуть в виде списка, а также получить список ключей (с помощью keys) и список значений (с помощью values):
+\begin{minted}{perl}
+say join ",", %simple; # k2,2,k1,1
+say join ",", keys %hash; # k2,key3,k1,key4
+say join ",", values %$href; # 2,3,1,four
+\end{minted}
+Хэш является неупорядоченной структурой, а значит нельзя полагаться на порядок элементов после разворачивания (гарантируется, что порядок, в котором вернет keys, и порядок, в котором вернет values, будет одинаковым).
+
+Срез хэша происходит в списковом контексте и происходит аналогично срезу списков:
+\begin{minted}{perl}
+say join ",", @hash{ "k1", $key }; # 1,3
+say join ",", @{hash}{ "k1", $key }; # 1,3
+say join ",", @{ hash{ "k1", $key } }; # 1,3
+
+say join ",", @{$href}{ "k1","key3" }; # 1,3
+\end{minted}
+С помощью delete и exist можно удалить элемент хэша или проверить его на существование.
+\begin{minted}{perl}
+$hash{key5} = "five";
+$one = delete $href->{k1}; say $one; # 1
+say $hash{k2} if exists $hash{k2}; # 2
+\end{minted}
+
+\subsection{Использование ссылок} % 28-55
+С помощью ссылок можно создавать сложные структуры. Важно отметить, что инициализация хэша производится с помощью списка с использованием жирных запятых:
+\begin{minted}{perl}
+$var = 7;
+%hash = (
+    s => "string",
+    a => [ qw(some elements) ],
+    h => {
+        nested => "value",
+        "key\0" => [ 1,2,$var ],
+    },
+    f => sub { say "ok:@_"; },
+);
+\end{minted}
+Обращение к созданным элементам:
+\begin{minted}{perl}
+say $hash{s}; # string
+say $hash{a}->[1]; # elements
+say $hash{h}->{"key\0"}->[2]; # 7
+say $hash{h}{"key\0"}[2]; # 7
+\end{minted}
+Если есть ссылка на функцию, то по этой ссылке ее можно вызывать с помощью круглых скобок, или разыменовать ее явно, а затем вызвать:
+\begin{minted}{perl}
+$hash{f}->(3); # ok:3
+&{ $hash{f} }(3); # ok:3
+\end{minted}
+
+В отличие от хэша, ссылка на хэш инициализируется фигурными скобками. Обращение к элементам этого хэша по его ссылке:
+\begin{minted}{perl}
+$var = 7;
+$href = {
+    s => "string",
+    a => [ qw(some elements) ],
+    h => {
+        nested => "value",
+        "key\0" => [ 1,2,$var ],
+    },
+    f => sub { say "ok:@_"; },
+};
+\end{minted}
+
+\begin{minted}{perl}
+say $href->{s}; # string
+say $href->{a}->[1]; # elements
+say $href->{h}->{"key\0"}->[2]; # 7
+say $href->{h}{"key\0"}[2]; # 7
+$href->{f}->(3); # ok:3
+&{ $href->{f} }(3); # ok:3
+\end{minted}
+
+Самая частая ошибка у новичков~--- перепутаны массивы и ссылки на массив. В этом примере массив инициализируется списком (с помощью круглых скобок) и содержит элементы этого списка:
+\begin{minted}{perl}
+$, = ", "; # $OUTPUT_FIELD_SEPARATOR
+@array = (1,2,3);
+say @array; # 1, 2, 3
+\end{minted}
+Здесь массив инициализируется ссылкой на массив (с помощью квадратных скобок) и содержит только один элемент --- эту ссылку:
+\begin{minted}{perl}
+@array = [1,2,3];   # НЕВЕРНО!
+say @array; # ARRAY(0x7fcd02821d38)
+\end{minted}
+
+То же самое происходит при инициализации хэша:
+\begin{minted}{perl}
+%hash  = (key => "value"); # Верно
+say %hash; # key, value
+\end{minted}
+Еще одна ошибка --- при сборке хэша использовать вместо массива, список:
+\begin{minted}{perl}
+%hash  = {key => "value"}; # НЕВЕРНО!
+say %hash; # HASH(0x7fbbd90052f0),
+\end{minted}
+В следующем случае все внутренние скобки будут проигнорированы (в примере получится список из 6 элементов):
+\begin{minted}{perl}
+%hash = ( key1 => (1,2), key2 => (3,4) );
+say $hash{key1}; # 1
+say $hash{key2}; # undef
+say $hash{2};    # key2
+
+%hash = ( key1 => 1,2 => 'key2', 3 => 4 );
+\end{minted}
+
+Можно также обращаться к несуществующим элементам структуры. При обращении глубже, perl будет создавать сам недостающие элементы:
+\begin{minted}{perl}
+$href = {
+    s => "string",
+};
+\end{minted}
+Существует следующая особенность. При обращении к существующему элементу, который не является ссылкой, а является строкой, программа не падает:
+\begin{minted}{perl}
+$href->{none}{key} = "exists";
+say $href->{none};      # HASH(0x7fea...)
+say $href->{none}{key}; # exists
+
+$href->{ary}[7] = "seven";
+say $href->{ary};       # ARRAY(0x7f9...)
+say $href->{ary}[7];    # seven
+say $#{ $href->{ary} }; # 7
+
+$href->{s}{error} = "what?";
+say $href->{s}{error};  # what?
+say $string{error};     # what?
+\end{minted}
+А создается новый хэш, имя которого есть данная строка. Это явление называется символической ссылкой.
+
+\subsection{Символические ссылки} % 35-00
+Символической ссылкой называется обращение к переменной, имя которой содержится в другой переменной:
+\begin{minted}{perl}
+$name = "var";
+$$name = 1;     # устанавливает $var в 1
+${$name} = 2;   # устанавливает $var в 2
+@$name = (3,4); # устанавливает @var в (3,4)
+
+$name->{key} = 7; # создаёт %var и
+                  # устанавливает $var{key}=7
+
+$name->();      # вызывает функцию var
+\end{minted}
+Это становится возможным ввиду того, что язык является динамическим, может быть удобно при написании коротких программ, но для более сложных программ использование символических ссылок считается плохим тоном. Символическая ссылка в коде программы может не быть задумкой программиста и быть написанной по ошибке, которую может быть сложно найти. Запретить использование символических ссылок можно с помощью \verb|use strict 'refs'|:
+\begin{minted}{perl}
+use strict 'refs';
+
+${ bareword }    # ≡ $bareword; # ok
+${ "bareword" }; # not ok
+
+$hash{ "key1" }{ "key2" }{ "key3" }; # ok
+$hash{ key1 }{ key2 }{ key3 }; # also ok
+
+$hash{shift}; # ok for keyword, no call
+$hash{ +shift }; # call is done
+$hash{ shift() }; # or so
+\end{minted}
+
+\subsection{Интерполяция} % 39-00
+Внутри двойных кавычек идентификаторы переменных заменяются их значениями (переменные интерполируются):
+\begin{minted}{perl}
+$var = "one";
+@ary = (3, "four", 5);
+%hash = (k => "v", x => "y");
+say "new $var";      # new one
+say 'new $var';      # new $var
+\end{minted}
+При выводе массивов элементы разделяются между собой значением в спецпеременной \verb|$LIST_SEPARATOR| (или коротко \verb|$"|):
+\begin{minted}{perl}
+$" = ';'; # $LIST_SEPARATOR
+say "new @ary";      # new 3;four;5
+say 'new @ary';      # new @ary
+say "1st: $ary[0]";  # 1st: 3
+say "<@ary[1,2]>";   # <four;5>
+say "<${ ary[1] }>"; # <four>
+say "<$hash{x}>";    # <y>
+\end{minted}
+С помощью интерполяции можно реализовать инлайновое исполнение (с помощью разыменования и анонимного конструктора):
+\begin{minted}{perl}
+$var = 100;
+say "1+2 = @{[ 1+2 ]}"; # 1+2 = 3
+say "\$var/=10 = @{[do{ $var/=10; $var }]}";
+    # $var/=10 = 10
+
+say "1+2 = ${\( 1+2 )}";
+say "1+2 = ${\do{ 1+2 }}";
+
+say "1+2 = ${{key=> 1+2 }}{key}";
+say "\$var = ${{key=> do{ $var } }}{key}";
+
+say "Now: ${\scalar localtime}";
+   # Now: Wed Mar  2 01:58:36 2016
+\end{minted}
+Реальное применение --- вывести что-нибудь без введения новой переменной:
+\begin{minted}{perl}
+use 5.010;
+use Time::Local;
+my $time = timelocal(30,25,19,3,2,16);
+say "Now: ${\scalar localtime}";
+\end{minted}
+
+\section{Функции} % 44-00
+\subsection{Объявление функций}
+Функции объявляются следующим образом с помощью ключевого слова sub:
+\begin{minted}{perl}
+sub NAME;
+sub NAME(PROTO);
+
+sub NAME BLOCK
+sub NAME(PROTO) BLOCK
+
+$sub = sub BLOCK;
+$sub = sub (PROTO) BLOCK;
+\end{minted}
+Можно заранее продекларировать функцию с определенным именем, а также функцию с определенными прототипом.
+
+Анонимные функции конструируются с помощью того же ключевого слова sub без указания имени:
+\begin{minted}{perl}
+sub mysub;
+\end{minted}
+Для примера:
+\begin{minted}{perl}
+sub mysub {
+    @_;              # <- args here
+    my $a = shift;   # one arg
+    my ($a,$b) = @_; # 2 args
+    my %h = @_;      # kor k/v
+    say "my arg: ",$_[0];
+
+    return unless defined wantarray;
+    return (1,2,3) if wantarray; # return list
+    1; # implicit ret, last statement
+}
+\end{minted}
+Аргументы функции будут расположены в спецмассиве \verb|@_|, с которым работают такие функции как shift, unshift и так далее.
+
+
+\subsection{Вызов функции}
+Функции <<чувствуют>> контекст, в котором их вызывают:
+\begin{itemize}
+  \item Скалярный контекст: результат функции записывается в скалярную переменную или с функцией выполняется скалярное действие:
+  \begin{minted}{perl}
+  # scalar context
+  my $var = mysub(1, 2, $var);
+  say 10 + mysub();
+  \end{minted}
+  \item Списковый контекст:  результат функции сохраняется в массив или присваивается списку:
+  \begin{minted}{perl}
+  # list context
+  @a = mysub();
+  ($x,$y) = mysub();
+  \end{minted}
+  \item Void контекст: функция вызывается, а ее результат не интересует:
+  \begin{minted}{perl}
+  #void context
+  mysub();
+  \end{minted}
+\end{itemize}
+Внутри функции проверить, в каком контексте она была вызвана, можно с помощью специального вызова wantarray. wantarray возвращает undef (в случае void-контекста), true (в случае спискового контекста) или false (в случае скалярного контекста).
+
+Вызов функции происходит следующим образом:
+\begin{minted}{perl}
+mysub(...);
+\end{minted}
+Если функция объявлена раньше, круглые скобки можно опустить:
+\begin{minted}{perl}
+mysub ...;
+\end{minted}
+Старый стиль записи с амперсандами и скобками оставлен для поддержания совместимости с perl 4 и использовать его в новом коде не рекомендуется:
+\begin{minted}{perl}
+&mysub(  );
+&mysub;     # ≡ &mysub( @_ );
+\end{minted}
+Если используется запись с амперсандами без скобок, то будет произведен вызов функции с текущими аргументами (и она может их изменить)
+
+Вызов функции по ссылке происходит следующим образом:
+\begin{minted}{perl}
+$sub->(...);
+&$sub(...);
+&$sub;      # ≡ &$sub( @_ );
+\end{minted}
+
+\subsection{Прототипы функций}
+У функции может быть объявлен прототип. Прототип представляет собой не перечесление типов, это описание того, что функция принимает на вход:
+\begin{verbatim}
+ $ # scalar
+ @ # list
+ % # list
+ * # filehandle
+ & # special codeblock
+ ; # optional separator
+
+ _ # scalar or $_
+ + # hash or array (or ref to)
+ \ # force type
+ \[%@] # ex: real hash or array
+\end{verbatim}
+Например, прототип функции, которая принимает 2 обязательных аргумента и 1 необязательный:
+\begin{minted}{perl}
+sub vararg($$;$); # 2 req, 1 opt
+\end{minted}
+Прототип функции, которая принимает 2 обязательных аргумента и произвольное число необязательных (как список):
+\begin{minted}{perl}
+sub vararg($$;@); # 2 req, 0..* opt
+\end{minted}
+Прототип функции, которая не принимает аргументы:
+\begin{minted}{perl}
+sub noarg(); # no arguments at all
+\end{minted}
+
+Специальный прототип <<амперсанд>>, позволяет (если находится в первой позиции) передавать указатель на функцию не используя слово sub:
+\begin{minted}{perl}
+sub check (&@) {
+    my ($code, @args) = @_;
+    for (@args) {
+        $code->($_);
+    }
+}
+
+check {
+    if( $_[0] > 10 ) {
+        die "$_[0] is too big";
+    }
+} 1, 2, 3, 12;
+\end{minted}
+
+
+\section{Встроенные функции}
+\subsection{Фильтрация списка (функция grep)}
+  Функция \verb|grep| фильтрует список, а именно: принимает его на вход, для каждого элемента устанавливает значение в~$\$\_$ и вызывает переданный в фигурных скобках блок. Если блок возвращает значение true, элемент пропускается в выход, а если false --- не пропускается:
+  \begin{minted}{perl}
+  @nonempty = grep { length $_; } @strings;
+  $count    = grep { length $_; } @strings;
+  \end{minted}
+  Существует специальный синтаксис без фигурных скобок (который написать самостоятельно нельзя):
+  \begin{minted}{perl}
+  @nonempty = grep length($_), @strings;
+  \end{minted}
+  Примеры использования функции \verb|grep|:
+  \begin{minted}{perl}
+  @odd  = grep {     $_ % 2 } 1..100;
+  @even = grep { not $_ % 2 } 1..100;
+
+  %uniq = ();
+  @unique = grep { !$uniq{$_}++ } @with_dups;}
+
+  @a = 1..55;
+  @b = 45..100;
+  %chk; @chk{@a} = ();
+  @merge = grep { exists $chk{$_} } @b;
+  \end{minted}
+
+\subsection{Отображение списка (функция map)}
+  Функция \verb|map| позволяет преобразовать входной список в выходной по некоторому правилу, которое определяется в блоке в фигурных скобках:
+  \begin{minted}{perl}
+  @squares = map { $_**2 } 1..5; # 1,4,9,16,25
+
+  say map chr($_), 32..127;
+
+  @nums = 1..100;
+  @sqrs = map {
+      if( int(sqrt($_)) == sqrt($_) ) {
+          $_
+      } else { () }
+  } @nums;
+
+  my @reduced =
+      map $_->[1],
+      grep { int($_->[1]) == $_->[1] }
+      map { [$_,sqrt $_] } 1..1000;
+  \end{minted}
+
+\subsection{Сортировка (функция sort)}
+  Вызов \verb|sort| сортирует входящий список. Он может просто принять входящий список (в таком случае он будет отсортирован лексикографически):
+  \begin{minted}{perl}
+  @alphabetically = sort @strings;
+  \end{minted}
+  Либо он может принять блок компаратора или имя функции, в которой реализован компаратор:
+  \begin{minted}{perl}
+  @nums = sort { $a <=> $b } @numbers;
+  @reverse = sort { $b <=> $a } @numbers;
+  @ci = sort { fc($a) cmp fc($b) } @strings;
+
+  sub smart {$a<=>$b || fc($a) cmp fc($b) }
+  @sorted = sort smart @strings;
+
+  my @byval = sort { $h{$a} cmp $h{$b} } keys %h;
+  \end{minted}
+  Компаратор должен вернуть одно из трех значений -1, 0 или 1. Внутри используется быстрая сортировка (алгоритм может быть заменен), но так или иначе компаратор используется для сравнения двух элементов.
+
+\subsection{Функции: eval, die, war} % 56-40
+
+\subsection{Работа со строками %
+  (функции chop, chomp, index,rindex, substr, length,...)}
+Функция chop отрубает с конца один символ, а chomp отрубает с конца то, что содержится в спецпеременной с разделитем входного потока:
+\begin{minted}{perl}
+$/ = "\r\n";
+$a = $b = "test\r\n";
+chop($a),chop($a),chop($a); # \n,\r,t
+say $a;
+chomp($b),chomp($b) # \r\n, '';
+say $b;
+\end{minted}
+Для работы со строками есть стандартный набор функций: вычисление длины, поиск подстроки, поиск слева и поиск справа:
+\begin{minted}{perl}
+#            ↓─────index($_," ") # 4
+$_  =   "some average string\n";
+#           └─┬─┘    ↑───rindex($_," ") # 12
+#        substr($_,3,5) = "e ave"
+\end{minted}
+Функции приведения case:
+\begin{minted}{perl}
+$big = "WORD"; $small = "word";
+say lc $big;         # word "\L"
+say lcfirst $big;    # wORD "\l"
+say uc $small;       # WORD "\U"
+say ucfirst $small;  # Word "\u"
+
+say "equal" if
+    fc $big eq fc $small; # v5.16+
+\end{minted}
+Приведение case можно делать с помощью специальных escape-последовательностей:
+\begin{minted}{perl}
+say "\u\LnAmE\E"; # Name
+\end{minted}
+
+\subsection{Функции chr, ord, hex, oct}
+Функции chr, ord, hex, oct используются для преобразования символа в код, кода в символ, для парсинга 16-ричных строк, для парсинга 8-ых строк и так далее:
+\begin{minted}{perl}
+use utf8; use open qw(:utf8 :std);
+say chr(80);         # P
+say ord("P");        # 80
+say ord(chr(-1));    # 65533, BOM \x{fffd}
+say ord("±");        # 177
+say chr(177);        # ±
+say chr(9786);       # ☺
+say ord "ё";         # 1105
+say hex "dead_beaf"; # 3735928495
+say hex "0xDEAD";    # 57005
+say oct "04751";     # 2537
+\end{minted}
+
+\subsection{Функция reverse}
+Функция reverse имеет двойное поведение. В скалярном контексте она переворачивает переданный скаляр. В списковом контексте reverse переворачивает список целиком не изменяя его элементов.
+\begin{minted}{perl}
+# Why
+say reverse 'dog';
+# prints dog,
+# but
+say ucfirst reverse 'dog';
+# prints God?
+\end{minted}
+
+Этот шуточный пример основан на том, что say принимает список, а следовательно (в первом случае) reverse <<чувствует>> (через wantarray), что его вызывали в списковом контексте, и поэтому переворачивает список своих аргументов (из 1го элемента).  Функция ucfirst принимает склярный контекст и поэтому функция  reverse <<чувствует>> скалярный контекст и переворачивает строку.
+
+\subsection{Функция sprintf}
+Функция sprintf идентична таковой в СИ и реализует форматированный вывод строки в переменную:
+\begin{minted}{perl}
+$a = sprintf"%c %s %d %u\n%o %x %e %f %g",
+    9786, "str", -42, -1, 2537,
+    57005, 1/9, 1/3, .6626E-33;
+say $a;
+# ☺ str -42 18446744073709551615
+# 4751 dead 1.111111e-01 0.333333 6.626e-34
+\end{minted}
+
+\subsection{Математические функции}
+В perl есть основные математические функции:
+\begin{verbatim}
+  abs, int, srand, rand, log, exp, sin, cos, atan2, sqrt
+\end{verbatim}
+Далее приведен пример, почему нужно смотреть на класс точности double'а.
+\begin{minted}{perl}
+while (<>) {
+    say int( log ( abs $_ ) / log 10 );
+}
+
+printf "%g\n", log ( 1e6 ) / log( 10 ) - 6 ;
+# -8.88178e-16
+\end{minted}
+
+\subsection{Работа с хэшами  и массивами (keys, values, each,
+  push, pop, shift, unshift, splice)}
+Про функции keys, values уже было сказано ранее. Итератор each может быть вызван как на массиве, так и на хэше, и последовательно возвращает пары ключ--значение хэша или элементы массива:
+\begin{minted}{perl}
+%h = map { $_ => -$_ } 1..3;
+@a = keys %h; @b = values %h;
+while (my ($k,$v) = each @a)
+    { say "$k: $v ($b[$k])"; }
+while (my ($k,$v) = each %h)
+    { say "$k: $v"; }
+\end{minted}
+\begin{minted}{bash}
+0: 1 (-1)
+1: 3 (-3)
+2: 2 (-2)
+1: -1
+3: -3
+2: -2
+\end{minted}
+
+Для работы с массивами функции push, pop, shift, unshift. По умолчанию они работают с массивом \verb|@_|).
+\begin{minted}{perl}
+push(@a,$x,$y)      splice(@a,@a,0,$x,$y)
+pop(@a)             splice(@a,-1)
+shift(@a)           splice(@a,0,1)
+unshift(@a,$x,$y)   splice(@a,0,0,$x,$y)
+$a[$i] = $y         splice(@a,$i,1,$y)
+\end{minted}
+Функция splice позволяет любым образом нарезать массив:
+\begin{verbatim}
+@a = ( 1, 2, 3, 4, 5, 6, 7 );
+#│        └────┬┘
+#│        └─┐  │     ┌ replacement
+#└──────┐   │  │  ┌──┴───┐
+splice( @a, 1, 3, ( 8, 9 ) );
+say @a;
+# 1, 8, 9, 5, 6, 7
+\end{verbatim}
+В качестве параметров указывается массив, смещение, размер и список для замены.
+
+\subsection{Работа со временем}
+Для работы со временем есть функции gmtime, localtime, time, strftime:
+\begin{minted}{perl}
+say time;         # 1457022000
+say ~~localtime;  # Thu Mar  3 19:20:00 2016
+say ~~localtime 0;# Thu Jan  1 03:00:00 1970
+say ~~gmtime 0;   # Thu Jan  1 00:00:00 1970
+\end{minted}
+localtime возвращает список из всех нужных значений:
+\begin{minted}{perl}
+($s,$m,$h,$D,$M,$Y,$Wd,$Yd,$dst) =
+    localtime( time+86400 );
+printf "%04u-%02u-%02uT%02u:%02u:%02u",
+   $Y+1900, $M+1, $D, $h, $m, $s;
+printf "Day no: %u, Weekday: %u", $Yd, $Wd;
+
+# 2016-03-04T19:20:00
+# Day no: 63, Weekday: 5
+
+use POSIX 'strftime';
+say strftime "%r",localtime(); # 07:20:40 PM
+\end{minted}
+
+\subsection{Работа со стеком}
+В perl есть стек. Если необходимо посмотреть на этот стек, то есть посмотреть, какая функция вызвала исполняемую сейчас и так далее, можно использовать функцию caller:
+\begin{minted}{perl}
+sub test1 {
+    my $i=0;
+    while ( ($pk, $f, $l,$s) = caller($i++)) {
+        say "$i. from $f:$l ($s)";
+    }
+}
+sub test2 {
+    test1()
+};
+sub test3 {
+    test2();
+}
+sub test4 { goto &test2; }
+test3();
+test4();
+\end{minted}
+В caller передается номер интересующего фрейма (0 --- тот фрейм, который испоняется и так далее) и возвращает список, содержащий требуемую информацию.
+\newpage
+\section{Операторы} % 1-07-00
+\subsection{Порядок исполнения операторов}
+В отличие от большинства динамических языков, Perl смотрит не на тип операнда, а на тип оператора. Это сделано для того, чтобы избежать двойственного поведения. В частности, есди на вход числового оператора приходят строки, они будут преобразованы в числа, и наоборот.
+
+На таблице ниже приведены все операторы, которые есть в Perl, в порядке убывания приоритета с указанием ассоциативности. Ассоциативность и приоритет арифметических операторов соответствуют тому, как это принято в математике.
+\begin{table}[H] \centering
+  \begin{tabular}{ |p{4cm}|p{5cm}| } \hline
+    ассоциативность & оператор \\ \hline
+    left  & \verb|TERM и LIST (leftward)| \\ \hline
+    left  & \verb|->|       \\ \hline
+    n/a   & \verb|++,  --|  \\ \hline
+    right & \verb|**|       \\ \hline
+    right & \verb|! ~ \, unary +, - |     \\ \hline
+    left  & \verb|=~ !~|    \\ \hline
+    left  & \verb|* / % x|  \\ \hline
+    left  & \verb|+ - .|    \\ \hline
+    left  & \verb|<< >>|    \\ \hline
+    n/a   & \verb|named unary ops #| \newline (функции с одним аргументом)  \\ \hline
+    n/a   & \verb|< > <= >= lt gt le ge|     \\ \hline
+    n/a   & \verb| == != <=> eq ne cmp ~~|   \\ \hline
+    left  & \verb|&|       \\ \hline
+    left  & \verb+| ^+     \\ \hline
+    left  & \verb|&&|      \\ \hline
+    left  & \verb+|| //+   \\ \hline
+    n/a   & \verb|.. ...|  \\ \hline
+    right & \verb|?:|      \\ \hline
+    right & \verb|= += -= *= etc.|   \\ \hline
+    left  & \verb| , =>|   \\ \hline
+
+    n/a   & \verb|LIST (rightward)|  \\ \hline
+    right & \verb|not|    \\ \hline
+    left  & \verb|and|    \\ \hline
+    left  & \verb|or xor| \\ \hline
+  \end{tabular}
+  \caption{Операторы перечислены в порядке приоритета и с указанием ассоциативности.}
+\end{table}
+
+\subsection{Операторы TERM, LIST(L)}
+Самыми высокоприоритетными операторами являются TERM и LIST(L), в том числе:
+\begin{verbatim}
+  - Любая переменная ($variable)
+  - Обращение к хэшу или массиву ($hash{key} или $array[$x])
+  - Любая строка ("string" или 'str'), число (42, -1e42) или quote-like оператор
+  - Любой вызов функции со скобками func(...)
+  - do{ ... }, eval{ ... }, sub{ ... }
+  - Анонимные конструкторы { ... } и [ ... ]
+\end{verbatim}
+Чтобы понять, как именно Perl разбирается с таким количеством операторов, можно рассмотреть следующий пример:
+\begin{minted}{perl}
+my $v = 5;
+my @a = ( 1,2,sort 3,4+$v,6x2,7 );
+\end{minted}
+С первого взгляда непонятно, в какой последовательности будут выполнены действия. Бывает уместно воспользоваться модулем Deparse, чтобы выяснить это:
+\begin{minted}{bash}
+-MO=Deparse,-p
+\end{minted}
+\begin{minted}{perl}
+(my $v = 5);
+(
+    my @a = (
+        1, 2,
+        sort(
+            3,
+            (4 + $v),
+            (6 x 2),
+            7
+        )
+    )
+);
+
+\end{minted}
+Можно рассмотреть действия по шагам:
+\begin{minted}{perl}
+(
+   my @a = (       # 12
+        1,              # 1
+        2,              # 2
+        sort(           # 11
+            3,              # 3
+            (
+                4               # 4
+                    +             # 6
+                $v              # 5
+            ),
+            (
+                6               # 7
+                    x             # 9
+                2               # 8
+            ),
+            7               # 10
+        )               # 11
+   )               # 12
+);
+\end{minted}
+
+
+\subsection{Cуффиксный оператор разыменования (->)}
+Следующий оператор по приоритету~--- суффиксный оператор разыменования (<<стрелочка>> $->$). Этот оператор обычно применяется к идентификатору переменной:
+\begin{minted}{perl}
+STMT->{...} # STMT должен вернуть HASHREF
+STMT->[...] # STMT должен вернуть ARRAYREF
+STMT->(...) # STMT должен вернуть CODEREF
+\end{minted}
+Но также может использоваться для вызова метода на объекте и для вызова метода  по содержимому переменной (подробнее будет рассказано на лекции про ООП):
+\begin{minted}{perl}
+STMT->method(...)
+ # STMT должен вернуть объект или класс
+STMT->$var(...)
+# $var должен вернуть имя метода или CODEREF
+\end{minted}
+
+
+\subsection{Операторы инкремента}
+Далее по приоритету идут операторы инкремента и декремента (аналогичны соответствующим в Си):
+\begin{minted}{perl}
+my $i = 0;
+$x = $i++; # $x = 0; $i = 1;
+$y = ++$i; # $y = 2; $i = 2;
+\end{minted}
+Здесь нужно отметить, что~$++\$i + \$i++$ является неопределённым поведением.
+Если в качестве аргумента этим операторам передается {undef}, то он всегда работает как число 0.
+
+В языке Perl оператор~$++$ наделен <<магическим>> поведением. Данный оператор работает не только над числами, но и над строками. Если переменная, попадающая в оператор инкремента, является строкой, начинается на большие или маленькие буквы и содержит в себе буквы или цифры, то она используется как число, знаковым набором которого являются соответствующие диапазоны:
+\begin{minted}{perl}
+say ++($a = "a");   #    b
+say ++($a = "aa");  #   ab
+say ++($a = "AA");  #   AB
+say ++($a = "Aa1"); #  Aa2
+say ++($a = "Aa9"); #  Ab0
+say ++($a = "Az9"); #  Ba0
+say ++($a = "Zz9"); # AAa0
+say ++($a = "zZ9"); # aaA0
+\end{minted}
+При этом декремент <<магическим>> не является.
+
+\subsection{Унарные операторы}
+В Perl False это: \verb|0|, пустая строка и \verb|undef|. Также False может быть объект, у которого переопределена операция приведения к бинарному типу. Во всех остальных случая переменная считается True.
+
+По умолчанию False это пустая строка, а True --- 1.
+
+В Perl существуют следующие операторы:
+\begin{itemize}
+  \item Оператор логического отрицания (\verb|!|):
+  \begin{minted}{perl}
+  !0     #  1
+  !1     # ""
+  !""    #  1
+  !undef #  1
+  \end{minted}
+  \item Оператор математического отрицания (\verb|-|) обычным образом ведет себя на числовых переменных:
+  \begin{minted}{perl}
+  -0       #  0
+  -1       # -1
+  - -1     #  1
+  -"123"   # -123
+  -"-123"  #  123
+  -undef   #  0 or -0
+  \end{minted}
+  и имеет специальное поведение на строках и BAREWORD:
+  \begin{minted}{perl}
+  -bare    # "-bare"
+  -"word"  # "-word"
+  -"+word" # "-word"
+  -"-word" # "+word"
+  -"-0"    #  0 or +0
+  \end{minted}
+
+  \item Оператор битовой инверсии (\verb|~|) также работает как на числах, так и на строках:
+  \begin{minted}{perl}
+  # numbers
+  ~0   # 0xffff_ffff or 0xffff_ffff_ffff_ffff
+  0777 & ~027 # 0750 (in oct)
+
+  # byte string
+  ~"test"    # "\213\232\214\213"
+             # chr(~ord("t")).chr(~ord("e")).
+             # chr(~ord("s")).chr(~ord("t"));
+  # char string
+  use utf8;
+   "ё" # ≡ "\x{451}"
+  ~"ё" # "\x{fffffbae}" 32b
+  ~"ё" # "\x{fffffffffffffbae}" 64b
+  \end{minted}
+  \item Унарный плюс (\verb|+|) не имеет собственного эффекта и используется как разделитель, когда нужно понизить приоритет:
+  \begin{minted}{perl}
+  say +( 1 + 2 ) * 3; # 9
+  say  ( 1 + 2 ) * 3; # 3
+
+  return +{}; # empty anon hash
+  map { +{ $_ => -$_} } @_;
+  \end{minted}
+\end{itemize}
+
+\subsection{Операторы применения регулярных выражений} % 1:21:13
+В языке Perl есть операторы, редко встречающиеся в других языках~--- операторы применения регулярного выражения: позитивный и негативный ($=\sim$,~$!\sim$):
+\begin{minted}{perl}
+# match
+$var =~ /regexp/;
+$var !~ /shoudn't/;
+
+# replace
+$var =~ s/word/bare/g;
+
+# transliterate
+$var =~ tr/A-Z/a-z/;
+\end{minted}
+Между~$=$ и~$\sim$ нельзя ставить пробел! Иначе получится два оператора, а не один:
+\begin{minted}{perl}
+*if ($var = ~ /match/) {...} # always true
+#         ^
+#         '-------- beware of space
+if ($var = (~(/match/))) {...}
+\end{minted}
+Подробнее про регулярные выражения будет в отдельной лекции.
+
+\subsection{Арифметические операторы и оператор повтора}
+Существуют также привычные операторы арифметики ($^{\ast}$,~$/$,~$\%$).
+Они работают на числах и приводят все к числам:
+\begin{minted}{perl}
+say 9*7; # 63
+say 9/7; # 1.28571428571429
+say 9%7; # 2
+\end{minted}
+
+Нестандартный оператор~$\times$~--- это {оператор повтора}, работающий либо на скалярах, либо на списках:
+\begin{minted}{perl}
+say 9x7; # 9999999
+say join ",",(9,10)x3; # 9,10,9,10,9,10
+\end{minted}
+
+\subsection{Сложение, вычитание и конкатенация}
+Бинарные операторы сложения, вычитания и конкатенации ($+$,~$-$,~$.$) работают следующим образом:
+\begin{minted}{perl}
+say 1+2;         # 3
+say "1"+"2";     # 3
+say "1z" + "2z"; # 3
+say "a" + "b";   # 0
+
+*say 1.2;         # 1.2
+say 1 . 2;       # 12
+say "1"."2";     # 12
+say "a"."b";     # ab
+\end{minted}
+Необходимо быть аккуратнее при использовании конкатенации~--- если слева и справа от точки стоят числа, то это число с десятичной частью, в случае конкатенации нужно отделять числа от точки пробелами.
+
+\subsection{Операторы сдвига}
+{Оператор сдвига} ($\ll$,~$gg$) реализован полностью с использованием Си, и его поведение аналогично такому же оператору СИ:
+\begin{minted}{perl}
+say 20 << 20;  # 20971520
+say 20 << 40;  # 5120 on 32-bit
+               # 21990232555520 on 64-bit
+use bigint;
+say 20 << 80;  # 24178516392292583494123520
+\end{minted}
+
+
+\subsection{Операторы сравнения}
+Арифметические операторы сравнения --- это $<$,~$>$,~$<=$,~$>=$:
+\begin{minted}{perl}
+say "a" > "b";    # "", 0 > 0
+say "a" < "b";    # "", 0 < 0
+\end{minted}
+Такие операторы приводят все к числам.
+
+Строковые операторы сравнения --- это \verb|lt|, \verb|gt|, \verb|le|, \verb|ge|:
+\begin{minted}{perl}
+say 100 gt 20;    # "", "100" gt "20"
+say "100" > "20"; # 1
+\end{minted}
+Такие операторы приводят все к строкам.
+
+\subsection{Операторы равенства}
+Арифметические операторы равенства~$==$,~$!=$ и~$<=>$ работают исключительно с числами:
+\begin{minted}{perl}
+say 10 == "10";   #  1
+say "20" != "10"; #  1
+say 1 <=> 2;      # -1
+say 1 <=> 1;      #  0
+say 2 <=> 1;      #  1
+say "a" <=> "b";  #  0
+say "a" == "b";   #  1
+\end{minted}
+
+Строковые операторы \verb|eq|, \verb|ne|, \verb|cmp| работают только со строками:
+\begin{minted}{perl}
+say 1 eq "1";     #  1
+say "0" ne 0;     # ""
+say "a" cmp "b";  # -1
+say "b" cmp "a";  #  1
+\end{minted}
+Так как изначально в язык не заложено таких понятий как \verb|NaN|, они здесь реализованы строками, и работа с ними поддерживается не на всех платформах. При этом два \verb|NaN| не равны друг другу, что позволяет проверить, есть ли поддержка \verb|NaN| так:
+\begin{minted}{perl}
+say "No NaN" if "NaN" == "NaN";
+\end{minted}
+
+\subsection{Операторы умного сравнения}
+В Perl версии~$5.10.1$ внердили {smartmatch operator}~--- {оператор умного сравнения} ($\sim\sim$):
+\begin{minted}{perl}
+my @ary = (1,2,undef,7);
+say "sparse" if undef ~~ @ary;
+
+given ($num) {
+    when ([1,2,3]) { # as $num ~~ [1,2,3]
+        say "1..3";
+    }
+    when ([4..7]) {  # as $num ~~ [4..7]
+        say "4..7";
+    }
+}
+\end{minted}
+Этот оператор <<вшит>> в {given/when}, но его можно использовать и вручную:
+Однако, этот оператор оказался настолько сложным в использовании, что в Perl версии~$5.18$ и выше его снова признали экспериментальным.
+
+\subsection{Битовые операторы}
+{Битовые операторы} {and}, {or} и {xor} ($\&$,~$|$,~$\^$) работают раздельно над числами и над строками:
+\begin{minted}{perl}
+$x = int(rand(2**31-1));
+say $x & ~$x + 1;
+say $x ^ ( $x & ($x - 1));
+
+$x = $x ^ $y;
+$y = $y ^ $x;
+$x = $x ^ $y;
+
+say "test" ^ "^^^^"; # *;-*
+say "test" & "^^^^"; # TDRT
+\end{minted}
+Если операнды смешанные, то берется тип левого операнда, и второй приводится к нему.
+
+\subsection{C-style логические операторы}
+Существуют также C-style логические операторы and, or, defined-or ($\&\&$,~$||$,~$//$).
+Они выполняются последовательно и передают контекст:
+\begin{minted}{perl}
+say 1 && "test"; # test
+say 0 || "test"; # test
+say 1 || die;    # 1   # say( 1 || die );
+say 0 && die;    # 0   # say( 0 && die );
+\end{minted}
+Оператор {defined-or} находится в данной категории по смыслу, но у него нет аналогов в других языках. Данный оператор проверяет переменную не на <<{true/false}>>, а на то, что она {defined}. У этих операторов очень высокий приоритет по сравнению с обычным списком, в связи с этим могут возникать определенные трудности.
+\begin{minted}{perl}
+$a = $x // $y;
+$a = defined $x ? $x : $y;
+\end{minted}
+
+\subsection{Операторы диапазона}
+Операторы <<две точки>> (\verb|..|) и <<три точки>> (\verb|...|) --- операторы диапазона. Он работает не только над числами, но и над строками. Последовательность получается согласно тому, как работает операция инкремента.
+
+Эти операторы работают по-разному в разных контекстах. В списковом контексте они просто возвращают соответствующий список, как показано в следующем примере:
+\begin{minted}{perl}
+@a = 1..10;
+
+for ("a".."z") {
+    say $_;
+}
+
+say "A"..."Z";
+
+@b = @a[3..7];
+\end{minted}
+В скалярном (логическом) контексте оператор \verb|..| проверяет значение служебной переменной \verb|$.| (в ней хранится номер читаемой строки) на соответствие указанному диапазону. Если переменная \verb|$.| не попала в диапазон он возвращает False, в ином случае --- возвращает свою последовательность, к последнему элементу которой дописывает \verb|E0|:
+\begin{minted}{perl}
+for $. (1,2,3,4,5) { # $. - $INPUT_LINE_NUMBER
+    say "$. : ".`(2..4)`;
+}
+\end{minted}
+Результат выполнения кода выше:
+\begin{minted}{perl}
+1 :
+2 : 1      # became true ($. == 2)
+3 : 2      # stay true, while $. != 4
+4 : 3E0    # ret true, $. == 4, became false
+5 :
+\end{minted}
+Такой оператор называется flip-flop оператором.
+
+В качестве операндов операторов <<две точки>> (\verb|..|) и <<три точки>> (\verb|...|) можно использовать любое выражение, в том числе регулярное выражение или условие. В данном случае в качестве выражения взят блок \verb|do|, возвращающий некоторое значение:
+\begin{minted}{perl}
+for $. (1..5) { print "$.";
+  do {
+      print "\tL,ret ".($.==2?"T":"F");
+      $. == 2;
+  } .. do {
+      print "\tR,ret ".($.==4?"T":"F");
+      $. == 4;
+  };
+  say " : ".scalar(2..4);
+}
+\end{minted}
+Данная программа фактически является такой же, как предыдущая, но вывод print внутри позволяет определять, когда этот блок был исполнен и как изменилось возвращаемое значение:
+\begin{minted}{bash}
+1   L,ret F :
+2   L,ret T R, ret F : 1
+3   R,ret F : 2
+4   R,ret T : 3E0
+5   L,ret F :
+\end{minted}
+Отличие между оператором <<две точки>> (\verb|..|) и <<три точки>> (\verb|...|) состоит в том, что на втором шаге оператор <<три точки>> (\verb|...|) не пытается проверять правое выражение:
+\begin{minted}{perl}
+for $. (1..5) { print "$.";
+  do {
+      print "\tL,ret ".($.==2?"T":"F");
+      $. == 2;
+  } ... do {
+      print "\tR,ret ".($.==4?"T":"F");
+      $. == 4;
+  };
+  say " : ".scalar(2...4);
+}
+\end{minted}
+Вывод программы следующий:
+\begin{minted}{bash}
+1   L,ret F :
+2   L,ret T: 1
+3   R,ret F : 2
+4   R,ret T : 3E0
+5   L,ret F :
+\end{minted}
+
+\subsection{Тернарный оператор}
+Тернарный оператор (\verb|?:|) в Perl аналогичен оператору из Си:
+\begin{minted}{perl}
+$a = $ok ? $b : $c;
+@a = $ok ? @b : @c;
+\end{minted}
+Единственное отличие состоит в том, что в него можно присваивать, то есть он может возвращать в качестве своего значения переменную, в которую можно присвоить значение:
+\begin{minted}{perl}
+($a_or_b ? $a : $b) = $c;
+\end{minted}
+
+\subsection{Операторы присваивания}
+Оператор присваивания \verb|=|, а также следующие операторы присваивания, построенные относительно всех операторов, которые есть в Perl:
+\begin{verbatim}
+  - +=, -=,
+  - *=, /=, %=, **=,
+  - &=, |=, x=, <<=, >>=, ^=,
+  - &&=, ||=, //=,
+\end{verbatim}
+все имеют одинаковый приоритет.
+
+\subsection{Оператор запятая}
+Оператор запятая делится на обычную (\verb|,|) и <<жирную>> (\verb|=>|), поведение которых совпадает за исключением работы с BAREWORD'ами.
+
+В скалярном контексте оператор запятая исполняет левый операнд, затем исполняет правый операнд и возвращает его значение (значение левого операнда отбрасывается). Таким образом, при присвоении переменной списка, в этом списке последовательно будут выполнены все команды, а в переменную попадет результат исполнения последней:
+\begin{minted}{perl}
+$a = do { say "one"; 3 }, do { say "two"; 7};
+# $a = 7. 3 thrown away
+
+@list = (bareword => STMT);
+# forces "" on left
+@list = ("bareword", STMT);
+\end{minted}
+В списковом контексте оператор запятая возвращает весь получившийся список.
+
+В Perl функция с пустым прототипом и с константным значением по своему устройству является константой. С этим связана особенность поведения жирной запятой:
+\begin{minted}{perl}
+use constant CONST => "some";
+%hash = ( CONST   => "val"); # "CONST"
+%hash = (+CONST   => "val"); # "CONST"
+%hash = ( CONST() => "val"); # "some"
+%hash = (&CONST   => "val"); # "some"
+\end{minted}
+
+\subsection{Низкоприоритетные логические операторы}
+Низкоприоритетные логические операторы \verb|and|, \verb|or|, \verb|xor| и \verb|not| являются операторами с самым низким приоритетом. Такие операоры используются, например, для проверки возвращаемого значения функций: % Вторые 2 строчки
+\begin{minted}{perl}
+open   $file, "<",  "0"   or die "Can't";
+open ( $file, "<",  "0" ) or die "Can't";
+\end{minted}
+Если использовать вместо этого оператора оператор \verb+|...|+, получится другой порядок исполнения и всегда будет вызываться \verb|die|:
+\begin{minted}{perl}
+open   $file, "<",  "0"   || die "Can't";
+open   $file, "<", ("0"   || die "Can't" );
+\end{minted}
+
+\begin{minted}{perl}
+do_one() and do_two() or do_another();
+
+@info = stat($file) || say "error";
+#        ^----------^-cast scalar context on stat
+@info = stat($file) or say "error";
+#                    ^-keep list context
+\end{minted}
+
+\subsection{Оператор кавычки}
+Оператор кавычки:
+\begin{itemize}
+  \item Оператор \verb|q| используется для обозначения строки без интерполяции (аналогичен одинарным кавычкам):
+  \begin{minted}{perl}
+  say 'string';
+  say q{string};
+  say q/string/;
+  say q;string;;
+  say q{str{i}ng}; # balanced
+  say q qtestq;
+  *say q{str{ing};  # not ok, unbalanced }
+  \end{minted}
+  Разделителями могут быть либо парные символы (различные скобки), либо пара одинаковых символов (в таком случае внутри строки использовать этот символ можно только, если он заэкранирован). Если используются парные символы, то внутри строки можно использовать их только в случае, если они сбалансированы.
+
+  \item Оператор \verb|qq|~--- строка с интерполяцией (двойные кавычки):
+  \begin{minted}{perl}
+  say "perl $^V";
+  say qq{perl $^V};
+  say qq/perl $^V/;
+  say qq;perl $^V;;
+  say qq{perl $^V};
+  \end{minted}
+  Поведение аналогично предыдущему оператору, но внутри строк работает интерполяция переменных.
+
+  \item Оператор \verb|qw|~--- генератор списка (без интерполяции):
+  \begin{minted}{perl}
+  $, = ', ';
+
+  say qw(a b c);
+  # say split / /, 'a b c';
+
+  for (qw(/usr /var)) {
+  #for ('/usr','/var') {
+      say stat $_;
+  }
+  \end{minted}
+  Строка внутри \verb|qw| будет разделена по пробельным символам и возвращена в виде одного списка.  Это используется часто при вызове внешних модулей. В качестве разделителя может использоваться любой символ.
+
+  \item Оператор \verb|qx| позволяет выполнить внешнюю команду (аналогичен обратным кавычкам). Оператор возвращает результат выполнения внешней переменной. Оператор \verb|qx| --- интерполируемый, кроме случая, когда в качестве разделителя используются одинарные кавычки:
+  \begin{minted}{perl}
+  say qx{uname -a};
+
+  say qx'echo $HOME';
+  \end{minted}
+
+  \item Оператор \verb|qr| используется для сборки регулярного выражения:
+  \begin{minted}{perl}
+  $re = qr/\d+/;
+  if ( $a =~ m[test${re}] ) { ... }
+  $b =~ s{search}[replace];
+  y/A-Z/a-z/; # on $_
+  \end{minted}
+  При этом \verb|/.../| и \verb|m| используются для сопоставления, \verb|s|~--- для поиска и замены, а $y$ и $tr$~--- для транслитерации.
+\end{itemize}
+
+Помимо оператора кавычек для сборки строк существует {Here-doc} (угловые скобки с последующим идентификатором):
+\begin{minted}{perl}
+say <<EOD;
+Content of document
+EOD
+
+say(<<'THIS', "but", <<THAT);
+No $interpolation
+THIS
+For $ENV{HOME}
+THAT
+\end{minted}

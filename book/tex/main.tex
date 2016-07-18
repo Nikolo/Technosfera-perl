@@ -1,0 +1,107 @@
+\documentclass{report}
+\usepackage{expl3,xargs,comment,luacode}
+\usepackage[table]{xcolor}
+\usepackage{polyglossia,fancyvrb}
+\usepackage{enumitem,graphicx,float} %subcaption
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{geometry}
+\geometry{margin=2cm}
+
+
+\usepackage{titlesec}
+\usepackage{titleps}
+\definecolor{gray75}{gray}{0.75}
+\newcommand{\hsp}{\hspace{20pt}}
+
+
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+
+
+\usepackage[unicode]{hyperref}
+\definecolor{linkcolor}{HTML}{000000} 
+\definecolor{urlcolor}{HTML}{333377}
+\hypersetup{pdfstartview=FitH, linkcolor=linkcolor, urlcolor=urlcolor, colorlinks=true}
+
+\usepackage{tikz}
+\usetikzlibrary{fadings,scopes,chains,decorations,decorations.pathreplacing,angles,calc,quotes,positioning}
+\usepackage{pgfplots,unicode-math,wasysym}
+
+\usepackage{shellesc}
+
+\usepackage[outputdir=build]{minted}
+\setminted{breaklines=true}
+
+\addto\captionsrussian{%
+  \renewcommand{\chaptername}{Лекция}
+}
+
+
+\expandafter\def\csname ver@transparent.sty\endcsname{}
+\expandafter\def\csname ver@subfig.sty\endcsname{}
+\usepackage{svg}
+
+
+%\makeatletter
+%\expandafter\def\csname PYGdefault@tok@err\endcsname{\def\PYGdefault@bc##1{{\strut ##1}}}
+%\makeatother
+\AtBeginEnvironment{minted}{\renewcommand{\fcolorbox}[4][]{#4}}
+
+\makeatletter
+\input{common/tikz/common_debug.tikz}
+\input{common/tikz/tikz_svhead.tikz}
+\input{common/tikz/tikz_stackblock.tikz}
+\makeatother
+\debugfalse
+
+
+\tikzset{
+grammar style/.style={
+  text depth=.25ex,
+  line width=2pt,
+  draw=black,
+  rounded corners=3mm,
+% Настройка типов нодов:
+  common/.style  = { minimum size=6mm,  draw=black!50, font=\large\rm\bf,
+                      top color=white,  bottom color=green!20},
+  value/.style          = { common, draw,
+                            minimum width=25mm,
+                            rounded corners=0mm      },
+  exotic value/.style   = { value,  font=\large\rm,
+                            rounded corners=3mm      },
+  operator/.style       = { common, circle           },
+% Макрос, который устанавливает референтные точки автоматически
+  setSyntaxDiagramPoints/.code = {
+    \path (-6,0) coordinate (LEnd)      ( 6,0) coordinate (REnd)
+          (-5,0) coordinate (LBracket)  ( 5,0) coordinate (RBracket)
+        (-3.8,0) coordinate (L)       ( 3.8,0) coordinate (R)
+        (-4.1,0) coordinate (LP)      (4.1 ,0) coordinate (RP)
+        (0, 0.8) coordinate (UP)      (0, -1)  coordinate (DW);
+  }
+}}
+
+
+\input{tikz/tikz-svschemes.tikz}
+
+%\includeonly{lectures/L7/L7,tex/L10}
+\newcommand\perldoc[1]{\href{http://perldoc.perl.org/#1.html}{#1}}
+
+\begin{document}
+\tableofcontents
+%\include{lectures/L1/L1}
+\include{lectures/L2/L2}
+%\include{lectures/L2/L2-bonus}
+%\include{lectures/L3/L3}
+%\include{lectures/L4/L4}
+%\include{lectures/L5/L5}
+%\include{lectures/L6/L6}
+%\include{lectures/L7/L7}
+%\include{lectures/L8/L8}
+%\include{lectures/L9/L9}
+%\include{lectures/L10/L10}
+%\include{lectures/L11/L11}
+%\include{lectures/L12/L12}
+\end{document}

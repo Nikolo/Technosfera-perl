@@ -1,0 +1,74 @@
+
+
+\def\drawsv{
+   \draw[fill=blue!30] (-2,0) rectangle (2,1);
+   \draw (-2,1) rectangle (1,2);
+   \draw[fill=red!20] ( 1,1) rectangle (2,2);
+   \draw (-2,2) rectangle (2,3);
+   \draw[fill=blue!30] (-2,3) rectangle (2,4);
+ }
+\def\drawsvflagbits{
+\foreach \n in {-2,-1,0} {
+   \draw[line width=0.6pt] (\n,2) --+ (0,-0.2);
+ \foreach \m in {1,2,...,8}
+   \draw[line width=0.6pt] (\n,2)++(0.125*\m,0) --+ (0,-0.13);
+ }
+}
+
+\tikzset{
+  sv schemes/.style = {
+    line width    = 1pt,
+    % Ячейка
+    sn/.style  = {
+      minimum height=0.6cm,
+      minimum width=0.5cm,
+      draw,
+      on chain
+    },
+    node distance = 0mm,
+    sn wide/.style = { sn, minimum width=1cm},
+    % Цветные ячейки
+    gsn/.style = { sn, fill=gray!30   }, %gsn/.default  = 0.5cm,
+    rsn/.style = { sn, fill=red!20    }, %rsn/.default  = 0.5cm,
+    ysn/.style = { sn, fill=yellow!20 }, %ysn/.default  = 0.5cm,
+    % Линии, стрелки
+    connect line/.style  = {line width = 2pt,  -latex},
+    max line/.style      = {line width = 2pt, |-|,     red!30!black },
+    arrow line/.style    = {line width = 2pt, |-latex, red!30!black },
+    connect linex/.style = {connect line, red!30!black,
+             preaction = {draw=white, line width = 4pt, opacity=0.8} },
+    },
+    xpv style/.style args = {named #1}{
+        start chain= #1 going below,
+        every node/.style ={
+          draw, on chain,
+          minimum height=0.6cm,
+          minimum width=2cm,
+          text width=1.8cm
+        },
+        xshift=2cm,
+        execute at end scope={
+          { \tikzset{every node/.style={}}
+            \node[above left, yshift=-1mm] at (#1-1.north east) {\tt #1};  }
+        },
+    },
+    sv style/.style args = {named #1}{
+      every node/.style = {},
+      execute at begin scope={
+        \drawsv\drawsvflagbits
+        \node[above] at (1.5,4) {\tt #1};
+      }
+    },
+    setlabel/.code={
+      \coordinate (#1-1) at (2,0.5);
+      \coordinate (#1-2) at (1.5,3.5);
+      \coordinate (#1-3) at (-2,3.5);
+    },
+    setcut/.code={
+    \draw[dashed] (#1) +(-0.2cm,-0.6cm) --+(  0cm,0.6cm)
+         +( 0.05cm,-0.6cm) --+(0.25cm,0.6cm);
+    \fill[white]  (#1) +(-0.2cm,-0.6cm) --+(  0cm,0.6cm)
+              --+(0.25cm,0.6cm)   --+( 0.05cm,-0.6cm);
+    },
+    setcircle/.code={ \fill (#1) circle (1mm); }
+}

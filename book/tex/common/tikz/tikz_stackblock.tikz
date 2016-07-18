@@ -1,0 +1,46 @@
+%% --- stackblock definition
+\newif\ifstackblockdwpointed
+
+\pgfkeys{/stackblock/.cd, %
+	height/.code   = \def\stackblockHeight{#1},
+	point/.is if   = stackblockdwpointed,
+	width/.code    = \def\stackblockWidth{#1},
+	prefix/.code   = \def\stackblockPrefix{#1},
+	color/.code    = \def\stackblockColor{#1},
+	prefix/.code   = \def\stackblockPrefix{#1},
+	defaults/.code = \pgfkeys{/stackblock/.cd,
+		height=1cm, width = 1cm,
+		prefix=cell, point=false
+	}
+}
+
+\newenvironment{stackblock}[1][]{
+	\pgfkeys{	/stackblock/.cd, defaults}
+
+	\def\setconfig##1{ \pgfkeys{/stackblock/.cd, ##1}	}
+
+	\def\setdefaults##1{
+		\pgfkeys{ /stackblock/.cd, defaults/.code = \pgfkeys{/stackblock/.cd, ##1} } }
+
+	\newcommand\process[2][]{
+		\setconfig{defaults,##1}
+		\foreach \n in {##2}{	\path (current) % Set points
+				+(0,                  -0.5*\stackblockHeight)  coordinate (this)
+				+(    \stackblockWidth,0.5*\stackblockHeight)  coordinate (next)
+				+(0.5*\stackblockWidth, 0 ) coordinate (point) coordinate (\stackblockPrefix\n);
+
+			\draw[fill=\stackblockColor] (this) rectangle (next); % Draw rectangle
+			\ifstackblockdwpointed \fill (\stackblockPrefix\n) circle (1.2mm); \fi
+
+			\debugtextpoint at (point) text(\tiny \stackblockPrefix\n); % DEBUG
+			\path (current)+(\stackblockWidth,0) coordinate (current);  % Take a step
+		}
+	}
+
+% The main part
+\begin{scope}[#1]
+	\coordinate (current) at (0,0);
+}{
+	\debugpoint at (0,0); % DEBUG
+\end{scope}
+}

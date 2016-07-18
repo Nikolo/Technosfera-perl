@@ -1,0 +1,48 @@
+\def\setpoints#1(#2)#3<#4,#5>#6 at (#7);{
+		\path[shift={(#7)}]
+		( 0     , 0      ) coordinate (#2)
+		( 0.5*#4, 0      ) coordinate (#2_east)
+		( 0     , 0.5*#5 ) coordinate (#2_north)
+		(-0.5*#4, 0      ) coordinate (#2_west)
+		( 0     ,-0.5*#5 ) coordinate (#2_south)
+		( 0.5*#4, 0.5*#5 ) coordinate (#2_north_east)
+		(-0.5*#4, 0.5*#5 ) coordinate (#2_north_west)
+		( 0.5*#4,-0.5*#5 ) coordinate (#2_south_east)
+		(-0.5*#4,-0.5*#5 ) coordinate (#2_south_west); }
+
+
+
+\def\doit{\draw[latex-] (box_west) -- (s); \draw[-latex] (box_east) -- (e);}
+\def\stepbl{\path (current)+(0,-7mm) coordinate (current);}
+\def\dblock<#1>(#2){
+		\setpoints (box) <30mm,6mm> at (current);
+		\draw[fill={#1}] (box_south_west) rectangle (box_north_east) (box) node {#2};
+		\doit\stepbl }
+\def\dblockl<#1>(#2){
+		\setpoints (box) <30mm,6mm> at (current);
+		\setpoints (box_in)  <6mm,6mm> at ($(box_west)+(0.3,0)$);
+		\draw[fill={#1}] (box_in_south_west) rectangle (box_in_north_east) (box_in) node {$\wedge$};
+		\draw[-latex] (box_in_east) --+ (4mm,0);
+		\setpoints (box_in)  <20mm,6mm> at ($(box_west)+(2,0)$);
+		\draw[fill={#1}] (box_in_south_west) rectangle (box_in_north_east) (box_in) node {#2};
+		\doit\stepbl }
+\def\dsmallblock<#1><#2> (#3) at (#4);{ \setpoints (box) <#1> at (#4);
+		\draw[fill={#2}] (box_south_west) rectangle (box_north_east);
+		\draw (box) node {#3}; }
+	
+	\def\block#1(#2)#3<#4>[#5] at (#6);{
+		\setpoints (#2) <#4> at (#6);
+		\draw (#2_south_west) rectangle (#2_north_east) (#2) node {\texttt{#5}};
+	}
+	
+	
+%---------------------------------------------
+
+\def\block#1(#2)#3<#4>[#5] at (#6);{
+	\setpoints (#2) <#4> at (#6);
+	\draw (#2_south_west) rectangle (#2_north_east) (#2) node {\texttt{#5}};
+}
+\def\arr<#1>{\textcolor{blue}{[}#1\textcolor{blue}{]}}
+\def\h<#1>{\textcolor{blue}{\{}#1\textcolor{blue}{\}}}
+\def\curv<#1>{\textcolor{red}{\{}#1\textcolor{red}{\}}}
+\def\red|#1|{\textcolor{red}{#1}}	

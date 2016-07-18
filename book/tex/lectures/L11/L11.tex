@@ -1,0 +1,728 @@
+\setcounter{chapter}{10}
+\chapter{Тестирование}
+
+\section{Виды тестирования}
+Данная лекция посвящена тому, как в perl организовано тестирование. Необходимость тестирования при разработке программного обеспечения стала очевидной сравнительно недавно. Эта тема, следовательно, слабо развита и существует множество мнений на этот счёт.
+
+Тесты можно разделять по тому, что собственно тестируется, например (некоторые пункты из этого списка достаточно сильно перекликаются):
+\begin{description}
+  \item[Функциональное тестирование:]
+    Проверка, что программа делает то, что от неё требуется.
+  \item[Тестирование производительности:]
+    Проверка, что программный продукт выдержит накладываемый на него определённый уровень нагрузки.
+  \item[Нагрузочное тестирование:]
+    Проверка, как ведёт себя программный продукт при нагрузке, на которую он не рассчитан.
+  \item[Юзабилити-тестирование:]
+    Проверка, насколько интерфейс удобен для пользователей.
+  \item[Тестирование интерфейса пользователя:]
+    Функциональное тестирование части программного продукта, с которой работает пользователь.
+  \item[Тестирование безопасности:]
+    Проверка на уязвимости.
+  \item[Тестирование локализации:]
+    Проверка корректности перевода и учёт особенностей местного рынка.
+  \item[Тестирование совместимости]
+\end{description}
+
+По степени автоматизации различают ручное тестирование и автоматизированное тестирование. Далее в лекции речь пойдёт преимущественно об автоматизированном тестировании, которое представляет собой, по сути, написание ещё одной программы, которая занимается тестированием первой.
+
+Существует также классическое деление тестов по степени изолированности:
+\begin{itemize}
+  \item Модульное тестирование (юнит-тесты) --- тестирование отдельного компонента, например функции, в полной изолированности от внешней среды.
+  \item Интеграционное тестирование --- тестирование двух компонент, например двух классов, на предмет того, правильно ли между ними настроен интерфейс.
+  \item Системное тестирование --- тестирование готового программного комплекса.
+\end{itemize}
+Следует понимать, что граница между этими видами тестов сильно размыта. Также существует множество мнений, какие тесты к какому типу относятся. Также нужно понимать, что системный тест на одном уровне иерархии является юнит-тестом на уровне выше.
+
+\section{Концепция тестирования}
+Тестировщик, когда получает продукт, должен убедиться, что продукт качественный и делает то, что нужно. Встаёт закономерный вопрос, а следует ли считать юнит-тесты также контролем качества или нет.
+
+Одно из мнений на этот счёт заключается в том, что юнит-тесты не являются контролем качества. Разработчик пишет их не для того, чтобы проверить продукт и гарантировать его правильную работу. Для разработчика юнит-тесты являются частью архитектуры приложения. А это уже, в свою очередь, позволяет держать дизайн приложения в порядке, писать более качественный код, что находит отражение в меньшем числе ошибок.
+
+Эта мысль на первый взгляд может показаться неочевидной. В первую очередь, тесты позволяют подтвердить намерения, которые хранятся за каждым методом и сохранить это намерение в виде кода. Когда другой разработчик или Вы сами позже будете править код, с помощью этих тестов можно будет понять, для чего те или иные элементы приложения предназначены. Другими словами, тесты документируют поведение классов.
+
+Существует такой принцип разработки как test driven development, который заключается в том, что под каждый новый функционал сначала пишется тест, который <<запрашивает>> требуемое поведение, а затем реализовывается поведение, которое проходит написанный тест. Существует множество мнений по поводу этого принципа, но не следует забывать, что при разработке программного обеспечения сначала в голове создаётся понимание того, как и что будет работать, то есть одновременно и сама программа, и тест к ней. А то, что именно будет набрано в первую очередь, это дело вторичное.
+
+Также немаловажно, что необходимость писать тесты будет влиять на архитектуру приложения. Нельзя просто взять готовую программу и к ней написать тесты. Это так же нелепо, как сначала написать программу, а потом добавить в неё классы. Классы не добавляют в программу, классы это то, как программа устроена. Так и при создании тестов, необходимо делить программу на классы и функции таким образом, чтобы эти классы и функции были тестируемыми в принципе.
+
+Стандартная ошибка новичка --- думать, что тест предназначен, чтобы искать ошибки. На самом деле тесты не предназначены для этого. Безусловно, может существовать некоторая система, особенно в крупных проектах, цель которой --- найти ошибки. Но это не есть unit-тесты в том понимании, как это написано выше, это не есть архитектура приложения.
+
+\section{Тестирование в perl}
+\subsection{Файлы с тестами в perl}
+В модулях в \verb|perl| обычно присутствует каталог \verb|t|, в котором лежат файлы с расширением \verb|t|.
+\begin{minted}{bash}
+$ ls t
+factory.t  pod.t
+\end{minted}
+Именно эти файлы и являются тестами. По большому счёту, каждый такой файл --- просто скрипт на perl, который в специальном формате (TAP --- Test Anything Protocol) выводит результат исполнения тестов. Например:
+\begin{minted}{bash}
+$ perl t/factory.t
+1..15
+ok 1 - get_fields
+ok 2 - build
+ok 3 - create
+...
+ok 10 - related_factory helper
+ok 11 - related_factory_batch helper
+ok 12 - create with excluded param
+ok 13 - after_get_fields
+ok 14 - after_build
+ok 15 - after_create
+\end{minted}
+Если какой-то из тестов не был пройден, вместо \verb|ok| пишется \verb|not ok| и ниже как комментарии выводится отладочное сообщение. Например:
+\begin{minted}{bash}
+$ perl t/factory.t
+1..15
+ok 1 - get_fields
+ok 2 - build
+ok 3 - create
+...
+ok 10 - related_factory helper
+ok 11 - related_factory_batch helper
+ok 12 - create with excluded param
+ok 13 - after_get_fields
+ok 14 - after_build
+not ok 15 - after_create
+#   Failed test 'after_create'
+#   at t/factory.t line 290.
+# Compared $data->[0]->sum
+#    got : '123'
+# expect : '1123'
+# Looks like you failed 1 test of 15.
+\end{minted}
+
+\subsection{Утилита prove}
+Существует утилита \verb|prove|, которая сама находит все файлы с тестами и запустит их как тесты. В результате ее выполнения выводится статистика прохождения тестов:
+\begin{minted}{bash}
+$ prove
+t/factory.t .. ok
+t/pod.t ...... ok
+All tests successful.
+Files=2, Tests=17,  0 wallclock secs (...)
+Result: PASS
+\end{minted}
+Если какие-то из тестов не пройдены, утилита предоставляет подробный отчёт:
+\begin{minted}{bash}
+$ prove
+t/factory.t .. 1/15
+#   Failed test 'after_create'
+#   at t/factory.t line 290.
+# Compared $data->[0]->sum
+#    got : '123'
+# expect : '1123'
+# Looks like you failed 1 test of 15.
+t/factory.t .. Dubious, test returned 1 ...
+Failed 1/15 subtests
+t/pod.t ...... ok
+
+Test Summary Report
+-------------------
+t/factory.t (Wstat: 256 Tests: 15 Failed: 1)
+Failed test:  15
+Non-zero exit status: 1
+Files=2, Tests=17,  0 wallclock secs (...)
+Result: FAIL
+\end{minted}
+
+\subsection{Модули TAP::Harness и Test::Builder}
+За сбор результатов тестирования отвечает модуль \verb|TAP::Harness|:
+\begin{minted}{perl}
+use TAP::Harness;
+
+my $h = TAP::Harness->new(\%args);
+
+$h->runtests("A", "B", "C");
+\end{minted}
+Для создания тестов существует модуль \verb|Test::Builder|, который выдаёт результаты теста в формате \verb|TAP|:
+\begin{minted}{perl}
+use Test::Builder;
+
+my $test = Test::Builder->new;
+
+$test->ok(1 == 1, 'one');
+$test->is_eq 2, 7, 'two';
+
+$test->done_testing();
+\end{minted}
+\begin{verbatim}
+ok 1 - one
+not ok 2 - two
+#   Failed test 'two'
+#   at T.pm line 6.
+#          got: '2'
+#     expected: '7'
+1..2
+# Looks like you failed 1 test of 2.
+\end{verbatim}
+Обычно в сыром виде этими двумя модулями не пользуются, так как существуют более высокоуровневые решения.
+
+\subsection{Модуль Test::Simple}
+% ОПЕЧАТКА НА СЛАЙДЕ
+Модуль \verb|Test::Simple| представляет собой простейший тест. Он практически не используется на практике, так как даже в простых случаях его возможностей недостаточно. Единственное, что может этот тест --- это проверять булевой результат с помощью функции \verb|ok|:
+\begin{minted}{perl}
+use Test::Simple tests => 42;
+
+ok(sin(0), 0, 'Sin(0)');
+\end{minted}
+
+\section{Test::More}
+\subsection{Модуль Test::More}
+\begin{minted}{perl}
+use Test::More tests => 42;
+\end{minted}
+% TODO про done_testing
+\begin{minted}{perl}
+use Test::More;
+
+# ...
+
+done_testing($n);
+\end{minted}
+Помимо простого ok, в модуле \verb|Test::More| доступны \verb|is|, \verb|isnt|, \verb|like| и \verb|unlike|:
+\begin{minted}{perl}
+ok(sin(0) == 0, '...');
+
+is(sin(0), 0, '...');
+
+isnt($result, 'error', '...');
+\end{minted}
+Причина, почему простого \verb|ok| не хватает, заключается в том, что новые функции выводят подробную информацию, если тест не пройден. Функция же \verb|ok| в случае провала теста просто выводит, что тест провален. Другими словами, эти функции дают куда более информативные сообщения о провале теста.
+
+\subsection{Функции cmp\_ok, can\_ok, isa\_ok и new\_ok}
+Поскольку ok сравнивает свои операнды не как числа, а как строки, есть функция \verb|cmp_ok|, которая принимает также оператор и сравнивает им:
+\begin{minted}{perl}
+cmp_ok($x, '==', $y);
+
+cmp_ok($x, '&&', $y);
+\end{minted}
+Функция \verb|can_ok| проверяет, что из класса или объекта могут быть вызваны какие-то методы:
+\begin{minted}{perl}
+can_ok("Dog", qw(bark run));
+can_ok($dog,  qw(bark run));
+
+foreach my $method (qw(bark run)) {
+	can_ok($dog, $method, "method $method");
+}
+\end{minted}
+Функция \verb|isa_ok| проверяет, что объект является экземпляром того или иного класса:
+\begin{minted}{perl}
+my $obj = Some::Module->new;
+isa_ok( $obj, 'Some::Module' );
+\end{minted}
+Функция \verb|new_ok| вызывает \verb|new| и проверяет, что он отработал:
+\begin{minted}{perl}
+new_ok("Dog" => ['Pluto', 42]);
+\end{minted}
+% Учитывая, что new в perl это не более, чем дань традициям, существование new_ok странно.
+
+\subsection{Функция subtest}
+Также в \verb|Test::More| есть функция \verb|subtest|, которая позволяет вложить один \verb|TAB| внутрь другого. Например:
+\begin{minted}{perl}
+subtests sinus => sub {
+	is(Sin(0), 0, 'zero');
+	is(Sin(PI/2), 1, 'pi/2');
+};
+\end{minted}
+Выглядит это следующим образом:
+\begin{minted}{bash}
+1..1
+	# Subtest: sinus
+	ok 1 - zero
+	ok 2 - pi/2
+	1..2
+ok 1 - sinus
+\end{minted}
+Это бывает удобно для группировки тестов.
+
+\subsection{Функции pass и fail}
+С помощью функции \verb|pass| и \verb|fail| можно явно указать, что тест пройден или провален:
+\begin{minted}{perl}
+my $name = '...';
+pass($name);
+fail($name);
+\end{minted}
+Эти две функции встречаются, в основном, в ещё не дописанном коде.
+
+\subsection{Функции use\_ok и require\_ok}
+Функции \verb|use_ok| и \verb|require_ok| позволяет удостовериться, что подключение модуля c помощью команд use и require проходит успешно. Поскольку use используется на стадии \verb|BEGIN|, а \verb|use_ok|, очевидно, нет, чтобы использовать \verb|use_ok|, следует его завернуть в <<\verb|BEGIN|>>, чтобы он исполнялся тогда же, когда и настоящие \verb|use|'ы:
+\begin{minted}{perl}
+require_ok 'My::Module';
+require_ok 'My/Module.pm';
+
+BEGIN { use_ok('Some::Module', qw(foo bar)) }
+\end{minted}
+На практике обычно используют обычные \verb|use| и \verb|require|, которые, если они падают, не выглядят как упавший тест, а выглядит как ошибка. В случае ошибки разработчику выводится информативное сообщение об ошибке.
+
+\subsection{Функция is\_deeply}
+Также есть функция \verb|is_deeply|, которая рекурсивно проверяет, что две сложные структуры идентичны:
+\begin{minted}{perl}
+is_deeply(
+  {1 => [1,2,3]},
+  {1 => [1,2,3]},
+  '...'
+);
+\end{minted}
+Использовать \verb|is| в данном случае нельзя.
+
+\subsection{Функции diag, note и explain}
+Функции для вывода диагностики \verb|diag| и \verb|note| отличаются тем, что \verb|note| выводит сообщение в \verb|stdout|, а \verb|diag| --- в \verb|stderr|. Это приводит к тому, что при агрегации утилитой prove остаются только диагностические сообщения:
+\begin{minted}{perl}
+pass('A'); pass('B');
+diag('DIAG');
+note('NOTE');
+pass('C'); pass('D');
+\end{minted}
+\begin{minted}{bash}
+1..4
+ok 1 - A
+ok 2 - B
+# DIAG
+# NOTE
+ok 3 - C
+ok 4 - D
+\end{minted}
+\begin{minted}{bash}
+T.pm .. 1/4 # DIAG
+T.pm .. ok
+All tests successful.
+Files=1, Tests=4,  0 wallclock secs (...)
+Result: PASS
+\end{minted}
+Также есть функция \verb|explain|, исходный код которой представлен ниже:
+\begin{minted}{perl}
+sub explain {
+    my $self = shift;
+
+    return map {
+        ref $_
+          ? do {
+            $self->_try(
+                sub { require Data::Dumper },
+                die_on_fail => 1
+            );
+
+            my $dumper = Data::Dumper->new( [$_] );
+            $dumper->Indent(1)->Terse(1);
+            $dumper->Sortkeys(1)
+                if $dumper->can("Sortkeys");
+            $dumper->Dump;
+          }
+          : $_
+    } @_;
+}
+\end{minted}
+Грубо говоря, это простой data-dumper.
+
+\subsection{Пропуск тестов по условию}
+Бывает так, что часть тестов нужно пропустить. В частности, если в модулях реализована функциональность, которая не поддерживается в текущей системе. Для этого необходимо завернуть эти тесты в блок, пометить этот блок меткой \verb|SKIP| и вызвать внутри него функцию \verb|skip|:
+\begin{minted}{perl}
+use Test::More tests => 4;
+
+SKIP: {
+  skip('because we are learning', 4) if 1;
+
+  fail('A');
+  fail('B');
+  pass('C');
+  pass('D');
+}
+\end{minted}
+В результате выполнения этой функции блок \verb|SKIP| будет пропущен. Тесты, которые должны были выполниться, будут присутствовать в TAB с статусом \verb|ok| и комментарием, что этот тест пропущен:
+\begin{minted}{bash}
+1..4
+ok 1 # skip because we are learning
+ok 2 # skip because we are learning
+ok 3 # skip because we are learning
+ok 4 # skip because we are learning
+\end{minted}
+
+\subsection{TODO-тесты}
+Тесты TODO выводятся в TAB как \verb|not ok|, но не собираются утилитой \verb|prove|. Создать такие тесты можно путём инициализации значения переменной \verb|$TODO| внутри блока с меткой \verb|TODO|:
+\begin{minted}{perl}
+TODO: {
+  local $TODO = 'we are learning';
+  fail('A'); fail('B'); pass('C'); pass('D');
+}
+\end{minted}
+В результате получается следующий TAB:
+\begin{minted}{bash}
+1..4
+not ok 1 - A # TODO we are learning
+#   Failed (TODO) test 'A'
+#   at T.pm line 6.
+not ok 2 - B # TODO we are learning
+#   Failed (TODO) test 'B'
+#   at T.pm line 7.
+ok 3 - C # TODO we are learning
+ok 4 - D # TODO we are learning
+\end{minted}
+Чтобы пропускать TODO-тесты, необходимо использовать вместо функции \verb|skip| функцию \verb|todo_skip|. Это необходимо, чтобы пропускался блок \verb|TODO|, а не \verb|SKIP|.
+\begin{minted}{perl}
+TODO: {
+  local $TODO = 'we are learning';
+
+  todo_skip('Learning!', 4);
+
+  fail('A');
+  fail('B');
+  pass('C');
+  pass('D');
+}
+\end{minted}
+\begin{minted}{bash}
+not ok 1 # TODO & SKIP Learning!
+not ok 2 # TODO & SKIP Learning!
+not ok 3 # TODO & SKIP Learning!
+not ok 4 # TODO & SKIP Learning!
+\end{minted}
+Однако эта возможность редко используется на практике.
+
+\subsection{Выход из тестов, BAIL\_OUT}
+Если возникает ситуация, что тестировать дальше бесполезно, можно воспользоваться функцией \verb|BAIL_OUT|:
+\begin{minted}{perl}
+require_ok($module) or
+    BAIL_OUT("Can't load $module");
+\end{minted}
+После вызова этой функции исполнение тестов заканчивается.
+
+% TODO 42:00
+\section{Класс тестов}
+Тесты являются, как и основная программа, тоже являются программным кодом. Идея делать тесты исключительно простыми нежизнеспособна, хотя мнения на этот счёт существуют диаметрально противоположные.
+
+\subsection{Test::Class}
+Для организации тестов есть более навороченные модули. Первая подобная система тестирования появилась в языке smalltalk и называлась SUnit. Вскоре появились JUnit для Java и другие похожие фреймворки для других языков программирования. Собирательно такие системы тестирования называют xUnit. В perl для этой цели существует модуль \verb|Test::Class|.
+
+Сначала объявляется класс, который наследуется от \verb|Test::Class|, и создаются функции, которые будут запускаться для тестирования. Функции для тестирования должны быть помечены атрибутом \verb|Test|.
+\begin{minted}{perl}
+package My::Cube::Test;
+use base qw(Test::Class);
+use Test::More;
+use My::Cube;
+
+sub test_volume : Test(2)
+{
+  my ($self) = @_;
+
+  my $cube = My::Cube->new(x => 2);
+  is($cube->volume, 8, 'regular cube');
+  $cube->x(0);
+  is($cube->volume, 0, 'trivial cube');
+
+  return;
+}
+
+sub test_diagonal : Test(4)
+{ ... }
+\end{minted}
+
+\subsection{Функции setup и teardown}
+Для каждого класса определяются специальные функции \verb|setup| и \verb|teardown|. Функция \verb|setup| выполняется до исполнения каждого теста, а \verb|teardown| --- после. Например:
+\begin{minted}{perl}
+package My::Cube::Test;
+use base qw(Test::Class);
+use Test::More;
+use My::Cube;
+
+sub init_cube : Test(setup)
+{
+  my ($self) = @_;
+  $self->{cube} = My::Cube->new(x => 2);
+}
+
+sub test_volume : Test(2)
+{
+  my ($self) = @_;
+  is($self->{cube}->volume, 8, 'regular cube');
+  $self->{cube}->x(0);
+  is($self->{cube}->volume, 0, 'trivial cube');
+  return;
+}
+\end{minted}
+
+\subsection{Функции startup и shutdown}
+Функции \verb|startup| и \verb|shutdown|, в отличие от \verb|setup| и \verb|teardown|, выполняются перед классом и после класса. Обычно в этих функциях делаются более глобальные действия, такие как подключение к базе данных. Следует отметить, что существуют диаметрально противоположные мнения на счёт того, должны ли тесты проводиться с настоящей базой данных или нет.
+
+Поскольку, вероятно, что в каждом классе нужно будет подключаться к базе данных, разумно объявить собственный класс, который наследован от \verb|Test::Class|. Тогда все тесты, наследованные от него, будут проявлять одно и то же поведение:
+\begin{minted}{perl}
+use My::Test;
+use base qw(Test::Class);
+
+sub db_connect : Test(startup) {
+    shift->{dbi} = DBI->connect(...);
+}
+
+sub db_disconnect : Test(shutdown) {
+    shift->{dbi}->disconnect;
+}
+\end{minted}
+Такое практически невозможно, если хранить тесты в виде файлов \verb|*.t|. Лучшее, что возможно в этом случае, это создать модуль и подключать его в каждом тесте.
+\begin{minted}{perl}
+package My::Some::Module::Test;
+use base qw(My::Test);
+\end{minted}
+
+\subsection{Модуль Test::Class::Load}
+Поскольку \verb|prove| будет искать файлы с расширением \verb|.t|, необходимо создать единственный такой файл. Самый примитивный способ запустить тесты --- это указать в этом файле с помощью \verb|use| модули с тестами, а после --- выполнить метод \verb|runtests|:
+\begin{minted}{perl}
+use Foo::Test;
+use Foo::Bar::Test;
+use Foo::Fribble::Test;
+use Foo::Ni::Test;
+Test::Class->runtests;
+\end{minted}
+Другой способ заключается в использовании \verb|Test::Class::Load|:
+\begin{minted}{perl}
+use Test::Class::Load qw(t/tests t/lib);
+Test::Class->runtests;
+\end{minted}
+
+Если необходимо запустить только один файл \verb|.pm| для выполнения теста, можно использовать следующий трюк. Необходимо в родительский класс всех тестов дописать строчку:
+\begin{minted}{perl}
+package My::Test::Class;
+
+use base 'Test::Class';
+INIT { Test::Class->runtests() }
+
+1;
+\end{minted}
+В этом случае при исполнении файла \verb|.pm| с тестом происходит следующее. Перед исполнением кода сначала выполняется блок \verb|INIT|, который запускает тесты. То есть в память загружается единственный файл \verb|.pm| и на него вызывается блок \verb|INIT|.
+
+\subsection{Test description}
+Есть ещё несколько особенностей \verb|Test::Class|. Во-первых, если в \verb|assert|'е не будет указано описание теста, в качестве этого описания будет использовано имя функции. Например:
+\begin{minted}{perl}
+sub one_plus_one_is_two : Test {
+    is(1+1, 2);
+}
+\end{minted}
+\begin{minted}{bash}
+ok 1 - one plus one is two
+\end{minted}
+Этим можно пользоваться, если в каждой функции будет один \verb|assert|.
+
+Во-вторых, TODO-тесты в этом случае не нужно объявлять, только выставить переменную \verb|$TODO|:
+\begin{minted}{perl}
+sub live_test : Test  {
+    local $TODO = "live currently unimplemented";
+    ok(Object->live, "object live");
+}
+\end{minted}
+
+\subsection{Организация}
+Как уже было сказано, разумно определить базовый класс для всех тестов, который наследуется от класса \verb|Test::Class|. От него, если нужно, можно наследовать ещё классы, формируя таким образом произвольное дерево классов.
+
+Предположим, что есть два теста, у которых имеется общий базовый класс. При этом сам базовый класс запускать не требуется. Нужно лишь, чтобы он свои тесты передал вниз по иерархии, причём сам не запускался. Например, в нем может не хватать \verb|setup|'а, которые есть в наследниках. В таком случае, чтобы он не исполнялся, объявляется функция \verb|SKIP_CLASS| следующим образом:
+\begin{minted}{perl}
+package My::Test;
+use base qw(Test::Class);
+
+package My::Some::Module::Test;
+use base qw(My::Test);
+sub SKIP_CLASS { 1 }
+
+package My::Some::Module::A::Test;
+use base (My::Some::Module::Test);
+
+package My::Some::Module::B::Test;
+use base (My::Some::Module::Test);
+\end{minted}
+Организация тестов обычно делается следующим образом:
+\begin{minted}{perl}
+use Local::OK::Post;
+use Local::OK::Post::Test;
+\end{minted}
+\begin{minted}{bash}
+lib/Local/OK/Post.pm
+t/lib/Local/OK/Post/Test.pm
+t/class.t
+\end{minted}
+% TODO
+
+\section{Test::Class::Moose}
+Кроме \verb|Test::Class| существует \verb|Test::Class::Moose|.
+\begin{minted}{perl}
+package TestsFor::DateTime;
+use Test::Class::Moose;
+use DateTime;
+
+sub test_constructor {
+    my $test = shift;
+    $test->test_report->plan(3);
+
+    can_ok 'DateTime', 'new';
+    my %args = (year  => 1967,
+                month => 6,
+                day => 20);
+    isa_ok my $date = DateTime->new(%args),
+        'DateTime';
+    is $date->year, $args{year},
+        '... and the year should be correct';
+}
+
+1;
+\end{minted}
+Этот модуль имеет несколько существенных отличий: функции не надо помечать атрибутом \verb|Test|, а просто начинать имена всех тестовых функций % с \'test\_\'.
+
+\section{Модуль Test::Deep}
+Единственный \verb|assert|, который предоставляет модуль \verb|Test::Deep|, это \verb|cmp_deeply|. Он рекурсивно сравнивает объект (передаётся первым параметром) с некоторым объектом-маской (передаётся вторым параметром). При определении этой маски можно пользоваться функциями \verb|re|, \verb|ignore| и \verb|array_each|, которые экспортирует \verb|Test::Deep|:
+\begin{minted}{perl}
+my $name_re = re('^(Mr|Mrs|Miss) \w+ \w+$');
+cmp_deeply(
+  $person,
+  {
+    Name => $name_re,
+    Phone => re(q{^0d{6}$}),
+    ChildNames => array_each($name_re)
+  },
+  "person ok"
+);
+
+\end{minted}
+Функция re в маске обозначает, что в объекте на соответствующем месте должна быть строка, удовлетворяющая регулярному выражению:
+\begin{minted}{perl}
+cmp_deeply(
+  [{1 => 2}, {3 => 4}],
+  [{1 => 2}, {3 => 4}],
+);
+\end{minted}
+Функция \verb|ignore| в маске обозначает, что в объекте на соответствующем месте может быть любое значение:
+\begin{minted}{perl}
+cmp_deeply(
+  [{1 => 2}, {3 => 4}],
+  [{1 => 2}, {3 => ignore()}],
+);
+\end{minted}
+Функция \verb|method| позволяет задать, какие методы должны быть у объекта и какие значения они должны возвращать:
+\begin{minted}{perl}
+cmp_deeply(
+  $obj,
+  methods(
+    name => "John",
+    ["favourite", "food"] => "taco"
+  )
+);
+\end{minted}
+Таким образом можно одной конструкцией проверить сразу результат многих методов. Функция \verb|listmethods| позволяет вызывать методы в списочном контексте:
+\begin{minted}{perl}
+cmp_deeply(
+  $obj,
+  listmethods(
+    name => "John",
+    ["favourites", "food"] =>
+        ["Mapo tofu", "Gongbao chicken"]
+  )
+);
+\end{minted}
+Функция \verb|bag| обозначает, что в соответствующем месте должен быть массив с определенными элементами в любом порядке.
+\begin{minted}{perl}
+cmp_deeply([1, 2, 2], bag(2, 2, 1))
+\end{minted}
+Функции \verb|all| и \verb|any| позволяют задавать сложные конструкции: % TODO
+\begin{minted}{perl}
+cmp_deeply(
+    $got,
+    all(isa("Person"), methods(name => 'John'))
+);
+
+any(
+    re("^John"),
+    all(isa("Person"), methods(name => 'John'))
+);
+
+re("^John") |
+    isa("Person") & methods(name => 'John')
+\end{minted}
+
+\begin{minted}{perl}
+my $common_tests = all(
+   isa("MyFile"),
+   methods(
+     handle => isa("IO::Handle")
+     filename => re("^/home/ted/tmp"),
+  )
+);
+
+cmp_deeply($got, array_each($common_tests));
+\end{minted}
+
+\section{Fixtures}
+Когда приложение использует базу в качестве тестирования, часто встаёт вопрос, где взять инициализационные данные. Как правило, каждому тесту, чтобы что-то проверить, нужно, чтобы какие-то данные уже были в базе. Такие данные называются \verb|Fixtures|.
+
+Стандартный метод \verb|populate| в \verb|Test::DBIx::Class| позволяет указать инициализационные данные:
+\begin{minted}{perl}
+use Test::DBIx::Class;
+
+$schema->resultset($source_name)->populate([...]);
+\end{minted}
+Есть и более хитрые модули, в частности \verb|Test::DBIx::Class::PopulateMore|:
+\begin{minted}{perl}
+{Gender => {
+        fields => 'label',
+        data => {
+                male => 'male',
+                female => 'female',
+        }}},
+
+{Person => {
+        fields => ['name', 'age', 'gender'],
+        data => {
+                john => ['john', 38,
+                    "!Index:Gender.male"],
+                jane => ['jane', 40,
+                    '!Index:Gender.female'],
+        }}},
+\end{minted}
+Полезный способ создания инициализационных данных --- создавать объекты на месте. В таком случае удобно воспользоваться следующим принципом. В одном месте программы сперва нужно определить, как создаются стандартные объекты, а далее, в тестах --- только пользоваться этим:
+\begin{minted}{perl}
+{FriendList => {
+        fields => [
+            'person',
+            'friend',
+            'created_date'
+        ],
+        data => {
+                john_jane => [
+                        '!Index:Person.john',
+                        '!Index:Person.jane'
+                        '!Date: March 30, 1996',
+                ],
+        }}},
+\end{minted}
+
+\section{Test Double}
+Часто бывает нужно тест изолировать от среды. Тест может выходить в интернет или другой сервис. В этом случае нужно как-то подделать эти хождения: либо тестировать только функции, которые никуда не ходят, либо подменить метод в таблице символов.
+
+Все эти <<подделки>> называются Test Double и бывают нескольких типов:
+\begin{itemize}[nosep]
+	\item \textbf{Stub}: подделывает только данные
+	\item \textbf{Spy}: подделывает данные и умеет регистрировать обращение к объекту
+	\item \textbf{Mock}: подделывает и проверяет данные, умеет регистрировать обращение к объекту
+\end{itemize}
+
+% ОПЕЧАТКА НА СЛАЙДЕ 1:08
+Эти названия не всегда используются так, как сказано выше. Например \verb|Test::MockModule| является на самом деле \verb|Stub|. Модуль \verb|Test::MockModule| позволяет подменить в требуемом модуле требуемую функцию на другую:
+\begin{minted}{perl}
+use Module::Name;
+use Test::MockModule;
+
+{
+    my $module = Test::MockModule-
+        new('Module::Name');
+    $module->mock('subroutine', sub { ... });
+    Module::Name::subroutine(@args); # mocked
+}
+
+Module::Name::subroutine(@args); # orig
+\end{minted}
+Модуль \verb|Test::MockModule| позволяет создать объект, указать его методы и то, какие значения он возвращает:
+\begin{minted}{perl}
+use Test::MockObject;
+
+my $mock = Test::MockObject->new();
+$mock->set_true('somemethod');
+ok($mock->somemethod());
+
+$mock->set_true('foo')
+    ->set_false('bar')
+    ->set_series('baz',
+        'a', 'b', 'c');
+);
+\end{minted}

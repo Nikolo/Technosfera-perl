@@ -1,0 +1,16 @@
+\newif\ifdebug
+\debugtrue
+
+\def\debugpoint at (#1);{
+\ifdebug \draw[red, line width = 1pt, shift={(#1)}]
+  ( 0.1,0.1) -- (-0.1,-0.1)
+  (-0.1,0.1) -- ( 0.1,-0.1); \fi
+}
+
+\def\debugtextpoint at (#1) text(#2);{
+\ifdebug \draw[red, line width = 1pt, shift={(#1)}]
+  ( 0.1,0.1) -- (-0.1,-0.1)
+  (-0.1,0.1) -- ( 0.1,-0.1)
+  (0,0) node [above=2mm] {#2}; \fi
+
+}

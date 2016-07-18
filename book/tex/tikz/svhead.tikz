@@ -1,0 +1,27 @@
+\def\modulepath{/mnt/994ad04b-4537-44d3-a860-c7c7f9cac084/MailRu/tikz/modules}
+
+\makeatletter
+\input{\modulepath/common_debug.tikz}
+\input{\modulepath/tikz_svhead.tikz}
+\input{\modulepath/tikz_stackblock.tikz}  
+\makeatother 
+
+\begin{tikzpicture}
+	\begin{stackblock}[shift={(5,0)}] 
+		\setdefaults{prefix=new, height=1.3cm, 
+			point=true, color=blue!15, width=1cm}
+  
+		\process{1} 
+		\process[width=2cm, color=white]{2}
+		\process{3,...,6}
+	\end{stackblock}  
+
+
+	\begin{simpleblock}[shift={(0,0)}] 
+		\add[color=blue!12, point]{ANY};
+		\add{REFCNT}; 
+		\add[width=3cm, flags] {FLAGS};
+		\add[color=red!12, width=1cm, font = {}, toright] {TYPE}; 
+		\add[point, color=blue!12] {SV\_U};
+	\end{simpleblock}
+\end{tikzpicture}  

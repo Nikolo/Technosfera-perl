@@ -1,0 +1,61 @@
+
+\def\sqldefaults{
+		\setdefaults{
+			toright = false,
+			point   = false, 
+			flags   = false,
+			font    = {\large \ },
+			color   = white, 
+			width   = 4cm, 
+			height  = 0.75cm,
+			align   = left
+		}
+}
+
+\begin{tikzpicture}
+	\begin{simpleblock}[shift={(0,0)}]  \sqldefaults
+		\add[color=gray!30, align = center]{grade};
+		\add[color=yellow!30]{\bf id};
+		\add[color=yellow!30]{homework\_id};
+			\saveReferencePointsAs{grade-homeworkid}
+		\add[color=yellow!30]{student\_id};
+			\saveReferencePointsAs{grade-studentid}
+		\add[color=yellow!30]{teacher\_id}; 
+			\saveReferencePointsAs{grade-teacherid}
+		\add[color=yellow!30]{points};
+	\end{simpleblock}
+
+	\begin{simpleblock}[shift={(6cm,2cm)}] \sqldefaults
+		\add[color=gray!30, align = center]{student};
+		\add[color=yellow!30]{\bf id};
+			\saveReferencePointsAs{student-id}
+		\add[color=red!30]{name};
+		\add[color=red!30]{faculty};
+		\add[color=red!30]{class};
+	\end{simpleblock}
+
+	\begin{simpleblock}[shift={(6cm,-3cm)}] \sqldefaults
+		\add[color=gray!30, align = center]{teacher};
+		\add[color=yellow!30]{\bf id};
+			\saveReferencePointsAs{teacher-id}
+		\add[color=red!30]{first\_name};
+		\add[color=red!30]{last\_name};
+		\add[color=yellow!30]{floor};
+	\end{simpleblock}
+
+	\begin{simpleblock}[shift={(-6cm,-0.5cm)}] \sqldefaults
+		\add[color=gray!30, align = center]{homework};
+		\add[color=yellow!30]{\bf id}; 
+			\saveReferencePointsAs{homework-id}
+		\add[color=red!30]{name};
+		\add[color=red!30]{path};
+		\add[color=yellow!30]{max\_points};
+	\end{simpleblock}
+
+\begin{scope}[in=180, out=0, line width=2pt]
+	\draw[red]   (homework-id-R)     to (grade-homeworkid-L);
+	\draw[green] (grade-studentid-R) to (student-id-L);
+	\draw[blue]  (grade-teacherid-R) to (teacher-id-L);
+\end{scope}
+
+\end{tikzpicture}  
