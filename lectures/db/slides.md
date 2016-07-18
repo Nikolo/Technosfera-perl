@@ -1,4 +1,4 @@
-class: center, middle
+class: firstpage
 
 # Работа с базами данных
 
