@@ -1,6 +1,8 @@
-class:firstpage
+class:firstpage, title
 
 # Программирование на Perl
+
+## Введение
 
 ---
 
@@ -39,7 +41,82 @@ class:firstpage
 
 ---
 
-class:note_and_mark
+# Преподаватели
+
+.floatright[![Right-aligned image](anosov.png)]
+Андрей Аносов
+
+Программирует на perl с 2000 года. Работает в команде системной разработки проекта "Мой Мир"
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](panteleev.jpg)]
+Сергей Пантелеев
+
+Ведущий разработчик проекта МойМир@mail.ru
+Борец с энтропией.
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](matveev.jpg)]
+Александр Матвеев
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](reznikov.jpg)]
+Антон Резников
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](kazakov.jpg)]
+Александр Казаков
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](nurtdinov.jpg)]
+Олег Нуртдинов
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](karbachinskiy.jpg)]
+Карбачинский
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](yazikov.jpg)]
+Языков
+
+
+---
+
+# Преподаватели
+
+.floatright[![Right-aligned image](enshin.jpg)]
+Еньшин
+
+
+---
+
+class:note_and_mark title
 
 # Отметьтесь на портале!
  
@@ -505,7 +582,7 @@ layout:true
 
 ```perl
 $a = 42;
-say "test";
+print "test";
 eval { ... };
 do { ... };
 my $var;
@@ -586,7 +663,6 @@ else            { ... }
 ```
 
 ---
-layout:true
 
 # Циклы - `while` / `until`
 
@@ -607,15 +683,14 @@ until ( EXPR ) { ... } continue { ... }
 
 ---
 
-layout:false
 # Циклы - `for` / `foreach`
 
 ---
-layout:false
-class:center, middle
+
+# Циклы - `for` / `foreach`
 
 .center[
-# `for` ≡ `foreach`
+## `for` ≡ `foreach`
 ]
 
 ---
@@ -738,7 +813,7 @@ $\ = "\n\n"; # $OUTPUT_RECORD_SEPARATOR
 while (<>) {
     chomp;
     @a = split /\s+/, $_;
-    say "$. @a",@a;
+    print "$. @a",@a;
 }
 ```
 
@@ -941,7 +1016,8 @@ perl -e 'while(<>){print "- ".$_}'
 Вот простейшая программа которая читает стандартный ввод и распечатывает строки добавляя в начало каждой из них дефис
 
 ```bash
-cat 'file_name.txt' | perl -e 'while(<>){print "- ".$_}'
+cat 'file_name.txt' | \
+perl -e 'while(<>){print "- ".$_}'
 ```
 
 Но кто захочет писать каждый раз такую конструкцию?
@@ -959,7 +1035,8 @@ while(<>){}
 Вот простейшая программа которая читает стандартный ввод и распечатывает строки добавляя в начало каждой из них дефис
 
 ```bash
-cat 'file_name.txt' | perl -e 'while(<>){print "- ".$_}'
+cat 'file_name.txt' | \
+perl -e 'while(<>){print "- ".$_}'
 ```
 
 Но кто захочет писать каждый раз такую конструкцию?
@@ -1459,12 +1536,10 @@ DB< 9 >
 
 ---
 
-class:lastpage
+class:lastpage title
 
-# Оставьте отзыв
+# Спасибо за внимание!
 
-Спасибо за внимание!
+## Оставьте отзыв
 
-Николай Шуляковский
-
-Email & Agent: n.shulyakovskiy@corp.mail.ru
+.teacher[![teacher]()]

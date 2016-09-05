@@ -1,0 +1,276 @@
+.firstpage, .lastpage {
+    background-image: url('park/background.png');
+    background-position: top;
+    vertical-align: center;
+}
+
+.firstpage h1 {
+    margin-top: 287px;
+    margin-left: 145px;
+    position: absolute;
+    font-size: 1.7em !important;
+}
+
+.lastpage h1 {
+    margin-top: 227px;
+    margin-left: 150px;
+}
+
+.lastpage h2 {
+    position: absolute;
+    margin-top: 260px;
+    margin-left: 530px;
+}
+
+.teacher img {
+    margin-left: 22%;
+}
+
+.firstpage h2 {
+    margin-top: 550px;
+    margin-left: 500px;
+}
+
+.note_and_mark {
+    background-image: url('park/background.png');
+    background-position: top;
+    text-align: center;
+    margin-top: 55%;
+}
+
+.note_and_mark h1 {
+    margin-top: 35%;
+}
+
+.remark-slide-content:not(.title) {
+    background-image: url('park/head.png');
+    background-position-y: 12px;
+    background-position-x: 700px;
+    padding-top: 70px;
+}
+
+.remark-slide-content:not(.title) h1:first-of-type {
+    margin-top: -45px;
+    position: absolute;
+}
+
+h1, h2, h3 {
+    font-family: 'HelveticaNeueCyrBold';
+}
+
+h1 code.remark-inline-code, h2 code.remark-inline-code, h3 code.remark-inline-code {
+    font-size: inherit !important;
+    margin: 0 0.2em !important;
+}
+
+.bold_font {
+    font-family: 'HelveticaNeueCyrBold';
+    font-weight: bold;
+}
+
+.remark-code, .remark-inline-code {
+    font-family: 'PTM55F';
+    font-size: 24px;
+    line-height: 1.15em;
+    background-color: #e8e8e8;
+}
+
+.hljs.remark-code, .hljs.remark-inline-code {
+    background-color: #e8e8e8;
+}
+
+.floatright {
+    float: right;
+    padding: 10px 10px 10px 16px;
+    max-width: 45%;
+}
+
+.floatleft {
+    float: left;
+    padding: 10px 10px 10px 16px;
+    max-width: 45%;
+}
+
+/*.remark-code-span-highlighted {
+background: inherit;
+}*/
+
+/*.remark-code-span-highlighted:before, .remark-code-span-highlighted:after {
+content: "`";
+}*/
+
+.clear {
+    clear: both;
+}
+
+.center-aligned {
+    text-align: center;
+    font-size: 36pt;
+}
+
+.remark-slide-content {
+    font-family: "HelveticaNeueCyr";
+    line-height: 1.5em;
+}
+
+.remark-slide-content strong {
+    font-family: "HelveticaNeueCyrBold";
+}
+
+.not .perl .remark-code-line-highlighted {
+    background-color: rgba(255, 0, 0, 0.5)
+}
+
+.minpad-zp {
+    margin-left: -60px;
+}
+
+.small {
+    font-size: 24px;
+    line-height: 1.15em;
+}
+
+.absmiddle {
+    position: absolute;
+}
+
+.remark-slide-content h1 { font-size: 2em; }
+.remark-slide-content h2 { font-size: 1.1em; }
+.remark-slide-content h3 { font-size: 1em; }
+.remark-inline-code {
+    background-color: #e2e2e2;
+    padding-left: 0.05em;
+    padding-right: 0.05em;
+    margin-left: -0.05em;
+    margin-right: -0.05em;
+}
+
+.big {
+    font-size: 1.5em;
+}
+
+.red {
+    color: red;
+}
+
+.note {
+    display:block;
+    font-size: 18px;
+}
+
+.remark-slide-content img {
+     width: 100%;
+}
+
+.normal-width img {
+     width: initial;
+}
+
+table {
+    width:95%;
+    border-collapse: separate;
+}
+
+table td, table th {}
+
+.hidden { background-color: silver; }
+
+.delete { background-color: #ffaaaa; }
+
+.optable {
+    font-size: 16px;
+    line-height: 1em;
+}
+.optable * { line-height: inherit; }        
+.optable .remark-inline-code {
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+    padding: 0;
+}
+
+.hljs .hljs-comment { font-style: normal !important; }
+
+.footer {
+    position: absolute;
+    bottom: 12px;
+    left: 128px;
+    font-size: 24px;
+}
+
+.remark-slide-content .img-uni img {
+    width: 120% !important;
+    margin-left: -10%;
+    margin-top: -10%;
+}
+
+.remark-slide-content .img-xkcd img {
+    width: 600px !important;
+    height: 607px !important;
+}
+
+.left {
+    clear:both;
+    float: left;
+    width: 54%;
+}
+
+.right {
+    float: right;
+    text-align: left;
+    width: 45%;
+}
+.right * { text-align: left;}
+.right ~ p { clear: both; }
+.right:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.left:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.casecharts th, .casecharts td {
+    border-spacing: 0;
+    border-style: solid;
+    border-color: teal;
+    border-width: 1px;
+    color: black;
+    vertical-align: top;
+    text-align: center;
+    line-height: 
+}
+.casecharts td.g {
+    font-size: 120%;
+    text-align: Center;
+    color: #808080;
+}
+.casecharts td.z {
+    font-size: 120%;
+    text-align: Center;
+    font-weight: bold;
+    background-color: #EEEEEE;
+}
+.casecharts td.n {
+    font-size: 120%;
+    text-align: Center;
+    color: #000000;
+    background-color: #CCCCFF;
+}        
+.casecharts tt {
+    font-size: 50%;
+}
+.huge1 {
+    font-size: 80px;
+}
+.huge {
+    font-size: 80px;
+    font-family: 'Apple Color Emoji';
+}
+.small .remark-code {
+    font-size: 18px !important;
+}
+
