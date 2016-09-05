@@ -92,6 +92,11 @@ class:firstpage, title
 .floatright[![Right-aligned image](nurtdinov.jpg)]
 Олег Нуртдинов
 
+Экс разработчик проекта Почта@mail.ru
+
+Разработчик проекта Облако@mail.ru.
+
+
 
 ---
 
