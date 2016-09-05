@@ -84,6 +84,10 @@ class:firstpage, title
 .floatright[![Right-aligned image](kazakov.jpg)]
 Александр Казаков
 
+Ведущий разработчик социальной сети "Мой Мир".
+
+Пишу на Perl уже 9 лет.
+
 
 ---
 
@@ -98,7 +102,7 @@ class:firstpage, title
 # Преподаватели
 
 .floatright[![Right-aligned image](karbachinskiy.jpg)]
-Карбачинский
+Игорь Карбачинский
 
 
 ---
