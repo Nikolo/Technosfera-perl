@@ -1,12 +1,12 @@
-class:firstpage
+class:firstpage, title
+
 # Программирование на Perl
 
----
-class:firstpage
-# Лекция 2: Синтаксис и данные
+## Синтаксис и данные
 
 ---
-class:note_and_mark
+class:note_and_mark title
+
 # Отметьтесь на портале!
 
 ---
@@ -1960,7 +1960,7 @@ use constant CONST => "some";
 
 ---
 
-# Низкоприоритетные логические операторы
+# Низкоприоритетные операторы
 
 > `and`, `or`, `xor`, `not`<code><br></code>
 
@@ -2594,10 +2594,10 @@ sub foo {
 ```
 
 ---
-class:lastpage
+class:lastpage title
 
-# Оставьте отзыв на портале
+# Спасибо за внимание!
 
-Спасибо за внимание!
+## Оставьте отзыв
 
-Mons Anderson &lt;<mons@cpan.org>&gt;
+.teacher[![teacher]()]
