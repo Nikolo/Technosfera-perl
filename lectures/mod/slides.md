@@ -1,7 +1,15 @@
-class: firstpage
+class: firstpage title
 
-# Модульность
+# Программирование на Perl
 
+## Модульность
+
+---
+
+class:note_and_mark title
+
+# Отметьтесь на портале!
+ 
 ---
 
 # Модули: разделяй и властвуй
@@ -1670,3 +1678,13 @@ my %CHECKERS = (
 # Всем спасибо!
 
 .center[.normal-width[![image](final.jpg)]]
+
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
