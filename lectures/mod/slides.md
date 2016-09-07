@@ -255,13 +255,39 @@ Another::Module::some_function();       # fqn
 
 ```perl
 package Local::Math;
+# ...
+package Local::Math::Integer;
+# ...
+# ...
+# end of file
+```
+
+```perl
+{
+   package Local::Math;
+   # ...
+}
+```
+
+```perl
+package Local::Math {
+   # ...
+}
+```
+
+---
+
+# Пакеты
+
+```perl
+*package Local::Math;
 $PI = 3.14159265;
 sub pow  { $_[0] ** $_[1] }
 sub sqr  { pow($_[0], 0.5) }
 # the same
 # sub sqr { Local::Math::pow($_[0], 0.5) }
 
-package main;
+*package main;
 print "sqr(4)=",
     Local::Math::sqr(4), "\n";  # sqr(4)=2
 print "fqn PI=", 
@@ -274,10 +300,10 @@ print "PI=$PI\n";               # PI=undef
 # Пакеты
 
 ```perl
-package Local::Math;
+*package Local::Math;
 sub pow  { $_[0] ** $_[1] }
 
-package main;
+*package main;
 $Local::Math::PI = 3.14159265;
 sub Local::Math::sqr {
     Local::Math::pow($_[0], 0.5)
@@ -302,6 +328,9 @@ sub pow  { $_[0] ** $_[1] }
 printf "Pkg %s, file %s, line %d\n",
     __PACKAGE__, __FILE__, __LINE__;           
 # Pkg Local::Math, file Local/Math.pm, line 4
+
+# :-)
+1;
 ```
 
 ---
@@ -386,7 +415,7 @@ func       => *Some::Package::func
      sub PI { print 3.14 }
  }
 
- *Other::Math::PI = *Local::Math::PI;
+* *Other::Math::PI = *Local::Math::PI;
  print $Other::Math::PI, "\n";         # 3.14159265
  Other::Math::PI();                    # 3.14
 ```
@@ -401,7 +430,7 @@ func       => *Some::Package::func
      sub PI { print 3.14 }
  }
 
- *Other::Math::PI = \$Local::Math::PI;
+* *Other::Math::PI = \$Local::Math::PI;
  print $Other::Math::PI, "\n";         # 3.14159265
  Other::Math::PI();
  # Undefined subroutine &Other::Math::PI called
@@ -417,7 +446,7 @@ func       => *Some::Package::func
      sub PI { print 3.14 }
  }
 
- *Other::Math::PI = \&Local::Math::PI;
+* *Other::Math::PI = \&Local::Math::PI;
  print $Other::Math::PI, "\n";         # undef
  Other::Math::PI();                    # 3.14
 ```
@@ -626,6 +655,14 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 
 # Фазы компиляции и выполнения
 
+* `require` использует `eval`
+* `mod_perl` выполняет приложение, используя `eval`
+* как работают фазы в `eval`?
+
+---
+
+# Фазы компиляции и выполнения
+
 ```perl
 warn "[${^GLOBAL_PHASE}] --- BEFORE EVAL\n";
 eval '
@@ -654,10 +691,10 @@ warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
 ```
 
 ```perl
-# CHECK?!!
-# INIT?!!
 # RUN?
-# END?
+# CHECK?!
+# INIT?!!
+# END?!!!
 ```
 
 ---
@@ -671,8 +708,8 @@ BEGIN     { warn __PACKAGE__, " compile start\n" }
 UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
 CHECK     { warn __PACKAGE__, " CHECK\n"         }
 INIT      { warn __PACKAGE__, " INIT\n"          }
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
             warn __PACKAGE__, " runtime\n";
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
 ```
 
 ```perl
@@ -681,8 +718,8 @@ BEGIN     { warn __PACKAGE__, " compile start\n" }
 UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
 CHECK     { warn __PACKAGE__, " CHECK\n"         }
 INIT      { warn __PACKAGE__, " INIT\n"          }
-*           require Local::Phases;
             warn __PACKAGE__, " runtime\n";
+*           require Local::Phases;
 BEGIN     { warn __PACKAGE__, " compile end\n"   }
 ```
 
@@ -696,11 +733,11 @@ main compile end
 main UNITCHECK
 main CHECK
 main INIT
+main runtime
 Local::Phases compile start
 Local::Phases compile end
 Local::Phases UNITCHECK
 Local::Phases runtime
-main runtime
 ```
 
 ```perl
@@ -719,8 +756,8 @@ BEGIN     { warn __PACKAGE__, " compile start\n" }
 UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
 CHECK     { warn __PACKAGE__, " CHECK\n"         }
 INIT      { warn __PACKAGE__, " INIT\n"          }
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
             warn __PACKAGE__, " runtime\n";
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
 ```
 
 ```perl
@@ -729,8 +766,8 @@ BEGIN     { warn __PACKAGE__, " compile start\n" }
 UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
 CHECK     { warn __PACKAGE__, " CHECK\n"         }
 INIT      { warn __PACKAGE__, " INIT\n"          }
-*BEGIN     { require Local::Phases;               }
             warn __PACKAGE__, " runtime\n";
+*BEGIN     { require Local::Phases;               }
 BEGIN     { warn __PACKAGE__, " compile end\n"   }
 ```
 
@@ -1102,14 +1139,14 @@ $x = \foo;
 
 ```perl
 use strict;                   # qw/vars refs subs/
-our $foo = "foo";
-my $ref = "foo";
+our $var = "foo";
+my $ref = "var";
 {
     no strict 'refs';
     print $$ref;              # foo
 }
 print $$ref;
-# Can't use string ("foo") as a SCALAR ref
+# Can't use string ("var") as a SCALAR ref
 #     while "strict refs" in use
 ```
 
@@ -1307,7 +1344,7 @@ libjson-xs-perl - module for manipulating
 ```
 
 ```bash
-*$ yum search perl-json
+*$ yum search perl-JSON
 =============== Matched: perl-json ===============
 perl-JSON-XS.x86_64 : JSON serialising/
    deserialising, done correctly and fast
@@ -1409,7 +1446,7 @@ my @USERS = (
 # Пишем модуль
 
 ```perl
-# first imported from List::Util
+# `first` imported from List::Util
 
 sub get_by_email {
   my $email = shift;
@@ -1560,7 +1597,7 @@ die "Введен неправильный пароль\n"
 
 * использовать дополнительный случайный ключ для усложнения подбора пароля по хешу
 * предусмотреть возможное изменение механизма проверки пароля в будущем
-* оставить обратную совместимость с форматом хранения паролей из версии 1.1
+* оставить обратную совместимость с форматом хранения паролей из версии 1.2
 
 ---
 
@@ -1568,9 +1605,6 @@ die "Введен неправильный пароль\n"
 
 ```perl
 package Local::Math 1.3;
-# ...
-# not strong enough :-(
-use Digest::MD5 'md5_hex';
 # ...
 my @USERS = (
   {
