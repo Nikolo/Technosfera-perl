@@ -1,1053 +1,1262 @@
 class: firstpage
 
-# Модульность и повторное использование
+# Модульность
 
 ---
 
-# Как разбить по файлам?
+# Модули: разделяй и властвуй
 
-```
-1234
-1235 sub deployed_sources
-1236 {
-1237   my ($self) = @_;
-1238
-1239   my $deploy_opts = $self->deploy_opts;
-1240
-1241   return $deploy_opts->{sources}
-1242     if exists $deploy_opts->{sources};
-1243   return $deploy_opts->{parser_args}->{sources}
-1244     if exists $deploy_opts->{args}->{sources};
-1245
-1246   return [ $self->schema->sources ];
-1247 }
-1248
+* Структурирование кода
+    * читабельность
+    * надежность
+* Повторное использование кода
+    * в рамках проекта
+    * за пределами проекта
+* Совместная работа над проектом
+
+---
+
+# Модули: как разделять
+
+* Низкий уровень
+    * Работа с внешней подсистемой
+        * база данных
+        * сеть
+        * xml-файлы
+    * Специфические вычисления
+        * работа с большими числами
+        * работа датами и временем
+        * шифрование
+* Высокий уровень
+    * функционал для регистрации и авторизации пользователей
+    * функционал для загрузки, отображения и обработки фото на сайте
+
+---
+
+# Модули: как властвовать
+
+* Расположение кода в отдельных файлах
+    * `eval`
+    * `do`
+    * `require`
+    * `use`
+* Пространства имен и области видимости
+    * пакеты и таблицы символов
+    * области видимости
+    * фазы компиляции и выполнения
+* Модули
+    * версионность
+    * pragma
+    * CPAN
+
+---
+
+# `eval`
+
+* видит переменные, объявленные снаружи
+* имеет свою область видимости
+* возвращает последнее вычисленное значение
+* возвращает `undef` и устанавливает `$@` в случае ошибки компиляции/выполнения
+
+---
+
+# `eval`
+
+```perl
+my $E = 2.72;
+
+print "eval=",                    # eval=3.14159265
+    eval('
+        warn "Loading...\n";
+        sub pow { $_[0] ** $_[1]; }
+        $E = 2.71828183;
+        my $PI = 3.14159265;
+    '),
+    "\n";
+
+print "pow(2,8)=",pow(2,8),"\n";  # pow(2,8)=256
+print "E=$E\n";                   # E=2.71828183
+print "PI=$PI\n";                 # PI=undef
 ```
 
 ---
 
-# eval
+# `do` = open + eval?
+
+* видит переменные, объявленные снаружи
+* имеет свою область видимости
+* возвращает последнее вычисленное значение
+* возвращает `undef` и устанавливает `$!` в случае ошибки открытия файла
+* возвращает `undef` и устанавливает `$@` в случае ошибки компиляции/выполнения
+
+---
+
+# `do` = open + eval?
 
 ```perl
-my $u;
+# Local/Math.pm
 
-eval '
-  $u = 5;
-  my $y = 10;
-  sub m_3 {
-    my ($x) = @_;
-    return $x * 3;
-  }
-';
+warn "Loading...\n";
 
-$u; # 5
-$y; # Undefined
-m_3(2); # 6
+sub pow { $_[0] ** $_[1]; }
+
+$E = 2.71828183;
+
+my $PI = 3.14159265;
 ```
 
 ---
 
-# do
+# `do` = open + eval?
 
 ```perl
-do 'sqr.pl';
+# do.pl
+sub do {
+    my ($file) = @_;
+    $! = $@ = undef;
+
+    open my $fd, '<', $file or return;
+    my $code = join '', <$fd>;
+    close $fd;
+
+    eval $code;
+}
+
+print 'do=',                        # Loading...
+    &do("Local/Math.pm"),"\n";      # do=3.14159265
+print '$@=', $@, "\n";              # $@=undef
+print '$!=', $!, "\n";              # $!=undef
+print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
+
+```
+---
+
+# `do` = open + eval + @INC!
+
+```bash
+*$ perl -e 'print join "\n", @INC‘ | head –3
+/usr/local/lib64/perl5
+/usr/local/share/perl5
+/usr/lib64/perl5/vendor_perl
 ```
 
+```bash
+*$ PERL5LIB=/home/www/lib \
+*>     perl -e 'print join "\n", @INC' | head -3
+/home/www/lib
+/usr/local/lib64/perl5
+/usr/local/share/perl5
+```
+
+```bash
+*$ perl -I/home/www/lib \
+*>     -e 'print join "\n", @INC' | head -3
+/home/www/lib
+/usr/local/lib64/perl5
+/usr/local/share/perl5
+```
+
+---
+
+# `do` = open + eval + @INC!
+
 ```perl
-# sqr.pl
-$u = 5;
-my $y = 10;
-sub m_3 {
-  my ($x) = @_;
-  return $x * 3;
+# simplified implementation
+sub find_in_inc {
+    my ($file) = @_;
+    return $file if $file =~ m!^/!;
+    foreach my $path (@INC) {
+        return "$path/$file" if -f "$path/$file";
+    }
+    die "Can't find file $file in \@INC";
+}
+
+sub do {
+    my ($file) = @_;
+    $file = find_in_inc($file);
+
+    # ...
 }
 ```
 
-```perl
-$u; # 5
-$y; # Undefined
-m_3(2); # 6
-```
+---
+
+# `require` = do + die + %INC?
+
+* останавливает выполнение в случае ошибки открытия файла, компиляции или выполнения
+* не пытается загрузить и выполнить файл, если он уже был загружен ранее
+* проверяет последнее вычисленное значение, останавливает выполнение, если оно ложно
+* при первой загрузке файла возвращает последнее вычисленное значение, при последующих попытках его загрузить возвращает 1
 
 ---
 
-# require
+# `require` = do + die + %INC?
 
 ```perl
-require 'sqr.pl';
-require Local::Sqr; # Local/Sqr.pm
-```
+# simplified implementation
+sub require {
+    my ($file) = @_;
+    return 1 if $INC{$file};
 
-```perl
-# Local/Sqr.pm
-$u = 5;
-my $y = 10;
-sub m_3 {
-  my ($x) = @_;
-  return $x * 3;
-}
+    my $filepath = find_in_inc($file)
+        or die "Can't find $file in \@INC";
 
-1; # return value!
-```
+    my $result = do $filepath
+        or die "$file did not return true value";
+    die $@ if $@;
 
-```perl
-$u; # 5
-$y; # Undefined
-m_3(2); # 6
-```
-
----
-
-# Файл модуля
-
-```perl
-require Module; # Module.pm
-require Module::My; # Module/My.pm
-```
-
----
-
-# Поиск модулей
-
-```
-perl -e 'print join "\n", @INC'
-/etc/perl
-/usr/local/lib/perl/5.14.2
-/usr/local/share/perl/5.14.2
-/usr/lib/perl5
-/usr/share/perl5
-/usr/lib/perl/5.14
-/usr/share/perl/5.14
-/usr/local/lib/site_perl
-```
-
-```
-$ PERL5LIB=/tmp/lib perl ...
-$ perl -I /tmp/lib ...
-```
-
----
-
-# BEGIN
-
-.not[
-```perl
-BEGIN {
-  require Some::Module;
-}
-
-sub test1 {
-  return 'test1';
-
-* sub test2 {
-*   return 'test2';
-*
-*   BEGIN {...}
-* }
-}
-```
-]
-
----
-
-# END
-
-```perl
-open(my $fh, '>', $file);
-
-while (1) {
-  # ...
-}
-
-END {
-  close($fh);
-  unlink($file);
+    $INC{$file} = $filepath;
+    return $result;
 }
 ```
 
 ---
 
-# Другие блоки
+# `require` = do + die + %INC?
 
 ```perl
-CHECK {}
-UNITCHECK {}
-INIT {}
+$E = 2.72;
+                               # Loading...
+require "Local/Math.pm";       # 3.14159265
+print "E=$E\n";                # E=2.71828183
 
-${^GLOBAL_PHASE}
+$E = 2.72;
+require "Local/Math.pm";       # 1
+print "E=$E\n";                # E=2.72
 ```
 
 ---
 
-# use Module;
+# Пакеты
 
 ```perl
-use My_module;     # My_module.pm
-use Data::Dumper;  # Data/Dumper.pm
-BEGIN { push(@INC, '/tmp/lib'); }
-use Local::Module; # Local/Module.pm
+require "Some/Module.pm";
+some_function();
+
+require "Another/Module.pm";
+some_function();                # WTF?!
 ```
 
-```perl
-sub sqr {
-  my ($number) = @_;
+---
 
-  return $number ** 2;
+# Пакеты
+
+```perl
+require "Some/Module.pm";
+Some::Module::some_function();          # fqn
+
+require "Another/Module.pm";
+Another::Module::some_function();       # fqn
+```
+
+---
+
+# Пакеты
+
+```perl
+package Local::Math;
+$PI = 3.14159265;
+sub pow  { $_[0] ** $_[1] }
+sub sqr  { pow($_[0], 0.5) }
+# the same
+# sub sqr { Local::Math::pow($_[0], 0.5) }
+
+package main;
+print "sqr(4)=",
+    Local::Math::sqr(4), "\n";  # sqr(4)=2
+print "fqn PI=", 
+    $Local::Math::PI, "\n";     # fqn PI=3.14159265
+print "PI=$PI\n";               # PI=undef
+```
+
+---
+
+# Пакеты
+
+```perl
+package Local::Math;
+sub pow  { $_[0] ** $_[1] }
+
+package main;
+$Local::Math::PI = 3.14159265;
+sub Local::Math::sqr {
+    Local::Math::pow($_[0], 0.5)
 }
 
-my $load_time = time();
-
-1; # return value!
+print "sqr(4)=",
+    Local::Math::sqr(4), "\n";  # sqr(4)=2
+print "fqn PI=", 
+    $Local::Math::PI, "\n";     # fqn PI=3.14159265
+print "PI=$PI\n";               # PI=undef
 ```
 
 ---
 
-# Как разбить по файлам? (Итого)
+# Пакеты
 
 ```perl
-eval 'code';
+# Local/Math.pm
+package Local::Math;
+sub pow  { $_[0] ** $_[1] }
 
-do 'file';
-
-require 'file';
-require Module::Name;
-
-use Module::Name;
+printf "Pkg %s, file %s, line %d\n",
+    __PACKAGE__, __FILE__, __LINE__;           
+# Pkg Local::Math, file Local/Math.pm, line 4
 ```
 
 ---
 
-# Пространства имен?
+# Пакеты
 
 ```perl
-require Some::Module;
-function(); # ?
+# script.pl
+require "Local/Math.pm";
 
-require Another::Module;
-another_function(); # ??
-
-require Another::Module2;
-another_function(); # again!?
-```
-
-```perl
-require Some::Module;
-Some::Module::function();
-
-require Another::Module;
-Another::Module::another_function();
-
-require Another::Module2;
-Another::Module2::another_function(); # np!
+printf "Pkg %s, file %s, line %d\n",
+    __PACKAGE__, __FILE__, __LINE__;
+# Pkg main, file script.pl, line 3
 ```
 
 ---
 
-# package
+# Пакеты
 
 ```perl
-package Local::Multiplier;
-
-sub m2 {
-  my ($x) = @_;
-  return $x * 2;
-}
-
-sub m3 {
-  my ($x) = @_;
-  return $x * 3;
-}
-```
-
-```perl
-use Local::Multiplier;
-
-print Local::Multiplier::m3(8); # 24
-```
-
----
-
-# package — inline
-
-```perl
+# script.pl
 {
-  package Multiplier;
-  sub m_4 { return shift() * 4 }
+    package Local::Math;
+    sub sqr {pow($_[0], 0.5) }
+    
+    printf "Pkg %s, file %s, line %d\n",
+        __PACKAGE__, __FILE__, __LINE__;
+    # Pkg Local::Math, file script.pl, line 5
 }
 
-print Multiplier::m_4(8); # 32
+printf "Pkg %s, file %s, line %d\n",
+    __PACKAGE__, __FILE__, __LINE__;             
+# Pkg main, file script.pl, line 11
+
 ```
 
 ---
 
-# our
+# Таблицы символов
 
 ```perl
-{
-  package Some;
-  my $x = 1;
-  our $y = 2; # $Some::y;
-
-  our @array = qw(foo bar baz);
+package Some::Package {
+    $var = 500; 
+    @var = (1,2,3);
+    %func = (1 => 2, 3 => 4);
+    sub func { return 400 }
+    open F, "<", "/dev/null";
 }
+package Some::Package::Deeper {}
 
-print $Some::x; # ''
-print $Some::y; # '2'
+printf "%-10s => %s\n", $_, $Some::Package::{$_}
+    foreach keys %Some::Package::;
+```
 
-print join(' ', @Some::array); # 'foo bar baz'
+```perl
+F          => *Some::Package::F
+Deeper::   => *Some::Package::Deeper::
+var        => *Some::Package::var
+func       => *Some::Package::func
 ```
 
 ---
 
-# my, state
+# Таблицы символов
+
+* TYPEGLOB: `*foo`
+    * SCALAR: `$foo`
+    * ARRAY: `@foo`
+    * HASH: `%foo`
+    * CODE: `&foo`
+    * IO:  `foo`
+    * NAME: `"foo"`
+    * PACKAGE: `"main"`
+
+---
+
+# Таблицы символов
+
+```perl
+ package Local::Math {
+     $PI = 3.14159265;
+     sub PI { print 3.14 }
+ }
+
+ *Other::Math::PI = *Local::Math::PI;
+ print $Other::Math::PI, "\n";         # 3.14159265
+ Other::Math::PI();                    # 3.14
+```
+
+---
+
+# Таблицы символов
+
+```perl
+ package Local::Math {
+     $PI = 3.14159265;
+     sub PI { print 3.14 }
+ }
+
+ *Other::Math::PI = \$Local::Math::PI;
+ print $Other::Math::PI, "\n";         # 3.14159265
+ Other::Math::PI();
+ # Undefined subroutine &Other::Math::PI called
+```
+
+---
+
+# Таблицы символов
+
+```perl
+ package Local::Math {
+     $PI = 3.14159265;
+     sub PI { print 3.14 }
+ }
+
+ *Other::Math::PI = \&Local::Math::PI;
+ print $Other::Math::PI, "\n";         # undef
+ Other::Math::PI();                    # 3.14
+```
+
+---
+
+# Таблицы символов
+
+```perl
+ *PI = \3.14159265;
+ print $PI, "\n";      # 3.14159265
+ $PI = 4;
+ # Modification of a read-only value attempted
+```
+
+```perl
+ $glob = *FH;
+ print *{$glob}{PACKAGE}, "::", *{$glob}{NAME};
+ # main::FH
+```
+
+---
+
+# Области видимости
+
+```perl
+package Local::Math;
+*our $PI = 3.14159265;
+
+package main;
+print $PI, "\n";                      # 3.14159265
+print $::PI, "\n";                    # undef
+print $Local::Math::PI, "\n";         # 3.14159265
+```
+
+---
+
+# Области видимости
+
+```perl
+package Local::Math;
+*my $PI = 3.14159265;
+
+package main;
+print $PI, "\n";                      # 3.14159265
+print $::PI, "\n";                    # undef
+print $Local::Math::PI, "\n";         # undef
+```
+
+---
+
+# Области видимости
 
 ```perl
 my $x = 4;
 {
-  my $x = 5;
-  print $x; # 5
+    my $x = 5;
+    print $x, "\n"; # 5
 }
-print $x; # 4
+print $x, "\n"; # 4
 ```
+
+---
+
+# Области видимости
 
 ```perl
 use feature 'state';
 
 sub test {
-  state $x = 42;
-  return $x++;
+    state $x = 42;
+    return $x++;
 }
 
-printf(
-  '%d %d %d %d %d',
-  test(), test(), test(), test(), test()
-); # 42 43 44 45 46
+printf(                            # 42 43 44 45 46
+    '%d %d %d %d %d',
+    test(),test(),test(),test(),test()
+);
+
+print $x;                          # undef
 ```
 
 ---
 
-# main package
+# Области видимости
 
 ```perl
-our $size = 42;
+our $x = 10;
+our %y = (x => 20, y => 30);
+{
+    local $x = -10;
+    local $y{x} = -20;
+    print $x, "\n";                # -10
+    print $y{x}, "\n";             # -20
+}
+print $x, "\n";                    #  10
+print $y{x}, "\n";                 #  20
+```
 
-sub print_size {
-  print $main::size;
+---
+
+# Области видимости
+
+```perl
+# 1,2,3
+{
+    local $/ = ",";
+    $x=<>; $y = <>; $z=<>;       # "1," "2," "3\n"
+    chomp $y;                    # "2"
+}
+chomp $z;                        # "3"
+
+# 1\n2\n3\n
+{
+    local $/;
+    $all = <>;                   # "1\n2\n3\n"
+}
+```
+
+---
+
+# `require`=do+die+%INC+namespace!
+
+```perl
+require "/home/www/lib/Local/Math.pm";
+require "Local/Math.pm";
+require Local::Math;                   # BAREWORD!
+```
+
+---
+
+# `require`=do+die+%INC+namespace!
+
+```perl
+sub pkg_to_filename {
+    my ($pkg) = @_;
+    $pkg =~ s!::!/!g;
+    return "${pkg}.pm";
 }
 
-package Some;
-main::print_size(); # 42
+sub require {
+    my ($file) = @_;
+
+    # simplified implementation
+    $file = pkg_to_filename($file)
+        unless $file =~ m![./]!;
+
+    # ...
+}
 ```
 
 ---
 
-# `__PACKAGE__`
+# Фазы компиляции и выполнения
+
+`${^GLOBAL_PHASE}` – фаза работы интерпретатора
+* CONSTRUCT
+* START
+* CHECK
+* INIT
+* RUN
+* END
+* DESTRUCT
+
+---
+
+# Фазы компиляции и выполнения
 
 ```perl
-package Some::Module::Lala;
-
-print __PACKAGE__; # Some::Module::Lala
+        warn "[${^GLOBAL_PHASE}] Runtime 1\n";
+END   { warn "[${^GLOBAL_PHASE}] End 1\n"       }
+CHECK { warn "[${^GLOBAL_PHASE}] Check 1\n"     }
+UNITCHECK
+      { warn "[${^GLOBAL_PHASE}] UnitCheck 1\n" }
+INIT  { warn "[${^GLOBAL_PHASE}] Init 1\n"      }
+BEGIN { warn "[${^GLOBAL_PHASE}] Begin 1\n"     }
+END   { warn "[${^GLOBAL_PHASE}] End 2\n"       }
+CHECK { warn "[${^GLOBAL_PHASE}] Check 2\n"     }
+UNITCHECK
+  { warn "[${^GLOBAL_PHASE}] UnitCheck 2\n"     }
+INIT  { warn "[${^GLOBAL_PHASE}] Init 2\n"      }
+BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
+        warn "[${^GLOBAL_PHASE}] Runtime 2\n";
 ```
 
 ---
 
-# package VS module
+# Фазы компиляции и выполнения
 
 ```perl
-require 'Some/Module.pm';
-require Some::Module;
-```
-
-```perl
-package Some::Module;
-```
-
-```perl
-# :-O :-(
-
-use Some::Module;
-Some::Another::Module::function(); # surprise!
+[START] Begin 1
+[START] Begin 2
+[START] UnitCheck 2
+[START] UnitCheck 1
+[CHECK] Check 2
+[CHECK] Check 1
+[INIT] Init 1
+[INIT] Init 2
+[RUN] Runtime 1
+[RUN] Runtime 2
+[END] End 2
+[END] End 1
 ```
 
 ---
 
-# Пространства имен? (Итого)
+# Фазы компиляции и выполнения
 
-```
-Local/MusicLibrary/Table.pm
-```
-
-```
-use Local::MusicLibrary::Table;
-```
-
-```
-package Local::MusicLibrary::Table;
+```perl
+warn "[${^GLOBAL_PHASE}] --- BEFORE EVAL\n";
+eval '
+          warn "[${^GLOBAL_PHASE}] Runtime\n";
+  END   { warn "[${^GLOBAL_PHASE}] End\n"       }
+  CHECK { warn "[${^GLOBAL_PHASE}] Check\n"     }
+  UNITCHECK
+        { warn "[${^GLOBAL_PHASE}] UnitCheck\n" }
+  INIT  { warn "[${^GLOBAL_PHASE}] Init\n"      }
+  BEGIN { warn "[${^GLOBAL_PHASE}] Begin\n"     }
+';
+warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
 ```
 
 ---
 
-# Импорт?
+# Фазы компиляции и выполнения
 
-``` perl
-use Net::FaceBook::Feed::Post;
-
-Net::FaceBook::Feed::Post::download('...');
+```perl
+[RUN] --- BEFORE EVAL
+[RUN] Begin
+[RUN] UnitCheck
+[RUN] Runtime
+[RUN] --- AFTER EVAL
+[END] End
 ```
 
 ```perl
-use Net::FaceBook::Feed::Post 'download';
-
-download('...');
-```
-
-```cpp
-using namespace std;
-cout << endl;
-```
-
-```python
-from facebook.feed.post import download
-download('...')
+# CHECK?!!
+# INIT?!!
+# RUN?
+# END?
 ```
 
 ---
 
-# use Module LIST;
+# Фазы компиляции и выполнения
 
 ```perl
-use Local::Module ('param1', 'param2');
-use Another::Module qw(param1 param2);
+# Local/Phases.pm
+package Local::Phases;
+BEGIN     { warn __PACKAGE__, " compile start\n" }
+UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
+CHECK     { warn __PACKAGE__, " CHECK\n"         }
+INIT      { warn __PACKAGE__, " INIT\n"          }
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
+            warn __PACKAGE__, " runtime\n";
+```
+
+```perl
+# phases.pl
+BEGIN     { warn __PACKAGE__, " compile start\n" }
+UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
+CHECK     { warn __PACKAGE__, " CHECK\n"         }
+INIT      { warn __PACKAGE__, " INIT\n"          }
+*           require Local::Phases;
+            warn __PACKAGE__, " runtime\n";
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
+```
+
+---
+
+# Фазы компиляции и выполнения
+
+```perl
+main compile start
+main compile end
+main UNITCHECK
+main CHECK
+main INIT
+Local::Phases compile start
+Local::Phases compile end
+Local::Phases UNITCHECK
+Local::Phases runtime
+main runtime
+```
+
+```perl
+# Local::Phases CHECK ?!!
+# Local::Phases INIT  ?!!
+```
+
+---
+
+# Фазы компиляции и выполнения
+
+```perl
+# Local/Phases.pm
+package Local::Phases;
+BEGIN     { warn __PACKAGE__, " compile start\n" }
+UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
+CHECK     { warn __PACKAGE__, " CHECK\n"         }
+INIT      { warn __PACKAGE__, " INIT\n"          }
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
+            warn __PACKAGE__, " runtime\n";
+```
+
+```perl
+# phases.pl
+BEGIN     { warn __PACKAGE__, " compile start\n" }
+UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
+CHECK     { warn __PACKAGE__, " CHECK\n"         }
+INIT      { warn __PACKAGE__, " INIT\n"          }
+*BEGIN     { require Local::Phases;               }
+            warn __PACKAGE__, " runtime\n";
+BEGIN     { warn __PACKAGE__, " compile end\n"   }
+```
+
+---
+
+# Фазы компиляции и выполнения
+
+```perl
+main compile start
+Local::Phases compile start
+Local::Phases compile end
+Local::Phases UNITCHECK
+Local::Phases runtime
+main compile end
+main UNITCHECK
+*Local::Phases CHECK
+main CHECK
+main INIT
+*Local::Phases INIT
+main runtime
+```
+
+---
+
+# `use` = BEGIN + require?
+
+```perl
+use Local::Math;   # BAREWORD
+# BEGIN { require Local::Math; }
+
+BEGIN { print Local::Math::pow(2, 8) } # 256
+```
+
+```perl
+require Local::Math;
+
+BEGIN { print Local::Math::pow(2, 8) }
+# Undefined subroutine &Local::Math::pow
+```
+
+---
+
+# `use` = BEGIN + require + import?
+
+```perl
+use Some::Module ();
 ```
 
 ```perl
 BEGIN {
-  require Module;
-  Module->import(LIST);
-  # ~ Module::import('Module', LIST);
+    require Some::Module;
 }
 ```
 
 ```perl
-use Module ();
-# BEGIN { require Module; }
-```
----
-
-# Пример
-
-```perl
-package My::Package;
-
-use File::Path qw(make_path remove_tree);
-
-# File::Path::make_path
-make_path('foo/bar/baz', '/zug/zwang');
-File::Path::make_path('...');
-My::Package::make_path('...');
-
-# File::Path::remove_tree
-remove_tree('foo/bar/baz', '/zug/zwang');
-File::Path::remove_tree('...');
-My::Package::remove_tree('...');
+# import?
 ```
 
 ---
 
-# Exporter
+# `use` = BEGIN + require + import?
 
 ```perl
-package Local::Multiplier;
+use Some::Module;
 
-use Exporter 'import';
-our @EXPORT = qw(m2 m3 m4 m5 m6);
-
-sub m2 { shift() ** 2 }
-sub m3 { shift() ** 3 }
-sub m4 { shift() ** 4 }
-sub m5 { shift() ** 5 }
-sub m6 { shift() ** 6 }
+BEGIN {
+    require Some::Module;
+    Some::Module::import("Some::Module"); # if can
+}
 ```
 
 ```perl
-use Local::Multiplier;
+use Some::Module ('arg1', 'arg2');
 
-print m3(5); # 125
-print Local::Multiplier::m3(5); # 125
-```
-
----
-
-# Exporter — EXPORT_OK
-
-```perl
-package Local::Multiplier;
-
-use Exporter 'import';
-our @EXPORT_OK = qw(m2 m3 m4 m5 m6);
-
-sub m2 { shift() ** 2 }
-sub m3 { shift() ** 3 }
-sub m4 { shift() ** 4 }
-sub m5 { shift() ** 5 }
-sub m6 { shift() ** 6 }
-```
-
-```perl
-use Local::Multiplier qw(m3);
-
-print m3(5); # 125
-print Local::Multiplier::m4(5); # 625
-```
-
----
-
-# %EXPORT_TAGS
-
-```perl
-our %EXPORT_TAGS = (
-  odd  => [qw(m3 m5)],
-  even => [qw(m2 m4 m6)],
-  all  => [qw(m2 m3 m4 m5 m6)],
-);
-```
-
-```perl
-use Local::Multiplier qw(:odd);
-
-print m3(5);
-```
-
----
-
-# import()
-
-* Не зарезервированное слово
-* Не обязан экспортировать функции пакета
-* Не обязан экспортировать в принципе
-
-```
-$ perl -e 'Lol->import();'
-$ perl -e 'Lol->method();'
-Can't locate object method "method" via package "Lol"
-(perhaps you forgot to load "Lol"?) at -e line 1.
-```
-
----
-
-# Импорт? (Итого)
-
-```perl
-use Some::Module qw(some_function);
-some_function('...');
-```
-
-```perl
-package Some::Module;
-use Exporter 'import';
-our @EXPORT = qw(some_function);
-
-sub some_function {}
-```
-
----
-
-# Контроль версий?
-
-```
-$ perl -we 'use File::Path qw(make_path);'
-"make_path" is not exported by the File::Path module
-Can't continue after import errors at -e line 1.
-BEGIN failed--compilation aborted at -e line 1.
-```
-
-```perl
-use File::Path 2.00 qw(make_path);
-```
-
----
-
-# use Module VERSION;
-
-```perl
-package Local::Module;
-
-our $VERSION = 1.4;
-```
-
-```perl
-use Local::Module 1.5;
-```
-
-```
-$ perl -e 'use Data::Dumper 500'
-Data::Dumper version 500 required--
-this is only version 2.130_02 at -e line 1.
-BEGIN failed--compilation aborted at -e line 1.
-```
-
----
-
-# sub VERSION
-
-```perl
-use Local::Module 500;
-# Local::Module->VERSION(500);
-# ~ Local::Module::VERSION('Local::Module', 500);
-```
-
-```perl
-package Local::Module;
-
-sub VERSION {
-  my ($package, $version) = @_;
-
-  # ...
+BEGIN {
+    require Some::Module;
+    Some::Module::import(                 # if can
+        "Some::Module",
+        'arg1', 'arg2'
+    );
 }
 ```
 
 ---
 
-# v-strings
+# `use` = BEGIN + require + import?
 
 ```perl
-use Local::Module v5.11.133;
+# Local/Math.pm
+sub import {
+    my $self = shift;
+    my ($pkg) = caller(0);
+    foreach my $func (@_) {
+        *{"${pkg}::$func"} = \&{$func};
+    }
+}
 ```
 
-```
-v102.111.111; # 'foo'
-102.111.111;  # 'foo'
-v1.5;
+```perl
+# main.pl
+use Local::Math qw/pow sqr/;
+print pow(2,8), "\n";             # 256
 ```
 
 ---
 
-# use VERSION;
+# `use` = BEGIN + require + import?
 
 ```perl
-use 5.12.1;
-use 5.012_001;
+# Local/Math.pm
+sub unimport {
+    my $self = shift;
+    my ($pkg) = caller(0);
+    foreach my $func (@_) {
+        delete ${"${pkg}::"}{$func};
+    }
+}
+```
 
-$^V # v5.12.1
-$]  # 5.012001
+```perl
+# main.pl
+use Local::Math qw/pow sqr/;
+print pow(2,8), "\n";             # 256
+
+no Local::Math qw/pow/;
+print pow(2,8), "\n";
+# Undefined subroutine &main::pow called
 ```
 
 ---
 
-# Контроль версий? (Итого)
+# `use`=BEGIN+require+import+version!
 
 ```perl
-use Module v1.1.1;
-use 5.10;
+# Local/Math.pm
+package Local::Math;
+$VERSION = 1.25;
+
+# package Local::Math 1.25;
+
+print $Local::Math::VERSION;  # 1.25
+```
+
+```perl
+# main.pl
+use Local::Math 1.26;
+# Local::Math version 1.26 required--this is
+#     only version 1.25
 ```
 
 ---
 
-# Pragmatic modules
+# `use`=BEGIN+require+import+version!
 
 ```perl
-use strict;
-use warnings;
+package Local::Math;
+$VERSION = v1.25.01;
+print $Local::Math::VERSION;  # ???
+```
+
+```perl
+print v67.97.109.101.108.33;  # Camel!
+```
+
+```perl
+package Local::Math v1.25.01;
+print $Local::Math::VERSION;  # v1.25.01
+```
+
+```perl
+use Local::Math v1.26.2;
+# Local::Math version v1.26.2 required--this is
+#     only version v1.25.1
 ```
 
 ---
 
-# use strict 'refs';
+# `use`=BEGIN+require+import+version!
 
 ```perl
-use strict 'refs';
+use 5.20;
+# Perl v5.200.0 required (did you mean v5.20.0?)--
+#     this is only v5.16.3, stopped
+```
 
-$ref = \$foo;
-print $$ref;  # ok
-$ref = "foo";
-print $$ref;  # runtime error; normally ok
+```perl
+use v5.20;
+# Perl v5.20.0 required--this
+# is only v5.16.3, stopped
+```
+
+```perl
+use 5.020_000;
+# Perl v5.20.0 required--this
+# is only v5.16.3, stopped
 ```
 
 ---
 
-# use strict 'vars';
+# Стандартные модули: `Exporter`
+
+```perl
+ package Local::Math;
+
+ use Exporter;
+ *import = \&Exporter::import;
+ @EXPORT_OK = qw/$PI pow sqr/;
+ %EXPORT_TAGS = (
+     func  => [ qw/pow sqr/ ],
+     const => [ qw/$PI $E/  ],
+ );
+ @EXPORT = qw/$PI/;
+
+ $PI = 3.14159265;
+ $E = 2.71828183;
+ sub pow  { $_[0] ** $_[1]  }
+ sub sqr  { pow($_[0], 0.5) }
+```
+
+---
+
+# Стандартные модули: `Exporter`
+
+```perl
+use Local::Math ();                 # nothing
+use Local::Math;                    # $PI
+use Local::Math qw/$PI/;            # $PI
+use Local::Math qw/pow/;            # pow
+use Local::Math qw/:const pow/;     # $PI $E pow
+use Local::Math qw/:const &sqr/;    # $PI $E sqr
+```
+
+---
+
+# Стандартные модули: `Data::Dumper`
+
+```perl
+use Data::Dumper;
+
+$u = \\3.14;
+$v = *STDIN;
+$w = "qwerty";
+$x = sub { 1 };
+@y = (1, "2", 3, "x");
+%z = (x => 1, y => 2);
+
+warn Dumper($u, $v, $w, $x, \@y, \%z);
+```
+
+---
+
+# Стандартные модули: `Data::Dumper`
+
+```perl
+$VAR1 = \\'3.14';
+$VAR2 = *::STDIN;
+$VAR3 = 'qwerty';
+$VAR4 = sub { "DUMMY" };
+$VAR5 = [
+          1,
+          '2',
+          3,
+          'x'
+        ];
+$VAR6 = {
+          'y' => 2,
+          'x' => 1
+        };
+```
+
+---
+
+# Стандартные модули: `Getopt::Std`
+
+```perl
+#!/usr/bin/perl
+use Getopt::Std;
+use Data::Dumper;
+getopts("oDi:", \%opts);
+print Dumper(\%opts);
+```
+
+```perl
+# ./getopt -D -i 123
+$VAR1 = {
+          'D' => 1,
+          'i' => '123'
+        };
+```
+
+---
+
+# Стандартные модули: `POSIX`
+
+```perl
+use POSIX ();
+```
+
+```perl
+print POSIX::ceil(2.72), "\n";             # 3
+print POSIX::floor(2.72), "\n";            # 2
+print join('@', POSIX::modf(2.72)),"\n";   # 0.72@2
+```
+
+```perl
+print POSIX::strftime("%Y-%m-%d %T / %B",
+    localtime(0)), "\n";
+# 1970-01-01 03:00:00 / January
+
+use POSIX qw(setlocale LC_ALL);
+setlocale(LC_ALL, "ru_RU.UTF-8");
+
+print POSIX::strftime("%Y-%m-%d %T / %B",
+    localtime(0)), "\n";
+# 1970-01-01 03:00:00 / Январь
+```
+
+---
+
+# Прагмы: `strict`
 
 ```perl
 use strict 'vars';
 
-$Module::a;
-my  $x = 4;
-our $y = 5;
+our $foo = 1;                  # ok
+my $bar = 2;                   # ok
+$baz = 3;
+# Global symbol "$baz" requires
+#     explicit package name
 ```
 
 ---
 
-# use strict 'subs';
+# Прагмы: `strict`
+
+```perl
+use strict 'refs';
+
+$foo = "foo"; 
+$ref = \$foo;
+print $$ref;                   # foo
+
+$ref = "foo";
+print $$ref;
+# Can't use string ("foo") as a SCALAR ref
+#     while "strict refs" in use
+```
+
+---
+
+# Прагмы: `strict`
+
+```perl
+$x = \foo;
+print $$x, "\n";               # foo
+```
 
 ```perl
 use strict 'subs';
+$x = \"foo";                   # ok
+$x = \foo;
+# Bareword "foo" not allowed
+#     while "strict subs" in use
 ```
 
-```perl
-print Dumper [test]; # 'test'
-```
+---
+
+# Прагмы: `strict`
 
 ```perl
-sub test {
-  return 'str';
+use strict;                   # qw/vars refs subs/
+our $foo = "foo";
+my $ref = "foo";
+{
+    no strict 'refs';
+    print $$ref;              # foo
 }
-print Dumper [test]; # 'str'
+print $$ref;
+# Can't use string ("foo") as a SCALAR ref
+#     while "strict refs" in use
 ```
 
 ---
 
-# use warnings
+# Прагмы: `warnings`
 
 ```perl
-use warings;
+use warnings;
 use warnings 'deprecated';
+
+print 5+"a";                      # 5
+Argument "a" isn't numeric in addition (+)
 ```
 
-```
-$ perl -e 'use warnings; print(5+"a")'
-Argument "a" isn't numeric in addition (+) at -e line 1.
-```
-
-```
+```bash
 $ perl -we 'print(5+"a")'
-Argument "a" isn't numeric in addition (+) at -e line 1.
+Argument "a" isn't numeric in addition (+)
+5
 ```
 
 ---
 
-# use diagnostics;
+# Прагмы: `diagnostics`
 
 ```perl
 use diagnostics;
-```
 
-```
-$ perl -e 'use diagnostics; print(5+"a")'
-Argument "a" isn't numeric in addition (+) at -e line 1 (#1)
-    (W numeric) The indicated string was fed as an argument to an operator
-    that expected a numeric value instead.  If you're fortunate the message
-    will identify which operator was so unfortunate.
-```
-
----
-
-# use lib;
-
-```perl
-use lib qw(/tmp/lib);
-
-BEGIN { unshift(@INC, '/tmp/lib') }
+print 5+"a";                      # 5
+# Argument "a" isn't numeric in addition (+)
+#     (W numeric) The indicated string was fed as
+#     an argument to an operator that expected
+#     a numeric value instead.  If you're fortunate
+#     the message will identify which operator was
+#     so unfortunate.
 ```
 
 ---
 
-# FindBin
+# Прагмы: `lib`
 
 ```perl
-use FindBin '$Bin';
-use lib "$Bin/../lib";
+use lib qw(/home/www/lib /home/www/lib2);
+```
+
+```perl
+BEGIN {
+    unshift @INC,
+    '/home/www/lib',
+    '/home/www/lib2'
+}
 ```
 
 ---
 
-# use feautre;
+# Прагмы: `feature`
 
 ```perl
-use feature qw(say);
+use feature qw/say state/;     # a lot of features
+use feature ":5.10";           # features for 5.10
 
 say 'New line follows this';
+
+state $x = 10;
 ```
 
 ---
 
-# use bignum;
+# Прагмы: `constant`
 
 ```perl
-use bignum;
-use bigint;
-use bigrat;
-```
+use constant PI => 3.14159265;
+# sub PI () { 3.14159265 }
 
-```
-$ perl -E 'use bigint; say 500**50'
-888178419700125232338905334472656250000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-
-$ perl -E 'say 500**50'
-8.88178419700125e+134
-```
-
----
-
-# Pragmatic modules (Итого)
-
-```perl
-package Some::Module;
-
-use strict;
-use warnings;
-
-1;
-```
-
----
-
-# no
-
-```perl
-no Local::Module LIST;
-
-# Local::Module->unimport(LIST);
+print PI;                      # 3.14159265
+# print 3.14159265;
 ```
 
 ```perl
-no 5.010;
-```
-
-```perl
-no strict;
-no feature;
-```
-
----
-
-# Как работает экспорт?
-
-* Как копируются функции?
-* Как `Exporter` узнает, куда их копировать?
-
----
-
-# Symbol Tables
-
-```perl
-{
-  package Some::Package;
-  our $var = 500;
-  our @var = (1,2,3);
-  our %func = (1 => 2, 3 => 4);
-  sub func { return 400 }
-}
-
-
-use Data::Dumper;
-print Dumper \%Some::Package::;
-```
-
-```perl
-$VAR1 = {
-          'var' => *Some::Package::var,
-          'func' => *Some::Package::func
-        };
-```
-
-
----
-
-# Typeglob
-
-```sh
-                       +------> SCALAR - $bar
-                       |
-                       +------> ARRAY  - @bar
-                       |
-                       +------> HASH   - %bar
-                       |
-Foo:: -----> bar  -----+------> CODE   - &bar
-                       |
-                       +------> IO     - bar (FH)
-                       |
-                       +------> GLOB   - *bar
-```
-
----
-
-# Typeglob — операции
-
-```perl
- *Some::Package::foo = *Some::Package::var;
-
- *Some::Package::foo = \$bar;
- *Some::Package::foo = \@bar;
-
- *Some::Package::func = sub { ... }
- *Some::Package::func = \&Another::Package::func;
-```
-
----
-
-# caller()
-
-```perl
-# 0         1          2
-($package, $filename, $line) = caller();
-```
-
-```perl
-(
-	$package,    $filename,   $line,
-	$subroutine, $hasargs,    $wantarray,
-	$evaltext,   $is_require, $hints,
-	$bitmask,    $hinthash
-) = caller($i);
-```
-
----
-
-# Как работает экспорт? (Итого)
-
-* Как копируются функции? — Таблица символов.
-* Как `Exporter` узнает, куда их копировать? — `caller()`
-
----
-
-# local
-
-```perl
-{
-  package Test;
-  our $x = 123;
-
-  sub bark { print $x }
-}
-
-Test::bark(); # 123
-{
-  local $Test::x = 321;
-  Test::bark(); # 321
-}
-Test::bark(); # 123
-```
-
----
-
-# local — варианты
-
-```perl
-# localization of values
-local $foo;
-local (@wid, %get);
-local $foo = "flurp";
-local @oof = @bar;
-local $hash{key} = "val";
-delete local $hash{key};
-local ($cond ? $v1 : $v2);
-
-# localization of symbols
-local *FH;
-local *merlyn = *randal;
-
-local *merlyn = 'randal';
-local *merlyn = \$randal;
+use constant {
+    PI => 3.14159265,
+    E  => 2.71828183,
+};
 ```
 
 ---
 
 # CPAN
 
-The Comprehensive Perl Archive Network
+## Comprehensive Perl Archive Network
 
-http://cpan.org
-
-![](cpan.png)
-
----
-
-# Metacpan
-
-http://metacpan.org
-
-![](metacpan.png)
+* DBI, DBD::mysql, DBD::Pg, DBD::SQLite
+* Digest::SHA, Digest::MD5, Digest::SipHash
+* Crypt::RSA, Crypt::Rijndael
+* XML::Parser, XML::LibXML, YAML, JSON::XS
+* LWP, Net::Twitter, Net::SMTP
+* Devel::StackTrace, Devel::NYTProf
+* Archive::Zip, MP3::Info, Image::ExifTool, GD
 
 ---
 
-# Установка из пакета в Debian
+# CPAN
 
 ```sh
-$ apt-cache search libjson-perl
-libjson-perl - module for manipulating
-  JSON-formatted data
-libjson-pp-perl - module for manipulating
-  JSON-formatted data (Pure Perl)
-libjson-xs-perl - module for manipulating
-  JSON-formatted data (C/XS-accelerated)
-
-# apt-get install libjson-perl
+$ perl –MCPAN -eshell
 ```
-
----
-
-# Установка из пакета в CentOS
-
-```sh
-$ yum search perl-json
-======================== Matched: perl-json ========================
-perl-JSON-XS.x86_64 : JSON serialising/deserialising,
-  done correctly and fast
-perl-JSON.noarch : Parse and convert to JSON
-  (JavaScript Object Notation)
-perl-JSON-PP.noarch : JSON::XS compatible pure-Perl module
-
-$ yum install perl-JSON-XS
-```
-
----
-
-# Утилита cpan
 
 ```sh
 $ cpan
-Terminal does not support AddHistory.
+cpan shell -- CPAN exploration and modules installation (v1.7602)
+ReadLine support available (try 'install Bundle::CPAN')
 
-cpan shell -- CPAN exploration and modules installation (v1.960001)
-Enter 'h' for help.
-```
-
-```sh
-$ cpan install JSON
-```
-
-```sh
-perl -MCPAN -e shell
+cpan> install Crypt::Rijndael
+...
+cpan> ?
 ```
 
 ---
 
-# Утилита cpanm
+# CPAN
 
-```sh
-curl -L https://cpanmin.us | \
-    perl - --sudo App::cpanminus
-```
-
-```sh
-cpanm Data::Printer
-cpanm MIYAGAWA/Plack-0.99_05.tar.gz
-cpanm ~/dists/MyCompany-Enterprise-1.00.tar.gz
+```bash
+wget http://search.cpan.org/CPAN/authors/id/L/LE/LEONT/Crypt-Rijndael-1.13.tar.gz
+tar –xzf Crypt-Rijndael-1.13.tar.gz
+cd Crypt-Rijndael-1.13
+perl Makefile.PL
+make
+make test
+make install
 ```
 
 ---
 
-# cpantesters
+# CPAN
 
-![](cpantesters.png)
-
----
-
-# module-starter
-
-```sh
-module-starter --module Local::PerlCourse
-  --author Vadim --email vadim@pushtaev.ru
+```bash
+$ module-starter --module Local::Math \
+>      --author Vadim --email vadim@pushtaev.ru
 ```
 
-```sh
-$ tree Local-PerlCourse/
-Local-PerlCourse/
+```
+Local-Math/
 ├── Changes
 ├── ignore.txt
 ├── lib
-│   └── Local
-│       └── PerlCourse.pm
+│   └── Local
+│       └── Math.pm
 ├── Makefile.PL
 ├── MANIFEST
 ├── README
@@ -1061,120 +1270,369 @@ Local-PerlCourse/
 
 ---
 
-# ExtUtils::MakeMaker
+# CPAN
 
-```sh
+```perl
+# Makefile.PL
 use 5.006;
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 use ExtUtils::MakeMaker;
-
 WriteMakefile(
-    NAME                => 'Local::PerlCourse',
-    AUTHOR              => q{Vadim <vadim@pushtaev.rut>},
-    VERSION_FROM        => 'lib/Local/PerlCourse.pm',
-    ABSTRACT_FROM       => 'lib/Local/PerlCourse.pm',
-    ($ExtUtils::MakeMaker::VERSION >= 6.3002
-      ? ('LICENSE'=> 'perl')
-      : ()),
-    PL_FILES            => {},
-    PREREQ_PM => {
+    NAME           => 'Local::Math',
+    AUTHOR         => 'Vadim <vadim@pushtaev.ru>',
+    VERSION_FROM   => 'lib/Local/Math.pm',
+    ABSTRACT_FROM  => 'lib/Local/Math.pm',
+    LICENSE        => 'Artistic_2_0',
+    PL_FILES       => {},
+    BUILD_REQUIRES => {
         'Test::More' => 0,
     },
-    dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'Local-PerlCourse-*' },
+    # ...
 );
 ```
 
 ---
 
-# Module::Install
+# CPAN
 
-```perl
-  use inc::Module::Install;
+```bash
+*$ apt-cache search libjson-perl
+libjson-perl - module for manipulating
+  JSON-formatted data
+libjson-pp-perl - module for manipulating
+  JSON-formatted data (Pure Perl)
+libjson-xs-perl - module for manipulating
+  JSON-formatted data (C/XS-accelerated)
+```
 
-  # Define metadata
-  name           'Your-Module';
-  all_from       'lib/Your/Module.pm';
-
-  # Specific dependencies
-  requires       'File::Spec'  => '0.80';
-  test_requires  'Test::More'  => '0.42';
-  recommends     'Text::CSV_XS'=> '0.50';
-  no_index       'directory'   => 'demos';
-  install_script 'myscript';
-
-  WriteAll;
+```bash
+*$ yum search perl-json
+=============== Matched: perl-json ===============
+perl-JSON-XS.x86_64 : JSON serialising/
+   deserialising, done correctly and fast
+perl-JSON.noarch : Parse and convert to JSON
+  (JavaScript Object Notation)
+perl-JSON-PP.noarch : JSON::XS compatible pure-Perl
+  module
 ```
 
 ---
 
-# Module::Build
+# Список литературы
+
+* perldoc `perlmod`
+* perldoc `perlvar`
+* perldoc `perlfunc`
+* perldoc `perlpragma`
+* perldoc `perlmodlib`
+* perldoc `cpan`
+* perldoc `perlnewmod`
+* perldoc `perlmodstyle`
+
+---
+
+# Пишем модуль
+
+## Задача: написать скрипт, выполняющий аутентификацию пользователя по его email и паролю
+* для аутентифицированных пользователей должно выводиться персонифицированное приветствие, код возврата скрипта - 0
+* в остальных случаях выдавать сообщение об ошибке, код возврата скрипта - любой, кроме 0
+* всю обработку, связанную с пользовательскими данными, выделить в отдельный модуль
+* база данных пользователей должна храниться в том же модуле (мы еще не умеем ходить в настоящие базы данных)
+
+---
+
+# Пишем модуль
 
 ```perl
-use Module::Build;
-my $build = Module::Build->new(
-  module_name => 'Foo::Bar',
-  license  => 'perl',
-  requires => {
-    'perl'          => '5.6.1',
-    'Some::Module'  => '1.23',
-    'Other::Module' => '>= 1.2, != 1.5, < 2.0',
+#!/usr/bin/perl
+use strict;
+use feature 'say';
+use Local::User;
+
+my ($email, $passwd) = @ARGV;
+die "USAGE: $0 <email> <password>\n“
+    unless length $email && length $passwd;
+
+my $user = get_by_email($email);
+die "Пользователь с адресом '$email' не найден\n"
+    unless $user;
+die "Введен неправильный пароль\n"
+    unless $user->{passwd} eq $passwd;
+
+say welcome_string($user);
+say 'Добро пожаловать';
+```
+
+---
+
+# Пишем модуль
+
+```perl
+package Local::User 1.1;
+
+use strict;
+use warnings;
+
+use List::Util qw/first/;
+use Exporter 'import';
+
+our @EXPORT = qw/get_by_email name welcome_string/;
+```
+
+---
+
+# Пишем модуль
+
+```perl
+my @USERS = (
+    {
+        first_name => 'Василий',
+        last_name  => 'Пупкин',
+        gender => 'm',
+        email => 'vasily@pupkin.ru',
+        passwd => '12345',
+    },
+    {
+        first_name => 'Николай',
+        middle_name => 'Петрович',
+        last_name  => 'Табуреткин',
+        gender => 'm',
+        email => 'taburet.98@mail.ru',
+        passwd => 'admin',
+    },
+);
+```
+
+---
+
+# Пишем модуль
+
+```perl
+# first imported from List::Util
+
+sub get_by_email {
+  my $email = shift;
+  my $user =
+    first { $_->{email} eq $email } @USERS;
+  return $user;
+}
+```
+
+---
+
+# Пишем модуль
+
+```perl
+sub name {
+  my $user = shift;
+  return join ' ',
+    grep { length $_ }
+      map { $user->{$_} }
+        qw/first_name middle_name last_name/;
+}
+```
+
+---
+
+# Пишем модуль
+
+```perl
+sub welcome_string {
+  my $user = shift;
+  return
+    (
+      $user->{gender} eq 'm' ?
+      "Уважаемый " : "Уважаемая "
+    ) . name($user) . "!";
+}
+```
+
+---
+
+# Пишем модуль
+
+```perl
+# :-)
+
+1;
+```
+
+---
+
+# Пишем модуль
+
+```bash
+$ perl auth
+USAGE: auth <email> <password>
+```
+
+```bash
+$ perl auth mike@mail.ru 123
+Пользователь с адресом 'mike@mail.ru' не найден
+```
+
+```bash
+$ perl auth taburet.98@mail.ru 12345
+Введен неправильный пароль
+```
+
+```bash
+$ perl auth taburet.98@mail.ru admin
+Уважаемый Николай Петрович Табуреткин!
+Добро пожаловать
+```
+
+---
+
+# Пишем модуль
+
+## Задача: изменить скрипт и модуль так, чтобы пароли не хранились в открытом виде
+
+* использовать хеширование паролей
+* использовать секретный ключ ("соль")
+
+---
+
+# Пишем модуль
+
+```perl
+package Local::Math 1.2;
+# ...
+# not strong enough :-(
+use Digest::MD5 'md5_hex';
+# ...
+my @USERS = (
+  {
+    first_name => 'Василий',
+    last_name  => 'Пупкин',
+    gender => 'm',
+    email => 'vasily@pupkin.ru',
+    passwd => 'd19f77fefeae0fabdfc75f17abc47c96',
+  },
+  # ...
+);
+```
+
+---
+
+# Пишем модуль
+
+```perl
+our @EXPORT = qw/
+  get_by_email name welcome_string
+  is_password_valid
+/;
+# ...
+{
+  my $SALT = "perl rulez!";
+
+  sub is_password_valid {
+    my ($user, $passwd) = @_;
+    return
+      $user->{passwd} eq md5_hex($passwd.$SALT);
+  }
+}
+```
+
+---
+
+# Пишем модуль
+
+```perl
+#!/usr/bin/perl
+
+use Local::User 1.2;
+
+# ...
+
+die "Введен неправильный пароль\n"
+    unless is_password_valid($user, $passwd);
+
+# ...
+```
+
+---
+
+# Пишем модуль
+
+## Задача: усовершенствовать механизм хранения и проверки паролей
+
+* использовать дополнительный случайный ключ для усложнения подбора пароля по хешу
+* предусмотреть возможное изменение механизма проверки пароля в будущем
+* оставить обратную совместимость с форматом хранения паролей из версии 1.1
+
+---
+
+# Пишем модуль
+
+```perl
+package Local::Math 1.3;
+# ...
+# not strong enough :-(
+use Digest::MD5 'md5_hex';
+# ...
+my @USERS = (
+  {
+    first_name => 'Василий',
+    last_name  => 'Пупкин',
+    gender => 'm',
+    email => 'vasily@pupkin.ru',
+    passwd =>
+      '$1$f^34d*$24cc1e0d198dbf6bbfd812a30f1b4460',
+  },
+  # ...
+);
+```
+
+---
+
+# Пишем модуль
+
+```perl
+sub is_password_valid {
+  my ($user, $passwd) = @_;
+
+  my ($version, $data) = (0, $user->{passwd});
+  if ($user->{passwd} =~ /^\$(\d+)\$(.+)$/) {
+    # new scheme
+    ($version, $data) = ($1, $2);
+    die "Don't know passwd version $version"
+      unless $CHECKERS{$version};
+  }
+  return $CHECKERS{$version}->($data, $passwd);
+}
+```
+
+---
+
+# Пишем модуль
+
+```perl
+# (password_hashed_data, password_to_check)
+my %CHECKERS = (
+  0 => sub { $_[0] eq md5_hex($_[1] . $SALT) },
+  1 => sub {
+    my ($rand, $hash) = split '$', $_[0];
+    return
+      $hash eq md5_hex($_[1] . $SALT . $rand);
   },
 );
-$build->create_build_script;
-```
-
-```sh
-  perl Build.PL
-  ./Build
-  ./Build test
-  ./Build install
 ```
 
 ---
 
-# ДЗ 3.1
+# Пишем модуль
 
-*Упражнение, баллов не дает*
-
-`homeworks/getset`
-
-```perl
-package Local::SomePackage;
-
-use Local::GetterSetter qw(x y);
-# scalar only
-
-set_x(50);
-$Local::SomePackage::x; # 50
-
-our $y = 42;
-get_y(); # 42
-set_y(11);
-get_y(); # 11
-```
+## Что дальше?
+* заменяем устаревший MD5 на другой алгоритм хеширования (SHA512, bcrypt, scrypt)
+* переносим информацию о пользователях в базу данных или другое внешнее хранилище
+* добавляем функционал для регистрации новых пользователей и изменения существующих данных
+* интегрируем модуль в веб-приложение
+* ...
 
 ---
 
-# ДЗ 3.2
+# Всем спасибо!
 
-*8 баллов*
-
-`homeworks/music_library`
-
-```
-./Midas Fall/2015 - The Menagerie Inside/Low.ogg
-./Midas Fall/2015 - The Menagerie Inside/Holes.ogg
-./Midas Fall/2015 - The Menagerie Inside/Push.ogg
-```
-
-```
-/--------------------------\
-| Midas Fall |   Low | ogg |
-|------------+-------+-----|
-| Midas Fall | Holes | ogg |
-|------------+-------+-----|
-| Midas Fall |  Push | ogg |
-\--------------------------/
-```
+.center[.normal-width[![image](final.jpg)]]
