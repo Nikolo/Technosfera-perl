@@ -1166,14 +1166,17 @@ print $$ref;
 use warnings;
 use warnings 'deprecated';
 
-print 5+"a";                      # 5
-Argument "a" isn't numeric in addition (+)
+print "foo" . undef;                 # foo
+# Use of uninitialized value in concatenation (.)
+#     or string
+
+no warnings 'uninitialized';
+print "foo" . undef;                 # foo
 ```
 
 ```bash
-$ perl -we 'print(5+"a")'
-Argument "a" isn't numeric in addition (+)
-5
+$ perl -we 'print 5 + "a"'           # 5
+# Argument "a" isn't numeric in addition (+)
 ```
 
 ---
