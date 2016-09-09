@@ -1606,7 +1606,7 @@ $ perl auth taburet.98@mail.ru admin
 # Пишем модуль
 
 ```perl
-package Local::Math 1.2;
+package Local::User 1.2;
 # ...
 # not strong enough :-(
 use Digest::MD5 'md5_hex';
@@ -1676,7 +1676,7 @@ die "Введен неправильный пароль\n"
 # Пишем модуль
 
 ```perl
-package Local::Math 1.3;
+package Local::User 1.3;
 # ...
 my @USERS = (
   {
