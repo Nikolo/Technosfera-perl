@@ -1,37 +1,43 @@
 <html>
-    <head>
-        <title>Perl</title>
-    </head>
-    <body>
-        <p>
-            <a href="/viewer?lect=intro">intro</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=syntax">syntax</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=mod">mod</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=extern-world">extern-world</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=oop">oop</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=db">db</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=web">web</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=xs">xs</a>
-        </p>
-        <p>
-            <a href="/viewer?lect=test">test</a>
-        </p>
-        <p>
-            <img src="http://i.imgur.com/5dzps3J.gif">
-        </p>
-    </body>
+  <head>
+    <title>Perl</title>
+  </head>
+  <body>
+    <p>
+      <form method="GET" action="viewer">
+        <select name="lect">
+          <option value="intro">intro</option>
+          <option value="syntax">syntax</option>
+          <option value="mod">mod</option>
+          <option value="extern-world">extern-world</option>
+          <option value="oop">oop</option>
+          <option value="db">db</option>
+          <option value="web">web</option>
+          <option value="xs">xs</option>
+          <option value="test">test</option>
+        </select>
+        <select name="university">
+          <option value="park">park</option>
+          <option value="sphere">sphere</option>
+          <option value="track">track</option>
+          <option value="atom">atom</option>
+        </select>
+        <select name="teacher">
+          <option value="anosov">anosov</option>
+          <option value="kazakov">kazakov</option>
+          <option value="matveev">matveev</option>
+          <option value="mons">mons</option>
+          <option value="nurtdinov">nurtdinov</option>
+          <option value="panteleev">panteleev</option>
+          <option value="pushtaev">pushtaev</option>
+          <option value="reznikov">reznikov</option>
+          <option value="shulyakovskiy">shulyakovskiy</option>
+        </select>
+        <input type="submit" value="Go!">
+      </form>
+    </p>
+    <p>
+      <img src="http://i.imgur.com/5dzps3J.gif">
+    </p>
+</body>
 </html>
