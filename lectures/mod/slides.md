@@ -1090,22 +1090,24 @@ $VAR6 = {
 
 # Стандартные модули
 
-## Модуль `Getopt::Std`
+## Модуль `Getopt::Long`
 
 ```perl
-#!/usr/bin/perl
-use Getopt::Std;
+use Getopt::Long;
 use Data::Dumper;
-getopts("oDi:", \%opts);
-print Dumper(\%opts);
+GetOptions(
+    'format=s' => \$format,
+    verbose => \$verbose,
+);
+print Dumper [$format, $verbose];
 ```
 
 ```perl
-# ./getopt -D -i 123
-$VAR1 = {
-          'D' => 1,
-          'i' => '123'
-        };
+# ./script.pl --format xml --verbose
+$VAR1 = [
+          'xml',
+          1
+        ];
 ```
 
 ---
