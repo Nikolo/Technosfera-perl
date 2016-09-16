@@ -12,22 +12,26 @@
 }
 
 .lastpage h1 {
-    margin-top: 227px;
+    margin-top: 240px;
     margin-left: 150px;
 }
 
 .lastpage h2 {
     position: absolute;
-    margin-top: 260px;
+    margin-top: 295px;
     margin-left: 530px;
 }
-
+/*
+.lastpage .remark-slide-number, .firstpage .remark-slide-number {
+    visibility: hidden;
+};
+*/
 .teacher img {
     margin-left: 22%;
 }
 
 .firstpage h2 {
-    margin-top: 550px;
+    margin-top: 590px;
     margin-left: 500px;
 }
 
