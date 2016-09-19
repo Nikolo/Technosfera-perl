@@ -59,7 +59,7 @@ class:note_and_mark title
 
 ---
 
-# `eval`
+# Функция `eval`
 
 * видит переменные, объявленные снаружи
 * имеет свою область видимости
@@ -68,7 +68,7 @@ class:note_and_mark title
 
 ---
 
-# `eval`
+# Функция `eval`
 
 ```perl
 my $E = 2.72;
@@ -89,7 +89,9 @@ print "PI=$PI\n";                 # PI=undef
 
 ---
 
-# `do` = open + eval?
+# Функция `do`
+
+## `do` = open + eval?
 
 * видит переменные, объявленные снаружи
 * имеет свою область видимости
@@ -99,7 +101,9 @@ print "PI=$PI\n";                 # PI=undef
 
 ---
 
-# `do` = open + eval?
+# Функция `do`
+
+## `do` = open + eval?
 
 ```perl
 # Local/Math.pm
@@ -115,10 +119,11 @@ my $PI = 3.14159265;
 
 ---
 
-# `do` = open + eval?
+# Функция `do`
+
+## `do` = open + eval?
 
 ```perl
-# do.pl
 sub do {
     my ($file) = @_;
     $! = $@ = undef;
@@ -135,14 +140,15 @@ print 'do=',                        # Loading...
 print '$@=', $@, "\n";              # $@=undef
 print '$!=', $!, "\n";              # $!=undef
 print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
-
 ```
 ---
 
-# `do` = open + eval + @INC!
+# Функция `do`
+
+## `do` = open + eval?
 
 ```bash
-*$ perl -e 'print join "\n", @INC‘ | head –3
+*$ perl -e 'print join "\n", @INC' | head –3
 /usr/local/lib64/perl5
 /usr/local/share/perl5
 /usr/lib64/perl5/vendor_perl
@@ -150,23 +156,23 @@ print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
 
 ```bash
 *$ PERL5LIB=/home/www/lib \
-*>     perl -e 'print join "\n", @INC' | head -3
+*>     perl -e 'print join "\n", @INC' | head -2
 /home/www/lib
 /usr/local/lib64/perl5
-/usr/local/share/perl5
 ```
 
 ```bash
 *$ perl -I/home/www/lib \
-*>     -e 'print join "\n", @INC' | head -3
+*>     -e 'print join "\n", @INC' | head -2
 /home/www/lib
 /usr/local/lib64/perl5
-/usr/local/share/perl5
 ```
 
 ---
 
-# `do` = open + eval + @INC!
+# Функция `do`
+
+## `do` = open + eval + @INC!
 
 ```perl
 # simplified implementation
@@ -189,7 +195,9 @@ sub do {
 
 ---
 
-# `require` = do + die + %INC?
+# Функция `require`
+
+## `require` = do + die + %INC?
 
 * останавливает выполнение в случае ошибки открытия файла, компиляции или выполнения
 * не пытается загрузить и выполнить файл, если он уже был загружен ранее
@@ -198,7 +206,9 @@ sub do {
 
 ---
 
-# `require` = do + die + %INC?
+# Функция `require`
+
+## `require` = do + die + %INC?
 
 ```perl
 # simplified implementation
@@ -220,7 +230,9 @@ sub require {
 
 ---
 
-# `require` = do + die + %INC?
+# Функция `require`
+
+## `require` = do + die + %INC?
 
 ```perl
 $E = 2.72;
@@ -576,7 +588,9 @@ chomp $z;                        # "3"
 
 ---
 
-# `require`=do+die+%INC+namespace!
+# Функция `require`
+
+## `require`=do+die+%INC+namespace!
 
 ```perl
 require "/home/www/lib/Local/Math.pm";
@@ -586,7 +600,9 @@ require Local::Math;                   # BAREWORD!
 
 ---
 
-# `require`=do+die+%INC+namespace!
+# Функция `require`
+
+## `require`=do+die+%INC+namespace!
 
 ```perl
 sub pkg_to_filename {
@@ -608,9 +624,9 @@ sub require {
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
-`${^GLOBAL_PHASE}` – фаза работы интерпретатора
+`${^GLOBAL_PHASE}` – фаза работы интерпретатора perl
 * CONSTRUCT
 * START
 * CHECK
@@ -621,7 +637,7 @@ sub require {
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
         warn "[${^GLOBAL_PHASE}] Runtime 1\n";
@@ -642,7 +658,7 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 [START] Begin 1
@@ -661,15 +677,15 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 * `require` использует `eval`
 * `mod_perl` выполняет приложение, используя `eval`
-* как работают фазы в `eval`?
+* как работают фазы и специальные блоки в `eval`?
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 warn "[${^GLOBAL_PHASE}] --- BEFORE EVAL\n";
@@ -687,7 +703,7 @@ warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 [RUN] --- BEFORE EVAL
@@ -707,7 +723,7 @@ warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 # Local/Phases.pm
@@ -733,7 +749,7 @@ BEGIN     { warn __PACKAGE__, " compile end\n"   }
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 main compile start
@@ -755,7 +771,7 @@ Local::Phases runtime
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 # Local/Phases.pm
@@ -781,7 +797,7 @@ BEGIN     { warn __PACKAGE__, " compile end\n"   }
 
 ---
 
-# Фазы компиляции и выполнения
+# Фазы работы интерпретатора
 
 ```perl
 main compile start
@@ -800,7 +816,9 @@ main runtime
 
 ---
 
-# `use` = BEGIN + require?
+# Директива `use`
+
+## `use` = BEGIN + require?
 
 ```perl
 use Local::Math;   # BAREWORD
@@ -818,7 +836,9 @@ BEGIN { print Local::Math::pow(2, 8) }
 
 ---
 
-# `use` = BEGIN + require + import?
+# Директива `use`
+
+## `use` = BEGIN + require + import?
 
 ```perl
 use Some::Module ();
@@ -836,7 +856,9 @@ BEGIN {
 
 ---
 
-# `use` = BEGIN + require + import?
+# Директива `use`
+
+## `use` = BEGIN + require + import?
 
 ```perl
 use Some::Module;
@@ -861,7 +883,9 @@ BEGIN {
 
 ---
 
-# `use` = BEGIN + require + import?
+# Директива `use`
+
+## `use` = BEGIN + require + import?
 
 ```perl
 # Local/Math.pm
@@ -882,7 +906,9 @@ print pow(2,8), "\n";             # 256
 
 ---
 
-# `use` = BEGIN + require + import?
+# Директива `use`
+
+## `use` = BEGIN + require + import?
 
 ```perl
 # Local/Math.pm
@@ -907,7 +933,9 @@ print pow(2,8), "\n";
 
 ---
 
-# `use`=BEGIN+require+import+version!
+# Директива `use`
+
+## `use` = BEGIN + require + import + version!
 
 ```perl
 # Local/Math.pm
@@ -928,7 +956,9 @@ use Local::Math 1.26;
 
 ---
 
-# `use`=BEGIN+require+import+version!
+# Директива `use`
+
+## `use` = BEGIN + require + import + version!
 
 ```perl
 package Local::Math;
@@ -953,7 +983,9 @@ use Local::Math v1.26.2;
 
 ---
 
-# `use`=BEGIN+require+import+version!
+# Директива `use`
+
+## `use` = BEGIN + require + import + version!
 
 ```perl
 use 5.20;
@@ -975,7 +1007,9 @@ use 5.020_000;
 
 ---
 
-# Стандартные модули: `Exporter`
+# Стандартные модули
+
+## Модуль `Exporter`
 
 ```perl
  package Local::Math;
@@ -997,7 +1031,9 @@ use 5.020_000;
 
 ---
 
-# Стандартные модули: `Exporter`
+# Стандартные модули
+
+## Модуль `Exporter`
 
 ```perl
 use Local::Math ();                 # nothing
@@ -1010,7 +1046,9 @@ use Local::Math qw/:const &sqr/;    # $PI $E sqr
 
 ---
 
-# Стандартные модули: `Data::Dumper`
+# Стандартные модули
+
+## Модуль `Data::Dumper`
 
 ```perl
 use Data::Dumper;
@@ -1027,7 +1065,9 @@ warn Dumper($u, $v, $w, $x, \@y, \%z);
 
 ---
 
-# Стандартные модули: `Data::Dumper`
+# Стандартные модули
+
+## Модуль `Data::Dumper`
 
 ```perl
 $VAR1 = \\'3.14';
@@ -1048,27 +1088,33 @@ $VAR6 = {
 
 ---
 
-# Стандартные модули: `Getopt::Std`
+# Стандартные модули
+
+## Модуль `Getopt::Long`
 
 ```perl
-#!/usr/bin/perl
-use Getopt::Std;
+use Getopt::Long;
 use Data::Dumper;
-getopts("oDi:", \%opts);
-print Dumper(\%opts);
+GetOptions(
+    'format=s' => \$format,
+    verbose => \$verbose,
+);
+print Dumper [$format, $verbose];
 ```
 
 ```perl
-# ./getopt -D -i 123
-$VAR1 = {
-          'D' => 1,
-          'i' => '123'
-        };
+# ./script.pl --format xml --verbose
+$VAR1 = [
+          'xml',
+          1
+        ];
 ```
 
 ---
 
-# Стандартные модули: `POSIX`
+# Стандартные модули
+
+## Модуль `POSIX`
 
 ```perl
 use POSIX ();
@@ -1077,7 +1123,6 @@ use POSIX ();
 ```perl
 print POSIX::ceil(2.72), "\n";             # 3
 print POSIX::floor(2.72), "\n";            # 2
-print join('@', POSIX::modf(2.72)),"\n";   # 0.72@2
 ```
 
 ```perl
@@ -1095,7 +1140,9 @@ print POSIX::strftime("%Y-%m-%d %T / %B",
 
 ---
 
-# Прагмы: `strict`
+# Прагмы
+
+## Модуль `strict`
 
 ```perl
 use strict 'vars';
@@ -1109,7 +1156,9 @@ $baz = 3;
 
 ---
 
-# Прагмы: `strict`
+# Прагмы
+
+## Модуль `strict`
 
 ```perl
 use strict 'refs';
@@ -1126,7 +1175,9 @@ print $$ref;
 
 ---
 
-# Прагмы: `strict`
+# Прагмы
+
+## Модуль `strict`
 
 ```perl
 $x = \foo;
@@ -1143,7 +1194,9 @@ $x = \foo;
 
 ---
 
-# Прагмы: `strict`
+# Прагмы
+
+## Модуль `strict`
 
 ```perl
 use strict;                   # qw/vars refs subs/
@@ -1160,25 +1213,32 @@ print $$ref;
 
 ---
 
-# Прагмы: `warnings`
+# Прагмы
+
+## Модуль `warnings`
 
 ```perl
 use warnings;
 use warnings 'deprecated';
 
-print 5+"a";                      # 5
-Argument "a" isn't numeric in addition (+)
+print "foo" . undef;                 # foo
+# Use of uninitialized value in concatenation (.)
+#     or string
+
+no warnings 'uninitialized';
+print "foo" . undef;                 # foo
 ```
 
 ```bash
-$ perl -we 'print(5+"a")'
-Argument "a" isn't numeric in addition (+)
-5
+$ perl -we 'print 5 + "a"'           # 5
+# Argument "a" isn't numeric in addition (+)
 ```
 
 ---
 
-# Прагмы: `diagnostics`
+# Прагмы
+
+## Модуль `diagnostics`
 
 ```perl
 use diagnostics;
@@ -1194,7 +1254,9 @@ print 5+"a";                      # 5
 
 ---
 
-# Прагмы: `lib`
+# Прагмы
+
+## Модуль `lib`
 
 ```perl
 use lib qw(/home/www/lib /home/www/lib2);
@@ -1210,7 +1272,9 @@ BEGIN {
 
 ---
 
-# Прагмы: `feature`
+# Прагмы
+
+## Модуль `feature`
 
 ```perl
 use feature qw/say state/;     # a lot of features
@@ -1223,7 +1287,9 @@ state $x = 10;
 
 ---
 
-# Прагмы: `constant`
+# Прагмы
+
+## Модуль `constant`
 
 ```perl
 use constant PI => 3.14159265;
@@ -1542,7 +1608,7 @@ $ perl auth taburet.98@mail.ru admin
 # Пишем модуль
 
 ```perl
-package Local::Math 1.2;
+package Local::User 1.2;
 # ...
 # not strong enough :-(
 use Digest::MD5 'md5_hex';
@@ -1612,7 +1678,7 @@ die "Введен неправильный пароль\n"
 # Пишем модуль
 
 ```perl
-package Local::Math 1.3;
+package Local::User 1.3;
 # ...
 my @USERS = (
   {

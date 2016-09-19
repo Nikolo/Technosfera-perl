@@ -3,7 +3,7 @@
 <head>
     <title>Программирование на Perl</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href='/viewer/base.css' />
+    <link rel="stylesheet" type="text/css" href='./base.css' />
     <style type="text/css">
         @font-face {
             font-family: 'HelveticaNeueCyr';
@@ -50,7 +50,7 @@
             var style = document.createElement("link");
             style.setAttribute("rel", "stylesheet");
             style.setAttribute("type", "text/css");
-            style.setAttribute("href", '/viewer/' + parseGet('university') + '.css');
+            style.setAttribute("href", './' + parseGet('university') + '.css');
             document.head.appendChild(style);
             var path = '../lectures/' + parseGet('lect') + '/';
             var slideshow = remark.create({
@@ -60,7 +60,7 @@
                     highlightSpans: true,
             });
             $('img').each(function(){$(this).attr('src', path + $(this).attr('src'))});
-	    $('.teacher img').attr('src', '/viewer/teacher/' + parseGet('teacher') + '.svg');
+	    $('.teacher img').attr('src', './teacher/' + parseGet('teacher') + '.svg');
         });
     </script>
 </body>
