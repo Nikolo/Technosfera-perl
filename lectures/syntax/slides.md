@@ -428,6 +428,18 @@ layout:true
 ---
 
 * SCALAR (`$s`)
+    - Number
+    - String
+    - Reference
+* ARRAY (`@a`, `$a[...]`)
+    - Of scalars
+* HASH (`%h`, `$h{key}`, `$h{...}`)
+    - Key: string
+    - Value: scalar
+
+---
+
+* SCALAR (`$s`)
     - Number (`$s = 1`, `$s = -1e30`)
     - String (`$s = "str"`)
     - Reference
@@ -1048,7 +1060,7 @@ say map chr($_), 32..127;
 } @nums;
 
 my @reduced =
-    map $_->[1],
+    map $_->[0],
     grep { int($_->[1]) == $_->[1] }
     map { [$_,sqrt $_] } 1..1000;
 ```
@@ -1136,24 +1148,6 @@ say "\u\LnAmE\E"; # Name
 
 ---
 
-* `chr`, `ord`, `hex`, `oct`
-
-```perl
-use utf8; use open qw(:utf8 :std);
-say chr(80);         # P
-say ord("P");        # 80
-say ord(chr(-1));    # 65533, BOM \x{fffd}
-say ord("±");        # 177
-say chr(177);        # ±
-say chr(9786);       # ☺
-say ord "ё";         # 1105
-say hex "dead_beaf"; # 3735928495
-say hex "0xDEAD";    # 57005
-say oct "04751";     # 2537
-```
-
----
-
 * `reverse`, `sprintf`
 
 ```perl
@@ -1172,19 +1166,6 @@ $a = sprintf"%c %s %d %u\n%o %x %e %f %g",
 say $a;
 # ☺ str -42 18446744073709551615
 # 4751 dead 1.111111e-01 0.333333 6.626e-34
-```
-
----
-
-* `abs`, `int`, `srand`, `rand`, `log`, `exp`, `sin`, `cos`, `atan2`, `sqrt`
-
-```perl
-while (<>) {
-    say int( log ( abs $_ ) / log 10 );
-}
-
-printf "%g\n", log ( 1e6 ) / log( 10 ) - 6 ;
-# -8.88178e-16
 ```
 
 ---
@@ -1222,13 +1203,15 @@ $a[$i] = $y         splice(@a,$i,1,$y)
 ```
 
 ```perl
-@a = ( 1, 2, 3, 4, 5, 6, 7 );
-#│        └────┬┘
-#│        └─┐  │     ┌ replacement
-#└──────┐   │  │  ┌──┴───┐
-splice( @a, 1, 3, ( 8, 9 ) );
+@a =      ( 1, 2, 3, 4, 5, 6, 7 );
+#│             └────┬┘
+#│             └─┐  │     ┌ replacement
+#└───────────┐   │  │  ┌──┴───┐
+@b = splice( @a, 1, 3, ( 8, 9 ) );
 say @a;
 # 1, 8, 9, 5, 6, 7
+say @b;
+# 2, 3, 4
 ```
 
 ---
@@ -1268,6 +1251,26 @@ printf "# %04u-%02u-%02uT%02u:%02u:%02u\n",
    $Y+1900, $M+1, $D, $h, $m, $s; 
 printf "# Day no: %u, Weekday: %u\n", $Yd, $Wd;
 say strftime "%r",localtime($time+40);
+
+---
+
+* `ref`
+
+```perl
+my $s = "test";
+say ref $s;                   # ""
+
+my $aref = []; say ref $aref; # ARRAY
+my $href = {}; say ref $href; # HASH
+my $sref = \1; say ref $sref; # SCALAR
+
+my $rr = \$sref; say ref $rr; # REF
+
+say ref sub {};               # CODE
+
+my %h = (k => []);
+say ref $h{k};                # ARRAY
+```
 
 ---
 
@@ -1332,7 +1335,8 @@ layout:false
 
 ---
 class: optable
-### Приоритеты операторов
+# Приоритеты операторов
+
 ассоциативность | оператор
 :---------------|:---------
 left            | TERM и LIST (leftward)
@@ -1560,7 +1564,7 @@ my @a = ( 1,2,sort 3,4+$v,6x2,7 );
 ---
 layout:false
 # Оператор стрелочка (`->`)
-> суффиксный оператор разыменования<code><br></code>
+> суффиксный оператор разыменования  
 > (infix dereference)
 
 ```perl
@@ -1583,7 +1587,7 @@ STMT->$var(...)
 ```
 ---
 # Операторы инкремента
-> Аналогичны соответствующим в C<code><br></code>
+> Аналогичны соответствующим в C  
 > (auto-increment and auto-decrement)
 
 ```perl
@@ -1618,10 +1622,10 @@ say ++($a = "zZ9"); # aaA0
 
 ---
 # Унарные операторы - `!`
-> логическое отрицание<code><br></code>
+> логическое отрицание  
 > logical negation
 
-> False: `0`, `""`, `undef`, overloaded obj<code><br></code>
+> False: `0`, `""`, `undef`, overloaded obj  
 > True: остальное, по умолчанию `1`
 
 ```perl
@@ -1633,9 +1637,9 @@ say ++($a = "zZ9"); # aaA0
 
 ---
 # Унарные операторы - `-`
-> математическое отрицание<code><br></code>
-> arithmetic negation<code><br></code>
-> • специальное поведение на строках<code><br></code>
+> математическое отрицание  
+> arithmetic negation  
+> • специальное поведение на строках  
 
 ```perl
 -0       #  0
@@ -1654,7 +1658,7 @@ say ++($a = "zZ9"); # aaA0
 ---
 
 # Унарные операторы - `~`
-> битовая инверсия<code><br></code>
+> битовая инверсия  
 > bitwise negation
 
 ```perl
@@ -1676,10 +1680,11 @@ use utf8;
 ---
 
 # Унарные операторы - `+`
-> унарный плюс<code><br></code>
+> унарный плюс  
 > unary "+"
 
-Не имеет эффекта,<code><br></code>используется как разделитель
+Не имеет эффекта,  
+используется как разделитель
 
 ```perl
 say +( 1 + 2 ) * 3; # 9
@@ -1692,7 +1697,7 @@ map { +{ $_ => -$_} } @_;
 ---
 
 # Операторы - `=~`, `!~`
-> Применение регэкспа<code><br></code>
+> Применение регэкспа  
 > match, binding
 
 ```perl
@@ -1716,7 +1721,7 @@ if ($var = (~(/match/))) {...}
 ---
 
 # Операторы - `*` `/` `%` `x`
-> Умножение, деление, остаток, повтор<code><br></code>
+> Умножение, деление, остаток, повтор  
 > multiply, divide, modulo, repeat
 
 ```perl
@@ -1731,7 +1736,7 @@ say join ",",(9,10)x3; # 9,10,9,10,9,10
 ---
 
 # Операторы - `+` `-` `.`
-> Сложение, вычитание, конкатенация<code><br></code>
+> Сложение, вычитание, конкатенация  
 > add, subtract, concat
 
 ```perl
@@ -1750,10 +1755,10 @@ say "a"."b";     # ab
 ---
 
 # Операторы - `<<` `>>`
-> Сдвиг влево, сдвиг вправо<code><br></code>
+> Сдвиг влево, сдвиг вправо  
 > shift-left, shift-right
 
-Реализовано полностью с использованием C<code><br></code>
+Реализовано полностью с использованием C  
 Поведение аналогично
 
 ```perl
@@ -1767,7 +1772,7 @@ say 20 << 80;  # 24178516392292583494123520
 ---
 
 # Операторы сравнения
-> `<`, `>`, `<=`, `>=`, `lt`, `gt`, `le`, `ge`<code><br></code>
+> `<`, `>`, `<=`, `>=`, `lt`, `gt`, `le`, `ge`  
 > relational operators
 
 ```perl
@@ -1785,7 +1790,7 @@ say "100" > "20"; # 1
 
 # Операторы равенства
 
-> `==`, `!=`, `<=>`, `eq`, `ne`, `cmp`<code><br></code>
+> `==`, `!=`, `<=>`, `eq`, `ne`, `cmp`  
 > equality operators
 
 ```perl
@@ -1808,8 +1813,8 @@ say "No NaN" if "NaN" == "NaN";
 ---
 
 # Оператор умного сравнения
-> `~~`, perl 5.10.1+<code><br></code>
-> smartmatch operator<code><br></code>
+> `~~`, perl 5.10.1+  
+> smartmatch operator  
 > .red[experimental in 5.18+]
 
 ```perl
@@ -1829,7 +1834,7 @@ given ($num) {
 ---
 
 # Битовые операторы
-> `&`, `|`, `^`<code><br></code>
+> `&`, `|`, `^`  
 > and, or, xor
 
 ```perl
@@ -1849,7 +1854,7 @@ say "test" & "^^^^"; # TDRT
 
 # C-style логические операторы
 
-> `&&`, `||`, `//`<code><br></code>
+> `&&`, `||`, `//`  
 > and, or, defined-or
 
 * Выполняются последовательно
@@ -1871,8 +1876,8 @@ $a = defined $x ? $x : $y;
 
 # Операторы диапазона
 
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
+> `..`, `...`  
+> range operators  
 > .red[списковый контекст]
 
 ```perl
@@ -1891,8 +1896,8 @@ say "A"..."Z";
 
 # Операторы диапазона (flip-flop)
 
-> `..`, `...`<code><br></code>
-> range operators<code><br></code>
+> `..`, `...`  
+> range operators  
 > .red[скалярный (логический) контекст]
 > константный операнд
 
@@ -1913,7 +1918,7 @@ for $. (1,2,3,4,5) { # $. - $INPUT_LINE_NUMBER
 
 # Тернарный оператор
 
-> `?:`<code><br></code>
+> `?:`  
 > ternary operator, as in C
 
 ```perl
@@ -1927,8 +1932,8 @@ $a = $ok ? $b : $c;
 
 # Оператор присваивания
 
-> `=`<code><br></code>
-> assignment operator, as in C<code><br></code>
+> `=`  
+> assignment operator, as in C  
 
 * `+=` `-=` 
 * `*=` `/=` `%=` `**=`
@@ -1939,8 +1944,8 @@ $a = $ok ? $b : $c;
 
 # Оператор запятая
 
-> `,` запятая, `=>` жирная запятая<code><br></code>
-> comma, fat comma<code><br></code>
+> `,` запятая, `=>` жирная запятая  
+> comma, fat comma  
 
 ```perl
 $a = do { say "one"; 3 }, do { say "two"; 7};
@@ -1962,7 +1967,7 @@ use constant CONST => "some";
 
 # Низкоприоритетные операторы
 
-> `and`, `or`, `xor`, `not`<code><br></code>
+> `and`, `or`, `xor`, `not`  
 
 * операторы с нижайшим приоритетом
 
@@ -1985,7 +1990,7 @@ do_one() and do_two() or do_another();
 layout:true
 # Оператор кавычки
 
-> `q` `qq` `qw` `qx` `qr` `s` `y` `tr`<code><br></code>
+> `q` `qq` `qw` `qx` `qr` `s` `y` `tr`  
 > quote-like operators
 ---
 
@@ -2033,15 +2038,23 @@ for (qw(/usr /var)) {
 
 ---
 
+
 * `qx` - внешняя команда
     - с интерполяцией
     - qx'...' - без интерполяции
+
+.apos[
 
 ```perl
 say qx{uname -a};
 
 say qx'echo $HOME';
+
+say `date`;
+
 ```
+
+]
 
 ---
 
@@ -2100,7 +2113,7 @@ perl -le 'while (<>) { `}{` print$. }'
 ```perl
 *~~           Inchworm           Scalar context
 
-say scalar ~~localtime();
+say ~~localtime();
 #say scalar localtime();
 ```
 

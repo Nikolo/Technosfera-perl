@@ -35,6 +35,10 @@
     padding-top: 70px;
 }
 
+.remark-slide-content.optable {
+    padding-top: 80px;
+}
+
 h1, h2, h3 {
     font-family: 'HelveticaNeueCyrBold';
     color: #C1010D;
