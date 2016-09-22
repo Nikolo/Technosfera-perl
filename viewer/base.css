@@ -238,5 +238,18 @@ table td, table th {}
 .small .remark-code {
     font-size: 18px !important;
 }
+.small16 .remark-code {
+    font-size: 16px !important;
+}
+.small14 .remark-code {
+    font-size: 14px !important;
+}
 
+table .small16 {
+    font-size: 16px !important;
+}
+
+.small16 .remark-inline-code {
+    font-size: 16px !important;
+}
 
