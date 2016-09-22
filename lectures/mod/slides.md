@@ -124,7 +124,7 @@ my $PI = 3.14159265;
 ## `do` = open + eval?
 
 ```perl
-sub do {
+sub my_do {
     my ($file) = @_;
     $! = $@ = undef;
 
@@ -135,8 +135,8 @@ sub do {
     eval $code;
 }
 
-print 'do=',                        # Loading...
-    &do("Local/Math.pm"),"\n";      # do=3.14159265
+print 'my_do=',                     # Loading...
+    my_do("Local/Math.pm"),"\n";    # do=3.14159265
 print '$@=', $@, "\n";              # $@=undef
 print '$!=', $!, "\n";              # $!=undef
 print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
@@ -185,7 +185,7 @@ sub find_in_inc {
     die "Can't find file $file in \@INC";
 }
 
-sub do {
+sub my_do {
     my ($file) = @_;
     $file = find_in_inc($file);
 
@@ -212,7 +212,7 @@ sub do {
 
 ```perl
 # simplified implementation
-sub require {
+sub my_require {
     my ($file) = @_;
     return 1 if $INC{$file};
 
@@ -611,7 +611,7 @@ sub pkg_to_filename {
     return "${pkg}.pm";
 }
 
-sub require {
+sub my_require {
     my ($file) = @_;
 
     # simplified implementation
