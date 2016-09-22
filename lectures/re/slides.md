@@ -1,9 +1,4 @@
-class:firstpage
-# Программирование на Perl
-
----
-
-class:firstpage
+class:firstpage, title
 # Регулярные выражения и юникод
 
 ---
@@ -51,20 +46,7 @@ layout: true
 ---
 class:center,middle
 
-.img-uni[
-![image]( unicode.png )
-]
-
----
-class:center,middle
-
-.huge1[☺]
-
-WHITE SMILING FACE<br/>
-U+263A<br/>
-"\x{263A}"<br/>
-"\xE2\x98\xBA"<br/>
-"\342\230\272"
+<img src="unicode.png" width="80%"/>
 
 ---
 class:center,middle
@@ -257,22 +239,20 @@ use Encode qw(encode decode);
 my $bin = "\342\230\272";
 printf "%vX", $bin; # E2.98.BA
 
-my $str = decode("utf-8", $b); # "\x{263a}"
+my $str = decode("utf-8", $bin); # "\x{263a}"
 printf "%vX",$str; # 263A
-
 my $bin = encode("utf-8", $str); # "\342\230\272"
 printf "%vX", $bin; # E2.98.BA
 
 my $bytes_dos = "\xf1"; # cp866 ё
 printf "%vX", $bytes_dos; # F1
-my $chars = decode("cp866",$bytes_866);
+my $chars = decode("cp866",$bytes_dos);
 my $bytes_win = encode("cp1251", $chars);
 printf "%vX", $bytes_win; # B8
 
 my $to = encode("cp1251",decode("cp866",$from));
 from_to($from,"cp866","cp1251"); # inplace
 ```
-
 
 ---
 
@@ -354,7 +334,7 @@ SV = PV(0x7fa153802948) at 0x7fa153005b00
 $ perl -MDevel::Peek -E 'Dump "\x{100}"'
 SV = PV(0x7fcdbc003548) at 0x7fcdbc02c100
   REFCNT = 1
-* FLAGS = (PADTMP,POK,READONLY,pPOK,UTF8)
+  FLAGS = (PADTMP,POK,READONLY,pPOK,`UTF8`)
   PV = 0x7fcdbb707110 "\304\200"\0 [`UTF8 "\x{100}"`]
   CUR = 2
   LEN = 16
@@ -443,7 +423,7 @@ $ export PERL_UNICODE=S
 ```perl
 binmode(STDOUT,':utf8');
 open my $f, '<:utf8', 'file.txt';
-use open qw(:std); # auto
+use open qw(:std :utf8); # auto
 ```
 
 ---
@@ -697,11 +677,6 @@ layout: false
 - [Статья Joel Spolsky про кодировки](http://local.joelonsoftware.com/wiki/%D0%90%D0%B1%D1%81%D0%BE%D0%BB%D1%8E%D1%82%D0%BD%D1%8B%D0%B9_%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D1%83%D0%BC,_%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%8B%D0%B9_%D0%9A%D0%B0%D0%B6%D0%B4%D1%8B%D0%B9_%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA_%D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE_%D0%9E%D0%B1%D0%B5%D1%81%D0%BF%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D1%8F_%D0%9E%D0%B1%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE_%D0%94%D0%BE%D0%BB%D0%B6%D0%B5%D0%BD_%D0%97%D0%BD%D0%B0%D1%82%D1%8C_%D0%BE_Unicode_%D0%B8_%D0%9D%D0%B0%D0%B1%D0%BE%D1%80%D0%B0%D1%85_%D0%A1%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D0%BE%D0%B2)
 
 ---
-class:center,middle
-
-# Регулярные выражения
-
----
 
 # Регулярные выражения
 > (*regular expressions*)
@@ -862,7 +837,7 @@ $ . | * + ? \
 
 ---
 
-# Классы символов<br/>(character classes)
+# Классы символов
 
 ```perl
 [...]      # перечисление
@@ -1635,18 +1610,13 @@ for ($str) {
 }
 ```
 
-
 ---
-class: center, middle
+
 layout:false
+class:lastpage title
 
-# \_\_END\_\_
+# Спасибо за внимание!
 
----
-class:lastpage
+## Оставьте отзыв
 
-# Оставьте отзыв на портале
-
-Благодарю за внимание!
-
-Mons Anderson &lt;<mons@cpan.org>&gt;
+.teacher[![teacher]()]
