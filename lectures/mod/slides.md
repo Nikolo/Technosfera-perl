@@ -1432,14 +1432,14 @@ perl-JSON-PP.noarch : JSON::XS compatible pure-Perl
 
 # Список литературы
 
-* perldoc `perlmod`
-* perldoc `perlvar`
-* perldoc `perlfunc`
-* perldoc `perlpragma`
-* perldoc `perlmodlib`
-* perldoc `cpan`
-* perldoc `perlnewmod`
-* perldoc `perlmodstyle`
+* perldoc [`perlmod`](http://perldoc.perl.org/perlmod.html)
+* perldoc [`perlvar`](http://perldoc.perl.org/perlvar.html)
+* perldoc [`perlfunc`](http://perldoc.perl.org/perlfunc.html)
+* perldoc [`perlpragma`](http://perldoc.perl.org/perlpragma.html)
+* perldoc [`perlmodlib`](http://perldoc.perl.org/perlmodlib.html)
+* perldoc [`cpan`](http://perldoc.perl.org/cpan.html)
+* perldoc [`perlnewmod`](http://perldoc.perl.org/perlnewmod.html)
+* perldoc [`perlmodstyle`](http://perldoc.perl.org/perlmodstyle.html)
 
 ---
 
@@ -1748,6 +1748,8 @@ my %CHECKERS = (
 Функционал должен быть разумно распределен по модулям, в самом скрипте должен остаться абслютно необходимый минимум.
 
 Дополнительно предлагается к получившимся модулям добавить автотесты. Это полностью опциональный пункт, на количество баллов его исполнение не повлияет.
+
+https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/music_library
 
 ---
 
