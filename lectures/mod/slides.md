@@ -178,7 +178,7 @@ print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
 # simplified implementation
 sub find_in_inc {
     my ($file) = @_;
-    return $file if $file =~ m!^/!;
+    return $file if $file =~ m/^\//;
     foreach my $path (@INC) {
         return "$path/$file" if -f "$path/$file";
     }
@@ -865,7 +865,8 @@ use Some::Module;
 
 BEGIN {
     require Some::Module;
-    Some::Module::import("Some::Module"); # if can
+    Some::Module->import(); # if can
+    # Some::Module::import('Some::Module');
 }
 ```
 
@@ -874,10 +875,7 @@ use Some::Module ('arg1', 'arg2');
 
 BEGIN {
     require Some::Module;
-    Some::Module::import(                 # if can
-        "Some::Module",
-        'arg1', 'arg2'
-    );
+    Some::Module->import('arg1', 'arg2');
 }
 ```
 
@@ -915,9 +913,7 @@ print pow(2,8), "\n";             # 256
 sub unimport {
     my $self = shift;
     my ($pkg) = caller(0);
-    foreach my $func (@_) {
-        delete ${"${pkg}::"}{$func};
-    }
+    delete ${"${pkg}::"}{$_} foreach @_;
 }
 ```
 
@@ -925,7 +921,6 @@ sub unimport {
 # main.pl
 use Local::Math qw/pow sqr/;
 print pow(2,8), "\n";             # 256
-
 no Local::Math qw/pow/;
 print pow(2,8), "\n";
 # Undefined subroutine &main::pow called
@@ -940,7 +935,7 @@ print pow(2,8), "\n";
 ```perl
 # Local/Math.pm
 package Local::Math;
-$VERSION = 1.25;
+our $VERSION = 1.25;
 
 # package Local::Math 1.25;
 
@@ -962,7 +957,7 @@ use Local::Math 1.26;
 
 ```perl
 package Local::Math;
-$VERSION = v1.25.01;
+our $VERSION = v1.25.01;
 print $Local::Math::VERSION;  # ???
 ```
 
@@ -1016,15 +1011,15 @@ use 5.020_000;
 
  use Exporter;
  *import = \&Exporter::import;
- @EXPORT_OK = qw/$PI pow sqr/;
- %EXPORT_TAGS = (
+ our @EXPORT_OK = qw/$PI pow sqr/;
+ our %EXPORT_TAGS = (
      func  => [ qw/pow sqr/ ],
      const => [ qw/$PI $E/  ],
  );
- @EXPORT = qw/$PI/;
+ our @EXPORT = qw/$PI/;
 
- $PI = 3.14159265;
- $E = 2.71828183;
+ our $PI = 3.14159265;
+ our $E = 2.71828183;
  sub pow  { $_[0] ** $_[1]  }
  sub sqr  { pow($_[0], 0.5) }
 ```
@@ -1161,11 +1156,13 @@ $baz = 3;
 ## Модуль `strict`
 
 ```perl
-use strict 'refs';
-
 $foo = "foo"; 
 $ref = \$foo;
 print $$ref;                   # foo
+```
+
+```perl
+use strict 'refs';
 
 $ref = "foo";
 print $$ref;
@@ -1320,6 +1317,9 @@ use constant {
 * Devel::StackTrace, Devel::NYTProf
 * Archive::Zip, MP3::Info, Image::ExifTool, GD
 
+
+См. `perlmodlib`.
+
 ---
 
 # CPAN
@@ -1432,14 +1432,15 @@ perl-JSON-PP.noarch : JSON::XS compatible pure-Perl
 
 # Список литературы
 
-* perldoc [`perlmod`](http://perldoc.perl.org/perlmod.html)
-* perldoc [`perlvar`](http://perldoc.perl.org/perlvar.html)
-* perldoc [`perlfunc`](http://perldoc.perl.org/perlfunc.html)
-* perldoc [`perlpragma`](http://perldoc.perl.org/perlpragma.html)
-* perldoc [`perlmodlib`](http://perldoc.perl.org/perlmodlib.html)
-* perldoc [`cpan`](http://perldoc.perl.org/cpan.html)
-* perldoc [`perlnewmod`](http://perldoc.perl.org/perlnewmod.html)
-* perldoc [`perlmodstyle`](http://perldoc.perl.org/perlmodstyle.html)
+* [`perlmod`](http://perldoc.perl.org/perlmod.html)
+* [`perlsub`](http://perldoc.perl.org/perlsub.html)
+* [`perlvar`](http://perldoc.perl.org/perlvar.html)
+* [`perlfunc`](http://perldoc.perl.org/perlfunc.html)
+* [`perlpragma`](http://perldoc.perl.org/perlpragma.html)
+* [`perlmodlib`](http://perldoc.perl.org/perlmodlib.html)
+* [`cpan`](http://perldoc.perl.org/cpan.html)
+* [`perlnewmod`](http://perldoc.perl.org/perlnewmod.html)
+* [`perlmodstyle`](http://perldoc.perl.org/perlmodstyle.html)
 
 ---
 
