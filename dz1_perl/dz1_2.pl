@@ -1,0 +1,1 @@
+`cat dz1 | perl -lnaF';' -e 'if($F[4]>824){print $F[8]; $n++;}}{print $.,$/,$n'`
