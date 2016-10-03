@@ -1,2 +1,2 @@
-ls -l | perl -e '$/="/n"; while(<>){chomp;@ar=split(" ");$i=0;while($i<=7){print "$ar[$i];"; $i++;} if ($#ar==7) {print "\n";} else {while ($i<=$#ar) {print "$ar[$i] "; $i++;}print "\n";}}'  > 123.txt
+cat 123.txt | perl -lnaF';' -e 'if ($F[4]>1048576){print $F[8];$i++;};}{ print "Total number of strings is ".$.." Number of right strings is ".$i'
 
