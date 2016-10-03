@@ -865,8 +865,7 @@ use Some::Module;
 
 BEGIN {
     require Some::Module;
-    Some::Module->import(); # if can
-    # Some::Module::import('Some::Module');
+    Some::Module::import("Some::Module"); # if can
 }
 ```
 
@@ -875,7 +874,10 @@ use Some::Module ('arg1', 'arg2');
 
 BEGIN {
     require Some::Module;
-    Some::Module->import('arg1', 'arg2');
+    Some::Module::import(                 # if can
+        "Some::Module",
+        'arg1', 'arg2'
+    );
 }
 ```
 
@@ -1316,9 +1318,6 @@ use constant {
 * LWP, Net::Twitter, Net::SMTP
 * Devel::StackTrace, Devel::NYTProf
 * Archive::Zip, MP3::Info, Image::ExifTool, GD
-
-
-См. `perlmodlib`.
 
 ---
 
