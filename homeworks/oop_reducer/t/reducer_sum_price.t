@@ -3,10 +3,11 @@ use warnings;
 
 use Test::More tests => 4;
 
-use Local::Reducer::SumPrice;
+use Local::Reducer::Sum;
 use Local::Source::Array;
 
-my $reducer = Local::Reducer::SumPrice->new(
+my $reducer = Local::Reducer::Sum->new(
+    field => 'price',
     source => Local::Source::Array->new(array => [
         '{"price": 1}',
         '{"price": 2}',
