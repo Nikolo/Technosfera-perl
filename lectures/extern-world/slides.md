@@ -1,10 +1,10 @@
-﻿class:firstpage
+class:firstpage, title
 
 # Общение с внешним миром
 
 ---
 
-class:note_and_mark
+class:note_and_mark title
 
 # Отметьтесь на портале!
  
@@ -423,9 +423,9 @@ layout: true
 
 .clear[
 ```perl
-my $out = `ls -l`; 
+my $out = `ls -l`; 
   # построчное чтение stdout
-my @out = `ls -l`; 
+my @out = `ls -l`; 
   # стандартный вывод на выходе
 system('ls -l');   
   # только код завершения
@@ -640,7 +640,7 @@ my $socket = IO::Socket::INET->new(
     PeerPort => 80,
     Proto    => "tcp",
     Type     => SOCK_STREAM) 
-or die "Can`t connect to search.cpan.org $/";
+or die "Can't connect to search.cpan.org $/";
 
 print $socket 
    "GET / HTTP/1.0\nHost: search.cpan.org\n\n";
@@ -1165,13 +1165,11 @@ class:lastpage
 
 ---
 
-class:lastpage
+class:lastpage title
 
-# Оставьте отзыв
+# Спасибо за внимание!
 
-Спасибо за внимание!
+## Оставьте отзыв
 
-Николай Шуляковский
-
-Email & Agent: n.shulyakovskiy@corp.mail.ru
+.teacher[![teacher]()]
 
