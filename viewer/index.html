@@ -52,7 +52,7 @@
             style.setAttribute("type", "text/css");
             style.setAttribute("href", './' + parseGet('university') + '.css');
             document.head.appendChild(style);
-            var path = '../lectures/' + parseGet('lect') + '/';
+            var path = '../lectures/' + parseGet('lect') + parseGet('lect_postfix') + '/';
             var slideshow = remark.create({
                     sourceUrl: path + '/slides.md',
                     highlightStyle: 'github',

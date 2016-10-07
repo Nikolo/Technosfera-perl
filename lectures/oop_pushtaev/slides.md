@@ -126,21 +126,6 @@ sub get_name {
 
 ---
 
-# Class::Accessor
-
-```perl
-package Foo;
-use base qw(Class::Accessor);
-Foo->follow_best_practice;
-Foo->mk_accessors(qw(name role salary));
-```
-
-```perl
-use base qw(Class::Accessor::Fast);
-use base qw(Class::XSAccessor);
-```
-
----
 
 # Методы класса
 
@@ -235,9 +220,9 @@ $class->new();
 my $method_name = $cond ? 'get_a' : 'get_b';
 $obj->$method_name;
 
-A::new(); # not the same!
+A::new(); # not the same! static?
 
-$obj->A::get_a(); # !??
+$obj->A::get_a(); # !?
 
 ```
 
@@ -344,9 +329,9 @@ use Some::Package 10.01
 ```perl
 my $vadim = Person->new('Vadim');
 
-print $person->get_name();
+print $vadim->get_name();
 
-print $person->{name};
+print $vadim->{name};
 
 $vadim->can('get_name')->();
 
@@ -373,7 +358,8 @@ $dbh = DBI->connect(
   \%attr
 );
 
-$rv = $dbh->do('DELETE FROM table');
+my $sth = $dbh->prepare('SELECT name FROM city');
+$sth->execute();
 ```
 
 ---
@@ -672,12 +658,8 @@ eval {
 
 ```perl
 use Try::Tiny;
-try {
-  die 'foo';
-}
-catch {
-  warn "caught error: $_"; # not $@
-};
+try { die 'foo' }
+catch { warn "caught error: $_"; } # not $@
 ```
 
 ```perl
@@ -686,7 +668,7 @@ try {
   throw Error::Simple 'Oops!';
 }
 catch Error::Simple with { say 'Simple' }
-catch Error::IO with     { say 'IO' }
+catch Error::IO     with { say 'IO' }
 except                   { say 'Except' }
 otherwise                { say 'Otherwise' }
 finally                  { say 'Finally' };
@@ -762,6 +744,22 @@ sub add {
         $self->{value} + $other->{value}
     );
 }
+```
+
+---
+
+# Class::Accessor
+
+```perl
+package Foo;
+use base qw(Class::Accessor);
+Foo->follow_best_practice;
+Foo->mk_accessors(qw(name role salary));
+```
+
+```perl
+use base qw(Class::Accessor::Fast);
+use base qw(Class::XSAccessor);
 ```
 
 ---
@@ -1005,9 +1003,8 @@ has 'cache_dir' => ( ... );
 
 ---
 
-class: center, middle
+# ДЗ
 
-# ДЗ!
+https://github.com/Nikolo/Technosfera-perl/
 
----
-
+`/homeworks/oop_reducer`
