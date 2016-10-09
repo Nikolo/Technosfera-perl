@@ -961,28 +961,10 @@ layout:false
 
 ---
 
-# ДЗ 6
+# Домашнее задание
 
 https://github.com/Nikolo/Technosfera-perl/
 
-`/homeworks/iter`
+`/homeworks/oop_reducer`
 
-```perl
-my $iterator = Local::Iterator::Array->new(
-  array => [1, 2, 3]
-);
-$iterator->next(); # (1, 0);
-$iterator->next(); # (2, 0);
-$iterator->next(); # (3, 0);
-$iterator->next(); # (undef, 1);
-```
-
-```perl
-my $iterator = Local::Iterator::File->new(
-    file => '/tmp/file.txt'
-);
-$iterator->next(); # ('A', 0);
-$iterator->next(); # ('B', 0);
-$iterator->all(); # [qw(C D E)]
-$iterator->next(); # (undef, 1);
-```
+Требуется написать классы для проведения над логами операции [схлопывания](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) (reduce).
