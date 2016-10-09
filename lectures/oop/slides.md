@@ -548,6 +548,7 @@ sub UNIVERSAL::AUTOLOAD {}
 ```
 
 ---
+layout:false
 
 # Исключения
 
@@ -571,7 +572,6 @@ eval {
 ```
 
 ---
-
 # Исключения — модули
 
 ```perl
@@ -597,6 +597,18 @@ finally                  { say 'Finally' };
 ```
 
 ---
+layout:true
+.footer[[perltie](http://perldoc.perl.org/perltie.html)]
+---
+
+# ???
+
+```perl
+$hash{x} = 7;
+
+print $hash{x};
+```
+---
 
 # ???
 
@@ -606,11 +618,7 @@ $hash{x} = 7;
 print $hash{x};
 ```
 
----
-
-class:middle, center
-
-# 42
+.big[42]
 
 ---
 
@@ -634,6 +642,9 @@ $hash{x} = 7;
 print $hash{x};
 ```
 
+---
+layout: true
+.footer[[overload](http://perldoc.perl.org/overload.html)]
 ---
 
 # overload
@@ -673,7 +684,6 @@ sub add {
 layout: true
 
 .footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
-
 ---
 
 # Class::Accessor
@@ -690,7 +700,7 @@ use base qw(Class::Accessor::Fast);
 use base qw(Class::XSAccessor);
 ```
 ---
-
+layout:false
 # Итого
 
 ```perl
@@ -718,6 +728,9 @@ blessed($obj);
 1. **Moose-like**
 1. ДЗ
 
+---
+layout:true
+.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
 ---
 
 # Moose
@@ -924,7 +937,7 @@ has 'cache_dir' => ( ... );
 ```
 
 ---
-
+layout:false
 # Moose — аналоги
 
 * Moose
