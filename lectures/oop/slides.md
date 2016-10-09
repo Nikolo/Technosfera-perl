@@ -1,9 +1,10 @@
-class:firstpage
+class:firstpage, title
 
-# ООП
+# Программирование на Perl
+
+## ООП
 
 ---
-
 # Содержание
 
 1. **Введение**
@@ -14,6 +15,12 @@ class:firstpage
 1. Детали
 1. Moose-like
 1. ДЗ
+
+---
+
+layout: true
+
+.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
 
 ---
 
@@ -337,7 +344,7 @@ decode_json '...';
 {
   package Lynx;
 
-  BEGIN { push(@ISA, 'Dog', 'Cat') }
+  BEGIN { push(@Lynx::ISA, 'Dog', 'Cat') }
   use base qw(Dog Cat);
   use parent qw(Dog Cat);
 }
@@ -660,6 +667,12 @@ sub add {
     );
 }
 ```
+
+---
+
+layout: true
+
+.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
 
 ---
 
