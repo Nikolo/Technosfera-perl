@@ -6,7 +6,7 @@
 Reducer
 -------
 
-Каждый такой класс имеет префикс `Reducer`.
+Каждый такой класс имеет префикс `Local::Reducer`.
 
 Параметры конструктора:
 * `source` — объект, выдающий строки из лога (см. ниже);
@@ -19,12 +19,12 @@ Reducer
 * `reduced` — промежуточный результат.
 
 Минимум надо реализовать:
-* `Reducer` — базовый абстрактный класс.
-* `Reducer::Sum` — суммирует значение поля, указанного в параметре `field` конструктора, каждой строки лога.
-* `Reducer::MaxDiff` — выясняет максимальную разницу между полями, указанными в параметрах `top` и `bottom` конструктора, среди всех строк лога.
+* `Local::Reducer` — базовый абстрактный класс.
+* `Local::Reducer::Sum` — суммирует значение поля, указанного в параметре `field` конструктора, каждой строки лога.
+* `Local::Reducer::MaxDiff` — выясняет максимальную разницу между полями, указанными в параметрах `top` и `bottom` конструктора, среди всех строк лога.
 
 Также можно реализовать:
-* `Reducer::MinMaxAvg` — считает минимум, максимум и среднее по полю, указанному в параметре `field`. Результат (`reduced`) отдается в виде объекта с методами `get_max`, `get_min`, `get_avg`.
+* `Local::Reducer::MinMaxAvg` — считает минимум, максимум и среднее по полю, указанному в параметре `field`. Результат (`reduced`) отдается в виде объекта с методами `get_max`, `get_min`, `get_avg`.
 
 Source
 ------
@@ -60,7 +60,7 @@ Row
 ------
 
 ```perl
-my $reducer = Reducer::Sum->new(
+my $reducer = Local::Reducer::Sum->new(
     field => 'price',
     source => Source::Array->new(array => [
         '{"price": 1}',
@@ -77,11 +77,11 @@ my $reducer = Reducer::Sum->new(
 ----------
 
 ```perl
-my $reducer = Reducer::MaxDiff->new(
+my $reducer = Local::Reducer::MaxDiff->new(
     top => 'received',
     bottom => 'sended',
     source => Source::Text->new(text =>"sended:1024,received:2048\nsended:2048,received:10240"),
-    row_class => 'Local::Row::Simple',
+    row_class => 'Row::Simple',
 );
 ```
 Этот пример создает редьюсер, который считает максимальную разницу между полями `received` и `sended`, указанными в параметрах `top` и `bottom` конструктора. Сам лог — это набор строк, где каждая строка - набор пар `ключ:значение` соединенных запятыми. `$reducer->reduce_all()` вернет 9216.
