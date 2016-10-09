@@ -6,7 +6,7 @@
 Reducer
 -------
 
-Каждый такой класс называется `Reducer`.
+Каждый такой класс имеет префикс `Reducer`.
 
 Параметры конструктора:
 * `source` — объект, выдающий строки из лога (см. ниже);
@@ -60,15 +60,29 @@ Row
 ------
 
 ```perl
-my $reducer = Local::Reducer::Sum->new(
+my $reducer = Reducer::Sum->new(
     field => 'price',
-    source => Local::Source::Array->new(array => [
+    source => Source::Array->new(array => [
         '{"price": 1}',
         '{"price": 2}',
         '{"price": 3}',
     ]),
-    row_class => 'Local::Row::JSON',
+    row_class => 'Row::JSON',
     initial_value => 0,
 );
 ```
 Этот пример создает редьюсер, который посчитает сумму по полям `price` всех строк лога. Сам лог — это массив JSON-ов. `$reducer->reduce_all()` вернет 6.
+
+Еще пример
+----------
+
+```perl
+my $reducer = Reducer::MaxDiff->new(
+    top => 'received',
+    bottom => 'sended',
+    source => Source::Text->new(text =>"sended:1024,received:2048\nsended:2048,received:10240"),
+    row_class => 'Local::Row::Simple',
+);
+```
+Этот пример создает редьюсер, который считает максимальную разницу между полями `received` и `sended`, указанными в параметрах `top` и `bottom` конструктора. Сам лог — это набор строк, где каждая строка - набор пар `ключ:значение` соединенных запятыми. `$reducer->reduce_all()` вернет 9216.
+
