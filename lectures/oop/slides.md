@@ -262,6 +262,11 @@ sub get_by_email {
 
 ---
 
+layout: true
+.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
+
+---
+
 # Базовый синтаксис
 
 ## Создание объекта
@@ -288,8 +293,6 @@ bless \%data;
 # same as bless \%data, __PACKAGE__;
 ```
 
-.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
-
 ---
 
 # Базовый синтаксис
@@ -313,8 +316,6 @@ print blessed $obj;           # undef
 bless $obj, "Local::User";
 print blessed $obj;           # Local::User
 ```
-
-.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
 
 ---
 
@@ -780,6 +781,12 @@ print $resident_user->passport->emission;
 
 ---
 
+layout: true
+
+.footer[[overload](http://perldoc.perl.org/overload.html)]
+
+---
+
 # Расширенный синтаксис
 
 ## Модуль `overload`
@@ -907,8 +914,11 @@ print $hash{x};
 ```
 
 ---
+layout: true
 
-layout: false
+.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
+
+---
 
 # Расширенный синтакисис
 
@@ -934,6 +944,7 @@ print $user->can('first_name');    # 0 :-(
 ```
 
 ---
+layout: false
 
 # ООП: примеры применения
 
