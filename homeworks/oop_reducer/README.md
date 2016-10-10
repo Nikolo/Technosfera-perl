@@ -82,6 +82,7 @@ my $reducer = Local::Reducer::MaxDiff->new(
     bottom => 'sended',
     source => Local::Source::Text->new(text =>"sended:1024,received:2048\nsended:2048,received:10240"),
     row_class => 'Local::Row::Simple',
+    initial_value => 0,
 );
 ```
 Этот пример создает редьюсер, который считает максимальную разницу между полями `received` и `sended`, указанными в параметрах `top` и `bottom` конструктора. Сам лог — это набор строк, где каждая строка - набор пар `ключ:значение` соединенных запятыми. `$reducer->reduce_all()` вернет 8192.
