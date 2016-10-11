@@ -51,6 +51,8 @@ close
 
 /dev/null - пустое устройство
 
+/dev/zero - чтение 0 в бесконечном количестве
+
 ---
 
 ```perl
@@ -105,6 +107,14 @@ print STDERR $var;
 
 ---
 
+layout: true
+
+#Работа с файлами
+
+.footer[[perldata](http://perldoc.perl.org/perldata.html)]
+
+---
+
 __DATA__ - данные непосредственно в програмном модуле
 
 ```perl
@@ -124,6 +134,14 @@ This is data from pm file
 ```perl
 my $line = <DATA>
 ```
+
+---
+
+layout: true
+
+#Работа с файлами
+
+.footer[[perlopentut](http://perldoc.perl.org/perlopentut.html)]
 
 ---
 
@@ -222,6 +240,14 @@ tell($fh);
 
 ---
 
+layout: true
+
+#Работа с файлами
+
+.footer[[testfile](http://perldoc.perl.org/filetest.html)]
+
+---
+
 Операции проверки файлов
 
 .floatright[![right-aligned image](operation.png)]
@@ -249,6 +275,14 @@ if ( -e $fname and -f $fname and
 
 ---
 
+layout: true
+
+#Работа с файлами
+
+.footer[[perlfunc](http://perldoc.perl.org/perlfunc.html)]
+
+---
+
 rename - переименование
 
 unlink - удаление
@@ -258,6 +292,14 @@ truncate - очистка
 stat - информация о доступе к файлу
 
 utime - модификация времени доступа к файлу
+
+---
+
+layout: true
+
+#Работа с файлами
+
+.footer[[File::Path](http://perldoc.perl.org/File/Path.html)]
 
 ---
 
@@ -277,6 +319,14 @@ make_path( '/full/path/to/dir',
     group => 'group', 
     mode => 0755);
 ```]
+
+---
+
+layout: true
+
+#Работа с файлами
+
+.footer[[perlfunc](http://perldoc.perl.org/perlfunc.html)]
 
 ---
 
@@ -323,6 +373,7 @@ layout: false
 
 layout: true
 # Perl io backend
+.footer[[perliol](http://perldoc.perl.org/perliol.html)]
 
 ---
 
@@ -374,7 +425,13 @@ Layers: unix; lines: 2932894; time: 33.2629461288452
 
 ---
 
+.floatright[![right-aligned image](gzip.jpg)]
+
 :via - возможность подключения слоя из внешних библиотек
+
+perldoc PerlIO::via
+
+Если на CPAN нет необходимого слоя, его можно реализовать, самостоятельно определив необходимый набор функций вашего модуля.
 
 Например PerlIO::via::gzip
 
@@ -388,9 +445,7 @@ while (<$fh>) {
 }
 ```
 
-Если на CPAN нет необходимого слоя, его можно реализовать, самостоятельно определив необходимый набор функций вашего модуля.
 
-perldoc PerlIO::via
 
 ---
 
@@ -496,26 +551,6 @@ WTERMSIG - номер сигнала, который остановил проц
 
 ---
 
-```perl
-$SIG{CHLD} = sub {
-  while( my $pid = waitpid(-1, WNOHANG)){
-
-    last if $pid == -1;
-
-    if( WIFEXITED($?) ){ 
-      my $status = $? >> 8; 
-      print "$pid exit with status $status $/";
-    }
-    else { 
-      print "Process $pid sleep $/"
-    }
-
-  }
-};
-```
-
----
-
 Обработка сигналов
 
 Игнорируем сигнал
@@ -533,6 +568,26 @@ $SIG{INT} = sub {...};
 Возвращаем обработку сигнала в изначальное поведение
 ```perl
 $SIG{INT} = 'DEFAULT';
+```
+
+---
+
+```perl
+$SIG{CHLD} = sub {
+  while( my $pid = waitpid(-1, WNOHANG)){
+
+    last if $pid == -1;
+
+    if( WIFEXITED($?) ){ 
+      my $status = $? >> 8; 
+      print "$pid exit with status $status $/";
+    }
+    else { 
+      print "Process $pid sleep $/"
+    }
+
+  }
+};
 ```
 
 ---
@@ -663,8 +718,7 @@ my $server = IO::Socket::INET->new(
 or die "Can't create server on port 8081 : $@ $/";
 while(my $client = $server->accept()){
     $client->autoflush(1);
-    my $message = <$client>;
-    chomp( $message );
+    my $message = <$client>; chomp( $message );
     print $client "Echo: ".$message;
     close( $client );
     last if $message eq 'END';
@@ -701,9 +755,7 @@ struct sockaddr_in {
 ```perl
 while(my $client = $server->accept()){
   my $child = fork();
-  if($child){
-    close ($client); next;
-  }
+  if($child){ close ($client); next }
   if(defined $child){
     close($server);
     my $other = getpeername($client);
@@ -779,8 +831,8 @@ pack TEMPLATE, LIST
 ---
 
 ```perl
-pack "A5", "perl", "language";      # "perl "
-pack "A5 A2 A3", "perl", "language";# "perl la   "
+pack "A5", "perl", "language";      # "perl␣"
+pack "A5 A2 A3", "perl", "language";# "perl␣la␣␣␣"
 
 pack "H2", "31";                    # "1"
 pack "B8", "00110001"               # "1"
