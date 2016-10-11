@@ -54,7 +54,7 @@ our @EXPORT_OK = qw(encode_json decode_json to_json from_json);
 use My::JSON::Subs qw(encode_json);
 
 encode_json({}); # works!
-decode_json('{}'); # undefined</code>
+decode_json('{}'); # undefined
 ```
 
 Тут все просто: `JSON` безусловно экспортирует все фукнции в `My::JSON::Subs`, а `My::JSON::Subs` экспортирует только то, что требуется (благодаря `@EXPORT_OK`).
