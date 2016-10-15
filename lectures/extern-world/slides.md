@@ -236,6 +236,15 @@ open($fh, '<', 'not_exist') || die $!;
 ```perl
 seek( $fh, $len, $type); 
   # позиционирование
+  # относительно
+  # 0 - текущей позиции
+  # 1 - начала файла
+  # 2 - конца файла
+  # use Fcntl qw(
+  #   SEEK_SET
+  #   SEEK_CUR
+  #   SEEK_END
+  # );
 
 tell($fh); 
   # текущая позиция
@@ -318,11 +327,14 @@ chdir 'dir_name';
 
 .clear[
 ```perl
-use File::Path qw/make_path/;
+use File::Path qw( make_path remove_tree );
 make_path( '/full/path/to/dir', 
     owner => 'user', 
     group => 'group', 
     mode => 0755);
+
+my $removed_count = remove_tree(
+    'foo/bar/baz', '/zug/zwang' );
 ```]
 
 ---
@@ -487,7 +499,7 @@ my $out = `ls -l`;
   # построчное чтение stdout
 my @out = `ls -l`; 
   # стандартный вывод на выходе
-system('ls -l');   
+system('iconv -f windows-1251 src.txt >dst.txt');
   # только код завершения
 open(my $out, '-|', 'ls', '-l');
 ```
@@ -706,7 +718,8 @@ my $socket = IO::Socket::INET->new(
 or die "Can't connect to search.cpan.org $/";
 
 print $socket 
-   "GET / HTTP/1.0\012\015Host: search.cpan.org\012\015\012\015";
+   "GET / HTTP/1.0\012\015"
+   ."Host: search.cpan.org\012\015\012\015";
 my @answer = <$socket>;
 print(join($/, @answer));
 ```
@@ -999,7 +1012,11 @@ my $serialized = freeze \%table;
 my $hash = thaw( $serialized );
 ```
 
-.center[.normal-width[![image](storable.png)]]
+```perl
+use Storable qw( dclone );
+#...
+my $cloneref = dclone($ref);
+```
 
 ---
 
