@@ -1,21 +1,15 @@
-class:firstpage, title
+class: firstpage title
 
 # Программирование на Perl
 
-## ООП
+## Объекты и ООП
 
 ---
-# Содержание
 
-1. **Введение**
-1. Методы
-1. Примеры
-1. Наследование
-1. Method Resolution Order
-1. Детали
-1. Moose-like
-1. ДЗ
+class:note_and_mark title
 
+# Отметьтесь на портале!
+ 
 ---
 
 layout: true
@@ -24,489 +18,552 @@ layout: true
 
 ---
 
-# bless
+# План занятия
 
+1. Немного теории
+    * сравнение процедурного и объектно-ориентированного подходов
+    * основные понятия и определения из мира ООП
+    * особенности реализации ООП в perl
+1. Базовый синтаксис для ООП в perl
+    * конструкторы и деструкторы
+    * методы класса и методы объекта
+    * аксессоры
+    * наследование и композиция объектов
+1. Расширенные возможности ООП в perl
+    * `overload`: перегрузка операторов при работе с объектами
+    * `tie`: объект под капотом переменной
+    * `AUTOLOAD`: неявно существующие методы
+1. Примеры применения
+1. `Moose` и `Mouse`: "принципиально новая" концепция
+
+---
+
+# Процедурный код
+
+## Программирование на императивном языке, при котором последовательно выполняемые операторы можно собрать в подпрограммы, то есть более крупные целостные единицы кода, с помощью механизмов самого языка
+
+* центр внимания - исполняемый код, функции и их цепочки
+* *`действия` производятся над `данными`*
+* есть фиксированный набор функций, им на вход подают различные наборы данных
+* высокая производительность - цепочки команд языка напрямую отражаются в низкоуровневые последовательности команд процессора
+* крупные проекты трудно проектировать, так как мозг - не процессор
+
+---
+
+# Процедурный код
+
+## Аналогии реального мира
+
+* `Конвеер`: детали двигаются по конвееру и на каждом этапе над ними производятся действия. Конвеер, как набор функций, неизменен, детали-данные меняются.
 ```perl
-{
-  package Class::Name;
-  #...
+foreach my $component (@components) {
+        foreach my $tool (@tools) {
+            &$tool($component);
+        }
 }
-
-my $obj = bless {}, 'Package::Name';
-
-my $obj2 = bless [], '...';
-my $scalar = 42;
-my $obj2 = bless \$scalar, '...';
 ```
-
----
-
-# Содержание
-
-1. Введение
-1. **Методы**
-1. Примеры
-1. Наследование
-1. Method Resolution Order
-1. Детали
-1. Moose-like
-1. ДЗ
-
----
-
-# Методы
-
+* `Хлебопечка`: засыпаем муку, молоко и другие ингридиенты (входные данные), закрываем крышку (запускаем функцию), через некоторое время получаем на выходе хлеб.
+Муку можно засыпать вручную, а можно соединить вход хлебопечки с выходом мельнички для зерна, и т. д.
 ```perl
-{
-  package A;
+$bread=breadmaker($milk, $eggs, mill($grains));
+```
+---
 
-  sub set_a {
-    my ($self, $value) = @_;
-    $self->{a} = $value;
-    return;
-  }
+# ООП
 
-  sub get_a {
-    my ($self) = @_;
-    return $self->{a};
-  }
+##  Методология программирования, основанная на представлении программы в виде совокупности `объектов`, каждый из которых является экземпляром определенного `класса`, а классы образуют иерархию наследования
+
+* центр внимания - `объект` (данные и набор функций для работы с ними) и взаимодействие `объектов`
+* есть фиксированный набор типов объектов (`классы`), которые описывают свойства `объектов` и их средства взаимодействия (`методы`)
+* *`объекты` сами знают, как себя изменять*
+* удобно проектировать - аналогия объектов близка к реальному миру
+* как правило, производительность ниже, чем в процедурных языках
+* любой ООП-код может быть отражен в процедурный код
+
+---
+
+# ООП
+
+## Аналогии реального мира
+
+* `Телевизор`: может изменить состояние (канал, громкость) только при помощи пульта. Заведомо неверное состояние выставить с пульта невозможно.
+Если разобрать телевизор и подать импульс на нужный элемент схемы, канал тоже переключится, но разбирать телевизор нельзя.
+```perl
+$tv->remote->set_channel(1);
+```
+* `Турникет`: на вход получает другой объект - карту. Если поездки на карте есть, турникет изменяет состояние - открывается, а чип карты
+получает команду списать поездку. Добавить поездку через интефейс карты невозможно.
+```perl
+# $gate->open_by_card($card);
+if ($card->has_passes) {
+        $card->spend_pass; $gate->open;
 }
-
-my $obj = bless {}, 'A';
-
-$obj->set_a(42);
-print $obj->get_a(); # 42
 ```
 
 ---
 
-# Атрибуты
+# ООП: три кита
 
+## Различные языки программирования реализуют данные сущности по-разному. Единственно верной реализации ООП не существует.
+
+* инкапсуляция
+    * свойство системы, позволяющее объединить данные и методы, работающие с ними, в классе
+    * некоторые языки отождествляют инкапсуляцию с сокрытием реализации, другие различают эти понятия
+* наследование
+    * свойство системы, позволяющее описать новый класс на основе уже существующего с частично или полностью заимствующейся функциональностью
+* полиморфизм
+    * свойство системы, позволяющее использовать объекты с одинаковым набором методов без знания типа и внутренней реализации объекта
+
+---
+
+# ООП: программные сущности
+
+* `класс`
+    * комплексный тип данных, состоящий из тематически единого набора `свойств` (переменных более элементарных типов) и `методов` (функций для работы с этими свойствами)
+    * модель информационной сущности с внутренним и внешним интерфейсами для оперирования своим содержимым (значениями свойств)
+    * свойства часто называют `атрибутами`, `полями`
+* `объект`
+    * экземпляр `класса`
+    * набор значений `свойств`, привязанный к классу и его `методам`
+
+---
+
+layout: true
+.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
+
+---
+
+# Особенности ООП в perl
+
+## `Объект` = `свойства` с данными + `методы` для работы с ними
+
+* `свойства` - элементы базовой структуры (скаляр, элементы хеша или массива, и т. д.)
+* `класс` - пакет, связанный с базовой структурой
+* `методы` - функции, объявленные в пакете
+* `объект` - ссылка (!) на базовую структуру, связанная с классом
+
+---
+
+# Особенности ООП в perl
+
+* набор свойств не описывается в классе и ограничивается лишь базовой структурой
+    * вы можете использовать любые элементы базовой структуры в качестве свойств объекта
+    * нельзя ограничить набор свойств конкретным списком
+    * сокрытие реализации отсутствует: нет возможности сделать private-свойства, все свойства доступны снаружи и могут быть изменены
+    * любой дятел может разрушить цивилизацию
+* неявная типизация
+    * "если это выглядит как утка, плавает как утка и крякает как утка, то это возможно и есть утка"
+    * набор методов объекта определяет границы его использования
+    * можно использовать некий объект там же, где уже используется объект совсем другого класса, если у него есть необходимые методы и свойства
+    * нет возможности создавать private- или protected-методы
+
+---
+
+layout: false
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+* базовая структура - хеш
+* свойства:
 ```perl
-
-{
-  package A;
-  sub new {
-    my ($class, %params) = @_;
-
-    return bless \%params, $class;
-  }
-}
-
-my $obj = A->new(a => 1, b => 2);
-
-print $obj->{a}; # 1
-print $obj->{b}; # 2
+    first_name => 'Василий',
+    last_name  => 'Пупкин',
+    gender     => 'm',
+    email      => 'vasily@pupkin.ru',
+    passwd     =>
+      '$1$f^34d*$24cc1e0d198dbf6bbfd812a30f1b4460',
 ```
 
 ---
 
-# Методы класса
+# Базовый синтаксис
 
+## Пишем класс `Local::User`
+
+* никакого `Exporter`!
+* методы:
 ```perl
-{
-  package A;
-
-  sub new {
-    my ($class, %params) = @_;
-
-    return bless \%params, $class;
-  }
-
-  sub get_a {
-    my ($self) = @_;
-
-    return $self->{a};
-  }
-}
-
-my $obj = A->new(a => 42);
-$obj->get_a(); # 42
-```
----
-
-# Методы — еще варианты
-
-```perl
-$obj->A::get_a();
-
-my $class = 'A';
-$class->new();
-
-my $method_name = $cond ? 'get_a' : 'get_b';
-$obj->$method_name;
-
-A::new(); # not the same!
+  get_by_email
+  name
+  welcome_string
+  is_password_valid
 ```
 
 ---
 
-# Методы — indirect
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
 
 ```perl
-new My::Class(1, 2, 3);
-
-My::Class->new(1, 2, 3);
-```
-
-```perl
-foo $obj(123); # $obj->foo(123);
-```
-
-```perl
+#!/usr/bin/perl
 use strict;
-use warnings;
+use feature 'say';
+use Local::User;
 
-Syntax error!
+my ($email, $passwd) = @ARGV;
+die "USAGE: $0 <email> <password>\n“
+    unless length $email && length $passwd;
 
-exit 0;
+my $user = get_by_email($email);
+die "Пользователь с адресом '$email' не найден\n"
+    unless $user;
+die "Введен неправильный пароль\n"
+    unless is_password_valid($user, $passwd);
+
+say welcome_string($user);
+say 'Добро пожаловать';
 ```
 
 ---
 
-# Методы — WHY!?
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
 
 ```perl
+#!/usr/bin/perl
 use strict;
-use warnings;
+use feature 'say';
+use Local::User;
 
-Syntax error!
+my ($email, $passwd) = @ARGV;
+die "USAGE: $0 <email> <password>\n“
+    unless length $email && length $passwd;
 
-exit 0;
-```
+my $user = Local::User->get_by_email($email);
+die "Пользователь с адресом '$email' не найден\n"
+    unless $user;
+die "Введен неправильный пароль\n"
+    unless $user->is_password_valid($passwd);
 
-```perl
-use warnings;
-use strict;
-'error'->Syntax(!exit(0));
-```
-
----
-
-# can
-
-```perl
-{
-  package A;
-
-  sub test {
-    return 42;
-  }
-}
-
-if (A->can('test')) {
-  print A->test;
-}
-
-print A->can('test')->('A');
-```
-
-```perl
-my $obj = bless {}, 'A';
-$obj->can('test');
+say $user->welcome_string;
+say 'Добро пожаловать';
 ```
 
 ---
 
-# Filehandles
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
 
 ```perl
-open(my $fh, '>', 'path/to/file');
-
-$fh->autoflush();
-$fh->print('content');
-
-STDOUT->autoflush();
-```
-
----
-
-# Пакеты
-
-```perl
-use Some::Package qw(a b c);
-# Some::Package->import(qw(a b c));
-
-no Some::Package;
-# Some::Package->unimport;
-
-use Some::Package 10.01
-# Some::Package->VERSION(10.01);
-
-```
-
----
-
-# Итого
-
-```perl
-my $obj = Class->new();
-
-$obj->do_something();
-print $obj->{attr};
-```
-
-```perl
-$obj->can('method');
-$fh->print(123);
-$obj = new Class(); # :(
-```
-
----
-
-# Содержание
-
-1. Введение
-1. Методы
-1. **Примеры**
-1. Наследование
-1. Method Resolution Order
-1. Детали
-1. Moose-like
-1. ДЗ
-
----
-
-# DBI
-
-```perl
-$dbh = DBI->connect(
-  $data_source,
-  $username,
-  $auth,
-  \%attr
-);
-
-$rv = $dbh->do('DELETE FROM table');
-```
-
----
-
-# XML::LibXML;
-
-```perl
-use XML::LibXML;
-
-my $document = XML::LibXML->load_xml(
-    string => '...'
-);
-
-my $list = $document->findnodes('...');
-    # XML::LibXML::NodeList
-```
-
-```perl
-       XML::LibXML::Node
-      /                 \
- XML::LibXML::Document  XML::LibXML::Element
-```
-
----
-
-# File::Spec
-
-```perl
-use File::Spec;
-
-print File::Spec->catfile('a', 'b', 'c');
-```
-
----
-
-# JSON
-
-```perl
-use JSON;
-
-JSON->new->utf8->decode('...');
-
-decode_json '...';
-```
-
----
-
-# Содержание
-
-1. Введение
-1. Методы
-1. Примеры
-1. **Наследование**
-1. Method Resolution Order
-1. Детали
-1. Moose-like
-1. ДЗ
-
----
-
-# Наследование
-
-```perl
-{
-  package Lynx;
-
-  BEGIN { push(@Lynx::ISA, 'Dog', 'Cat') }
-  use base qw(Dog Cat);
-  use parent qw(Dog Cat);
-}
-
-```
-
----
-
-# UNIVERSAL
-
-```perl
-$obj->can('method');
-
-$obj->isa('Animal');
-Dog->isa('Animal');
-
-$obj->VERSION(5.12);
-
-```
-
----
-
-# SUPER
-
-```perl
-sub foo {
-  my ($self, %params) = @_;
-
-  $self->SUPER::foo(%params);
-
-  return;
+# `first` imported from List::Util
+sub get_by_email {
+  my $email = shift;
+  my $user_data =
+    first { $_->{email} eq $email } @USERS;
+* # ????
+  return $user_object;
 }
 ```
 
 ---
 
-# Содержание
-
-1. Введение
-1. Методы
-1. Примеры
-1. Наследование
-1. **Method Resolution Order**
-1. Детали
-1. Moose-like
-1. ДЗ
+layout: true
+.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
 
 ---
 
-# Method Resolution Order
+# Базовый синтаксис
 
-```
-       Animal
-         |
-        Pet   Barkable
-       /   \   /
-      Cat   Dog
-       \   /
-        Lynx
+## Создание объекта
+
+```perl
+$object = bless \%data, $class;
+# $object = \%data linked to package $class
 ```
 
 ```perl
-Lynx->method();
-
-qw(Lynx Cat Pet Animal Dog Barkable);
-```
-
----
-
-# use mro;
-
-```
-       Animal
-         |
-        Pet   Barkable
-       /   \   /
-      Cat   Dog
-       \   /
-        Lynx
+$obj = \%data;
+bless $obj, $class;
+# the same as $obj = bless \%data, $class
 ```
 
 ```perl
-use mro 'c3';
+bless \%data, $class;
+bless \@data, $class;
+bless \$data, $class;
+```
 
-Lynx->method();
-
-qw(Lynx Cat Dog Pet Animal Barkable);
+```perl
+bless \%data;
+# same as bless \%data, __PACKAGE__;
 ```
 
 ---
 
-# mro — next::method
+# Базовый синтаксис
+
+## Создание объекта
 
 ```perl
-package A;
-use mro;
+my $obj = \%data;
+print ref $obj;               # HASH
 
-sub foo {
-  my ($self, $param) = @_;
-
-  $param++;
-
-  return $obj->next::method($param);
-}
+bless $obj, "Local::User";
+print ref $obj;               # Local::User
 ```
 
----
-
-# Содержание
-
-1. Введение
-1. Методы
-1. Примеры
-1. Наследование
-1. Method Resolution Order
-1. **Детали**
-1. Moose-like
-1. ДЗ
-
----
-
-# `blessed`, `ref`
-
 ```perl
-use JSON:
 use Scalar::Util 'blessed';
 
-ref JSON->new(); # 'JSON'
-ref [];          # 'ARRAY'
-ref {};          # 'HASH'
-ref 0;           # ''
+my $obj = \%data;
+print blessed $obj;           # undef
 
-blessed JSON->new(); # 'JSON'
-blessed [];          # undef
-blessed {};          # undef
-blessed 0;           # undef
+bless $obj, "Local::User";
+print blessed $obj;           # Local::User
 ```
 
 ---
 
-# DESTROY
+# Базовый синтаксис
+
+## Методы класса
 
 ```perl
-package A;
 sub new {
-  my ($class, %params) = @_;
-  return bless \%params, $class;
+  my ($class) = shift;
+  my %params = @_;
+  $params{name} =
+    "$params{first_name} $params{last_name}";
+  bless \%params, $class;
 }
+```
+
+```perl
+$user = Local::User->new(
+    email => 'vasily@pupkin.ru',
+    gender => 'm',
+    # ...
+);
+$class = "Local::User";
+$user = $class->new;
+```
+
+---
+
+# Базовый синтаксис
+
+## Методы объекта
+
+```perl
+sub name {
+  my $self = shift;
+  return join ' ',
+    grep { length $_ }
+      map { $self->{$_} }
+        qw/first_name middle_name last_name/;
+}
+print $user->name;           # Василий Пупкин
+# print $user->name();       # same
+```
+
+```perl
+sub some_method {
+    my $proto = shift;
+    my $class = ref($proto) || $proto;
+    ...
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## Непрямой вызов методов
+
+```perl
+new Local::User(email => 'vasily@pupkin.ru');
+# Local::User->new(email => 'vasily@pupkin.ru');
+```
+
+```perl
+is_valid_password $user("123");
+# $user->is_valid_password("123");
+```
+
+---
+
+# Базовый синтаксис
+
+## Непрямой вызов методов
+
+```perl
+use strict;
+use warnings;
+
+Syntax error!
+
+exit 0;
+```
+
+---
+
+# Базовый синтаксис
+
+## Непрямой вызов методов
+
+```perl
+use strict;
+use warnings;
+
+Syntax error!
+
+exit 0;
+```
+
+```perl
+error->Syntax( ! exit(0) );
+```
+
+---
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+```perl
+# $user_obj = Local::User->get_by_email($email);
+
+sub get_by_email {
+  my ($class, $email) = @_;
+  my $user_data =
+    first { $_->{email} eq $email } @USERS;
+* my $user_object = bless $user_data, $class;
+  return $user_object;
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+```perl
+sub welcome_string {
+  my $self = shift;
+  return $self->greeting . ' ' . $self->name . "!";
+}
+sub greeting {
+  my $self = shift;
+  return (
+    $self->gender eq 'm' ?
+    "Уважаемый" : "Уважаемая"
+  );
+}
+sub is_password_valid {
+  my ($self, $passwd) = @_;
+  # ...
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## name - свойство или метод?
+
+```perl
+print $user->{first_name};        # Василий
+print $user->{last_name};         # Пупкин
+print $user->name();              # Василий Пупкин
+```
+
+---
+
+# Базовый синтаксис
+
+## Аксессоры (accessors)
+
+```perl
+sub first_name {
+    my $self = shift;
+    return $self->{first_name};
+}
+```
+
+## getters/setters
+
+```perl
+sub get_first_name { $_[0]->{first_name} }
+sub set_first_name {
+    my $self = shift;
+    $self->{first_name} = $_[0] if @_;
+    return $self->{first_name};
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## Аксессоры (accessors)
+
+* **Class::XSAccessor**
+* Class::Accessor::Fast
+* Class::Accessor
+* ...
+
+```perl
+package Local::User;
+
+# no passwd accessor - it is private!
+use Class::XSAccessor {
+  accessors => [qw/
+    gender email first_name middle_name last_name
+  /],
+};
+...
+```
+
+---
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+```perl
+sub name {
+  my $self = shift;
+  return join ' ',
+    grep { length $_ }
+*     map { my $m="${_}_name"; $self->$m }
+        qw/first middle last/;
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## Деструкторы
+
+```perl
+package Local::User;
 
 sub DESTROY {
   my ($self) = @_;
-  print 'D';
+  print 'DESTROYED: ', $self->name;
 }
 ```
 
 ```perl
-A->new(); # print 'D'
+{
+  my $user =
+    Local::User->get_by_email('vasily@pupkin.ru');
+  # ...
+}                      # DESTROYED: Василий Пупкин
 ```
 
 ---
 
-# DESTROY — сложности
+# Базовый синтаксис
+
+## Деструкторы: грабли
 
 * `die`
 * `local`
@@ -522,34 +579,407 @@ sub DESTROY {
 
 ---
 
-# AUTOLOAD
+# Базовый синтаксис
+
+## Наследование
 
 ```perl
-package A;
-our $AUTOLOAD;
-sub new {
-  my ($class, %params) = @_;
-  return bless \%params, $class;
-}
-sub AUTOLOAD { print $AUTOLOAD }
+package Local::Student;
+*BEGIN { our @ISA = ('Local::User'); }
 ```
 
 ```perl
-A->new()->test(); # test
-A->can('anything'); # :(
+package Local::Teacher;
+*use base 'Local::User';
 ```
 
 ```perl
-sub UNIVERSAL::AUTOLOAD {}
+package Local::Professor;
+*use parent 'Local::Teacher';
+```
 
-# Dog->m(); Animal->m(); UNIVERSAL->m();
-# Dog->AUTOLOAD(); Animal->AUTOLOAD();
-# UNIVERSAL->AUTOLOAD();
+```perl
+say Local::Professor->isa("Local::Teacher");# 1
+say Local::Professor->isa("Local::User");   # 1
+say Local::Professor->isa("Local::Student");# undef
 ```
 
 ---
 
-# Исключения
+# Базовый синтаксис
+
+## Наследование: класс UNIVERSAL
+
+```perl
+# ???
+say Local::Professor->isa("UNIVERSAL");     # 1
+```
+
+```perl
+my $professor = Local::Professor->new;
+say $professor->isa("Local::Teacher");      # 1
+
+say UNIVERSAL::isa({}, "Local::User");      # undef
+```
+
+```perl
+say ref Local::Professor->can("new");       # CODE
+say $professor->can("scream");              # undef
+```
+
+```perl
+say Local::User->VERSION;                   # 1.4
+```
+
+---
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+```perl
+package Local::Teacher;
+use strict;
+use warnings;
+use base 'Local::User';
+
+sub greeting {
+  my $self = shift;
+  return (
+    $self->gender eq 'm' ?
+      "Уважаемый преподаватель" :
+      "Уважаемая преподаватель"
+  );
+}
+
+```
+
+---
+
+# Базовый синтаксис
+
+## Пишем класс `Local::User`
+
+```perl
+package Local::Teacher;
+use strict;
+use warnings;
+use base 'Local::User';
+
+sub greeting {
+  my $self = shift;
+  return $self->SUPER::greeting . "преподаватель";
+}
+```
+
+---
+
+# Базовый синтаксис
+
+## Множественное наследование
+
+```perl
+package Local::Resident;
+use Class::XSAccessor {
+  accessors => [qw/
+    name snils inn
+    passport_id passport_emission passport_date
+  /],
+};
+```
+
+```perl
+package Local::ResidentStudent;
+use parent qw/Local::Student Local::Resident/;
+```
+
+```perl
+$resident_user->name(); # ???
+# Local::Student->name or Local::Resident->name?
+```
+
+---
+
+# Базовый синтаксис
+
+## Множественное наследование: method resolution order
+
+```
+       Object
+         |
+       Stream  Cacheable
+       /   \   /
+ InStream   CacheableOutStream
+       \   /
+      IOStream
+```
+
+```perl
+IOStream->method();
+# IOStream InStream Stream Object
+#     CacheableOutStream Cacheable
+```
+
+```perl
+$self->SUPER::method(@params);
+
+$self->Cacheable::method(@params);
+```
+
+---
+
+# Базовый синтаксис
+
+## Множественное наследование: method resolution order
+
+```
+       Object
+         |
+       Stream  Cacheable
+       /   \   /
+ InStream   CacheableOutStream
+       \   /
+      IOStream
+```
+
+```perl
+use mro 'c3';
+
+IOStream->method();
+# IOStream InStream CacheableOutStream
+#     Stream Object Cacheable
+```
+
+```perl
+$self->next::method(@params);
+```
+
+---
+
+# Базовый синтаксис
+
+## Композиция объектов
+
+```perl
+package Local::Resident;
+use Class::XSAccessor {
+    accessors => [qw/snils inn passport/],
+};
+
+package Local::Passport;
+use Class::XSAccessor {
+    accessors => [qw/id emission date/],
+};
+```
+
+```perl
+$passport = Local::Passport->get_by_id($id);
+$resident_user->passport($passport);
+print $resident_user->passport->emission;
+
+```
+
+---
+
+layout: true
+
+.footer[[overload](http://perldoc.perl.org/overload.html)]
+
+---
+
+# Расширенный синтаксис
+
+## Модуль `overload`
+
+```perl
+package Local::User;
+use overload '""' => 'to_string';
+sub to_string {
+    my ($self) = @_;
+    return $self->name.' <'.$self->email.'>';
+}
+```
+
+```perl
+print $user;   # Василий Пупкин <vasily@pupkin.ru>
+```
+
+---
+
+# Расширенный синтаксис
+
+## Модуль `overload`
+
+```perl
+package Local::Vector;
+use overload '+' => 'add', '0+' => 'len';
+sub new {
+    my ($class, $x, $y) = @_;
+    bless { x=>$x, y=>$y }, $class;
+}
+sub add {
+    my ($vec1, $vec2) = @_;
+    __PACKAGE__->new(
+        $vec1->{x} + $vec2->{x},
+        $vec1->{y} + $vec2->{y},
+    );
+}
+sub len {
+    my ($self) = @_;
+    return sqrt($self->{x}**2 + $self->{y}**2);
+}
+```
+
+---
+
+# Расширенный синтаксис
+
+## Модуль `overload`
+
+```perl
+$vec1 = Local::Vector->new(1, 2);
+$vec2 = Local::Vector->new(3, 1);
+
+print $vec1+$vec2;    # 5
+```
+
+```perl
+$vec1 = Local::Vector->new(1, 2);
+$vec2 = Local::Vector->new(3, 1);
+
+print Local::Vector::len(
+    Local::Vector::add($vec1, $vec2);
+);
+```
+
+---
+
+layout: true
+
+.footer[[perltie](http://perldoc.perl.org/perltie.html)]
+
+---
+
+# Расширенный синтаксис
+
+## `tie`: объект под капотом переменной
+
+```perl
+$hash{x} = 'vasily@pupkin.ru';
+
+print $hash{x};
+# Василий Пупкин <vasily@pupkin.ru>
+
+print ref $hash{x};
+# Local::User
+
+# WTF???
+```
+
+---
+
+# Расширенный синтаксис
+
+## `tie`: объект под капотом переменной
+
+```perl
+package Local::UserHash;
+
+use Tie::Hash;
+use base 'Tie::StdHash';
+
+use Local::User;
+
+sub STORE {
+  my ($self, $key, $value) = @_;
+  $self->{$key} = 
+    Local::User->get_by_email($value);
+}
+```
+
+---
+
+# Расширенный синтаксис
+
+## `tie`: объект под капотом переменной
+
+```perl
+my %hash;
+tie %hash, 'Local::UserHash';
+
+$hash{x} = 'vasily@pupkin.ru';
+
+print $hash{x};
+# Василий Пупкин <vasily@pupkin.ru>
+```
+
+---
+layout: true
+
+.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
+
+---
+
+# Расширенный синтакисис
+
+## `AUTOLOAD`
+
+```perl
+package Local::User;
+
+sub get_by_email      { ... }
+sub is_password_valid { ... }
+sub name              { ... }
+
+our $AUTOLOAD;
+sub AUTOLOAD {
+    my $self = shift;
+    return $self->{$AUTOLOAD};
+}
+```
+
+```perl
+print $user->first_name();         # Василий
+print $user->can('first_name');    # 0 :-(
+```
+
+---
+layout: false
+
+# ООП: примеры применения
+
+## import/unimport
+
+```perl
+use Some::Package qw(a b c);
+# Some::Package->import(qw(a b c));
+
+no Some::Package;
+# Some::Package->unimport;
+
+use Some::Package 10.01
+# Some::Package->VERSION(10.01);
+```
+
+---
+
+# ООП: примеры применения
+
+## Конвеерные вызовы методов
+
+```perl
+use JSON::XS;
+
+JSON::XS->new->utf8->decode('...');
+
+decode_json '...';
+```
+
+---
+
+# ООП: примеры применения
+
+## Исключения (exceptions)
 
 ```perl
 eval {
@@ -563,8 +993,7 @@ eval {
     $error->isa('Local::Exception')
   ) {
      # ...
-  }
-  else {
+  } else {
     die $error;
   }
 };
@@ -572,14 +1001,15 @@ eval {
 
 ---
 
-# Исключения — модули
+# ООП: примеры применения
+
+## Исключения (exceptions)
 
 ```perl
 use Try::Tiny;
 try {
   die 'foo';
-}
-catch {
+} catch {
   warn "caught error: $_"; # not $@
 };
 ```
@@ -587,10 +1017,9 @@ catch {
 ```perl
 use Error qw(:try);
 try {
-  throw Error::Simple 'Oops!';
+    throw Error::Simple 'Oops!';
 }
 catch Error::Simple with { say 'Simple' }
-catch Error::IO with     { say 'IO' }
 except                   { say 'Except' }
 otherwise                { say 'Otherwise' }
 finally                  { say 'Finally' };
@@ -598,140 +1027,101 @@ finally                  { say 'Finally' };
 
 ---
 
-# ???
+# ООП: примеры применения
+
+## Модуль `DBI`
 
 ```perl
-$hash{x} = 7;
+$dbh = DBI->connect(
+  $data_source,
+  $username,
+  $auth,
+  \%attr
+);
 
-print $hash{x};
+$rv = $dbh->do('DELETE FROM table');
 ```
 
 ---
 
-class:middle, center
+# ООП: примеры применения
 
-# 42
-
----
-
-# tie
+## Модуль `LWP`
 
 ```perl
-package Local::MyHash;
+use LWP::UserAgent;
+my $ua = LWP::UserAgent->new(agent => "MyAgent");
 
-use Tie::Hash;
-use base 'Tie::StdHash';
+my $req = HTTP::Request->new(
+  GET => 'http://search.cpan.org/search?q=LWP'
+);
 
-sub FETCH { 42 }
-```
-
-```perl
-my %hash;
-tie %hash, 'Local::MyHash';
-
-$hash{x} = 7;
-
-print $hash{x};
-```
-
----
-
-# overload
-
-```perl
-my $x = Local::Int->new(42);
-my $y = Local::Int->new(24);
-
-print(($x + $y)->{value}); # 66
-```
-
----
-
-# overload
-
-```perl
-package Local::Int;
-
-use overload '+' => 'add';
-
-sub new {
-    my ($class, $value) = @_;
-    return bless {value => $value}, $class;
-}
-
-sub add {
-    my ($self, $other) = @_;
-
-    return __PACKAGE__->new(
-        $self->{value} + $other->{value}
-    );
+my $res = $ua->request($req);
+if ($res->is_success) {
+    print $res->content;
+} else {
+    print $res->status_line;
 }
 ```
 
 ---
 
-layout: true
+# ООП: примеры применения
 
-.footer[[perlootut](http://perldoc.perl.org/perlootut.html)]
+## Модуль `Math::Int64`
+
+```perl
+use Math::Int64 qw(int64 uint64);
+
+my $i = int64(1);
+my $j = $i << 40;
+print($i + $j * 1000000);
+
+my $k = uint64("12345678901234567890");
+```
 
 ---
 
-# Class::Accessor
+# ООП: примеры применения
+
+## Паттерн проектирования singleton
 
 ```perl
-package Foo;
-use base qw(Class::Accessor);
-Foo->follow_best_practice;
-Foo->mk_accessors(qw(name role salary));
+$a = Some::Singleton->instance;
+$b = Some::Singleton->instance;   # same as $a
 ```
 
 ```perl
-use base qw(Class::Accessor::Fast);
-use base qw(Class::XSAccessor);
-```
----
-
-# Итого
-
-```perl
-ref($obj);
-blessed($obj);
-
-{ A->new() }
+our $INSTANCE;
+sub instance {
+    my $class = shift;
+    ${ "${class}::INSTANCE" } ||= $class->_new;
+}
 ```
 
-* `try`
-* `tie`
-* `overload`
-* `AUTOLOAD`
+---
+
+# ООП: best practices
+
+* Композиция vs наследование
+* `AUTOLOAD` vs генерация методов
+* аксессоры vs использование базовой структуры
+* паттерны проектирования
+* встроенное "легкое ООП" vs `Moose`
 
 ---
 
-# Содержание
+# Moose ООП
 
-1. Введение
-1. Методы
-1. Примеры
-1. Наследование
-1. Method Resolution Order
-1. Детали
-1. **Moose-like**
-1. ДЗ
-
----
-
-# Moose
+## Базовый синтаксис
 
 ```perl
-package Person;
-
+package Local::User;
 use Moose;
-
 has first_name => (
   is  => 'rw',
   isa => 'Str',
 );
-
 has last_name => (
   is  => 'rw',
   isa => 'Str',
@@ -739,33 +1129,31 @@ has last_name => (
 ```
 
 ```perl
-Person->new(
-  first_name => 'Vadim',
-  last_name  => 'Pushtaev',
+Local::User->new(
+  first_name => 'Василий',
+  last_name  => 'Пупкин',
 );
 ```
 
 ---
 
-# Moose — наследование
+# Moose ООП
+
+## Наследование
 
 ```perl
-package User;
+package Local::Teacher;
 
 use Moose;
 
-extends 'Person';
-
-has password => (
-  is => 'ro',
-  isa => 'Str',
-);
+extends 'Local::User';
 ```
 
 ---
 
-# Moose — инициализация
-### BUILD
+# Moose ООП
+
+## Инициализация объекта
 
 ```perl
 has age      => (is => 'ro', isa => 'Int');
@@ -773,17 +1161,16 @@ has is_adult => (is => 'rw', isa => 'Bool');
 
 sub BUILD {
   my ($self) = @_;
-
   $self->is_adult($self->age >= 18);
-
   return;
 }
 ```
 
 ---
 
-# Moose — инициализация
-### default
+# Moose ООП
+
+## Отложенное выполнение
 
 ```perl
 has age      => (is => 'ro', isa => 'Int');
@@ -800,8 +1187,9 @@ has is_adult => (
 
 ---
 
-# Moose — инициализация
-### builder
+# Moose ООП
+
+## "Ленивые вычисления"
 
 ```perl
 has age      => (is => 'ro', isa => 'Int');
@@ -824,8 +1212,9 @@ sub _build_is_adult { return 1; }
 
 ---
 
-# Moose — инициализация
-### Цепочки
+# Moose ООП
+
+## "Ленивые вычисления"
 
 ```perl
 has [qw(
@@ -847,7 +1236,9 @@ sub _build_data         { find(xml_document) }
 
 ---
 
-# Moose — миксины
+# Moose ООП
+
+## Миксины
 
 ```perl
 with 'Role::HasPassword';
@@ -858,21 +1249,22 @@ package Role::HasPassword;
 use Moose::Role;
 use Some::Digest;
 
-has password => (
+has passwd => (
   is => 'ro',
   isa => 'Str',
 );
 
-sub password_digest {
-  my ($self) = @_;
-
-  return Some::Digest->new($self->password);
+sub is_password_valid {
+  my ($self, $passwd) = @_;
+  ...
 }
 ```
 
 ---
 
-# Moose — делегирование
+# Moose ООП
+
+## Делегирование
 
 ```perl
 has doc => (
@@ -890,16 +1282,11 @@ has last_login => (
 );
 ```
 
-```perl
-{
-  handles => qr/^get_(a|b|c)|set_(a|d|e)$/,
-  handles => 'Role::Name',
-}
-```
-
 ---
 
-# Moose — и т. д.
+# Moose ООП
+
+## Декораторы, типы, расширения
 
 ```perl
 before 'is_adult' => sub { shift->recalculate_age }
@@ -912,7 +1299,6 @@ subtype 'ModernDateTime'
   => message { 'The date is not modern enough' };
 
 has 'valid_dates' => (
-  is  => 'ro',
   isa => 'ArrayRef[DateTime]',
 );
 ```
@@ -920,7 +1306,10 @@ has 'valid_dates' => (
 ```perl
 package Config;
 use MooseX::Singleton; # instead of Moose
-has 'cache_dir' => ( ... );
+```
+
+```perl
+$meta = $class->meta;
 ```
 
 ---
@@ -928,48 +1317,27 @@ has 'cache_dir' => ( ... );
 # Moose — аналоги
 
 * Moose
-* Mouse
+* *Mouse*
 * Moo
 * Mo
 * M
 
 ---
 
-# Содержание
-
-1. Введение
-1. Методы
-1. Примеры
-1. Наследование
-1. Method Resolution Order
-1. Детали
-1. Moose-like
-1. **ДЗ**
-
----
-
-# ДЗ 6
+# Домашнее задание
 
 https://github.com/Nikolo/Technosfera-perl/
 
-`/homeworks/iter`
+`/homeworks/oop_reducer`
 
-```perl
-my $iterator = Local::Iterator::Array->new(
-  array => [1, 2, 3]
-);
-$iterator->next(); # (1, 0);
-$iterator->next(); # (2, 0);
-$iterator->next(); # (3, 0);
-$iterator->next(); # (undef, 1);
-```
+Требуется написать классы для проведения над логами операции [схлопывания](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) (reduce).
 
-```perl
-my $iterator = Local::Iterator::File->new(
-    file => '/tmp/file.txt'
-);
-$iterator->next(); # ('A', 0);
-$iterator->next(); # ('B', 0);
-$iterator->all(); # [qw(C D E)]
-$iterator->next(); # (undef, 1);
-```
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]

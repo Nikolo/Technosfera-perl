@@ -899,7 +899,7 @@ Linux.
 - для FreeBSD: pkg install perl5
 
 Для любителей компилировать всё под свою систему:
-- make perl ./Configure -des; make test instal
+- make perl ./Configure -des; make test install
 
 ---
 

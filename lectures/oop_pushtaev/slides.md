@@ -4,6 +4,12 @@ class:firstpage
 
 ---
 
+class:note_and_mark title
+
+# Отметьтесь на портале!
+
+---
+
 class: center, middle
 
 # Термины
@@ -101,6 +107,7 @@ my $obj2 = bless \$scalar, '...';
 
 my $vadim = bless {}, 'Person';
 $vadim->set_name('Vadim');
+# SuperPerson::set_name($vadim, 'Vadim');
 print $vadim->get_name(); # Vadim
 ```
 
@@ -109,10 +116,13 @@ print $vadim->get_name(); # Vadim
 # Атрибуты?
 
 ```perl
-my $obj = bless {name => 42, zzz => 42}, 'Person';
+my $vadim = bless {
+    name => 'Vadim',
+    zzz => 42,
+}, 'Person';
 
-print $obj->{name}; # Vadim
-print $obj->{zzz}; # 42
+print $vadim->{name}; # Vadim
+print $vadim->{zzz}; # 42
 ```
 
 
@@ -126,7 +136,6 @@ sub get_name {
 
 ---
 
-
 # Методы класса
 
 ```perl
@@ -139,6 +148,21 @@ sub class_name {
 }
 
 Person->class_name(); # Person 
+# SuperPerson::class_name('Person');
+```
+
+---
+
+# `$self`, `$class`
+
+```perl
+sub object_method {
+    my ($self) = @_;
+}
+
+sub class_method {
+    my ($class) = @_;
+}
 ```
 
 ---
@@ -172,16 +196,18 @@ print $vadim->get_name(); # Vadim
 package Object;
 
 sub new {
-  my ($class, %params) = @_;
+  my ($class, @params) = @_;
 
-  my $obj = bless \%params, $class;
-  $obj->init();
+  my $obj = bless {}, $class;
+  $obj->init(@params);
 
   return $obj;
 }
 
 sub init {
-  my ($self) = @_;
+  my ($self, %params) = @_;
+
+  $self->{$_} = $params->{$_} for keys %params;
 
   return;
 }
@@ -189,7 +215,7 @@ sub init {
 
 ---
 
-# Универсальный конструктор
+# Универсальный конструктор в деле
 
 ```perl
 package Person;
@@ -197,21 +223,21 @@ package Person;
 # Наследуемся от Object
 
 sub init {
-  my ($self) = @_;
+  my ($self, $age) = @_;
 
-  if ($self->{age} < 0) {
-    die "Negative age $self->{age}";
-  }
+  die "Negative age $age" if $age < 0;
+
+  $self->{age} = $age;
 
   return;
 }
 
-Person->new(age => 42);
+Person->new(42);
 ```
 
 ---
 
-# Методы — еще варианты
+# Методы: еще варианты o_O
 
 ```perl
 my $class = 'A';
@@ -223,12 +249,13 @@ $obj->$method_name;
 A::new(); # not the same! static?
 
 $obj->A::get_a(); # !?
+# SuperA::get_a($obj);
 
 ```
 
 ---
 
-# Методы — indirect
+# Методы: indirect :(
 
 ```perl
 new My::Class(1, 2, 3);
@@ -251,7 +278,7 @@ exit 0;
 
 ---
 
-# Методы — WHY!?
+# Методы: WHY!?
 
 ```perl
 use strict;
@@ -304,6 +331,10 @@ $fh->autoflush();
 $fh->print('content');
 
 STDOUT->autoflush();
+```
+
+```perl
+print $fh "test\n";
 ```
 
 ---
@@ -631,7 +662,7 @@ sub DESTROY {
 
 ---
 
-# Исключения
+# Исключения ¯\\\_(ツ)\_/¯
 
 ```perl
 eval {
@@ -659,7 +690,7 @@ eval {
 ```perl
 use Try::Tiny;
 try { die 'foo' }
-catch { warn "caught error: $_"; } # not $@
+catch { warn "caught error: $_"; }; # not $@
 ```
 
 ```perl
@@ -967,7 +998,7 @@ has last_login => (
 
 ---
 
-# Moose — и т. д.
+# Moose — и т. д. :D
 
 ```perl
 before 'is_adult' => sub { shift->recalculate_age }
