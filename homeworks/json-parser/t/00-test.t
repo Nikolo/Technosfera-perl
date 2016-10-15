@@ -28,6 +28,7 @@ for my $source (
 	q/[ "hisym: \u045f" ]/,
 	q/[ "inter: u0451 \\u0451123" ]/,
 	q/[ "кириллица" ]/,
+    q/{ "smile here": "\u263a" }/,
 	qq/[\n"test"\n,\n"another"\n]/,
 
 	'{ "key1": "string value", "key2": -3.1415, "key3": ["nested array"], "key4": { "nested": "object" } }',
