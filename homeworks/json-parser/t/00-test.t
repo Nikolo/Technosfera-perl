@@ -35,6 +35,8 @@ for my $source (
 	qq/{\n\t"key1" : "string value",\n\t"key2" : -3.1415,\n\t"key3" : ["nested array"],\n\t"key4":{"nested":"object"}\n}\n/,
 	qq/ { "key1":\n"string value",\n"key2":\n-3.1415,\n"key3"\n: ["nested array"],\n"key4"\n:\n{"nested":"object"}}/,
 	qq/ { "key1" :\n"string value" ,\n"key2":\n-3.1415 ,\n"key3"\n: ["nested array"] ,\n"key4"\n:\n{"nested":"object"}}/,
+
+    qq/[{"key1":[{"deepkey1":"string value"},{"deepkey2":["deep array string value", 2]},{"deepkey3":{"deeperkey1":"string value"}}]}]/
 ) {
 	my $expect = $JSON->decode( $source );
 	my $data = parse_json($source);
