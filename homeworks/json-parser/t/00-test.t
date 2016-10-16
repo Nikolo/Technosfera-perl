@@ -9,7 +9,7 @@ use JSON::XS;
 
 our $JSON = JSON::XS->new->utf8;
 
-use Test::More tests => 22;
+use Test::More tests => 29;
 BEGIN { use_ok('Local::JSONParser') };
 
 diag "Positive tests";
@@ -55,6 +55,9 @@ for my $source (
 	'[{ [{]} }]',
 	'{"5"',
 	'{"42":null',
+    '42',
+    '5e-3',
+    'simple string'
 	#qq/{"key\nmulti":"value\nmulti"}/,
 ) {
 	my ($edied,$expect) = (!eval { $JSON->decode( $source ); 1},"$@");
