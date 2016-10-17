@@ -23,7 +23,7 @@ class:note_and_mark title
     - MSGPACK
     - Storable
     - XML
-1. Разбор входных параметров (Getopt::Long)
+1. Разбор входных параметров
 
 ---
 
@@ -384,7 +384,7 @@ layout: false
     - MSGPACK
     - Storable
     - XML
-1. Разбор входных параметров (Getopt::Long)
+1. Разбор входных параметров
 
 ---
 
@@ -480,7 +480,7 @@ layout: false
     - MSGPACK
     - Storable
     - XML
-1. Разбор входных параметров (Getopt::Long)
+1. Разбор входных параметров
 
 ---
 layout: true
@@ -549,7 +549,7 @@ else {
 
 Обработка сигналов
 
-INT,CHLD,TERM,ALRM ... кроме SIGKILL, SIGSEGV, SIGABRT
+INT,CHLD,TERM,ALRM ... кроме SIGKILL, SIGSTOP
 
 Уборка зомби
 
@@ -674,7 +674,7 @@ layout: false
     - MSGPACK
     - Storable
     - XML
-1. Разбор входных параметров (Getopt::Long)
+1. Разбор входных параметров
 
 ---
 
@@ -812,7 +812,7 @@ layout: false
     - MSGPACK
     - Storable
     - XML
-1. Разбор входных параметров (Getopt::Long)
+1. Разбор входных параметров
 
 ---
 
