@@ -9,7 +9,7 @@ class: firstpage title
 class:note_and_mark title
 
 # Отметьтесь на портале!
- 
+
 ---
 
 # Модули: разделяй и властвуй
@@ -135,12 +135,13 @@ sub my_do {
     eval $code;
 }
 
-print 'my_do=',                     # Loading...
+print 'do=',                        # Loading...
     my_do("Local/Math.pm"),"\n";    # do=3.14159265
 print '$@=', $@, "\n";              # $@=undef
 print '$!=', $!, "\n";              # $!=undef
 print 'pow(2,8)=', pow(2,8), "\n";  # pow(2,8)=256
 ```
+
 ---
 
 # Функция `do`
@@ -412,6 +413,9 @@ var        => *Some::Package::var
 func       => *Some::Package::func
 ```
 
+???
+Каким же образом хранится информация о пакетах и относящихся к ним переменных, функциях?
+
 ---
 
 # Таблицы символов
@@ -635,6 +639,10 @@ sub my_require {
 * END
 * DESTRUCT
 
+???
+Прежде чем мы перейдем к следующему, самому мощному и широкоиспользуемому инструменту для загрузки модулей,
+нам нужно разобраться, что же происходит внутри интерпретатора перл во время его работы.
+
 ---
 
 # Фазы работы интерпретатора
@@ -674,6 +682,9 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 [END] End 2
 [END] End 1
 ```
+
+???
+Показать, как работает BEGIN в консоли.
 
 ---
 
@@ -1006,6 +1017,15 @@ use 5.020_000;
 
 # Стандартные модули
 
+* Модули
+* Прагмы
+
+См. [`perlmodlib`](http://perldoc.perl.org/perlmodlib.html)
+
+---
+
+# Стандартные модули
+
 ## Модуль `Exporter`
 
 ```perl
@@ -1158,14 +1178,14 @@ $baz = 3;
 ## Модуль `strict`
 
 ```perl
-$foo = "foo"; 
-$ref = \$foo;
-print $$ref;                   # foo
+$foo = "bar";
+$ref = "foo";
+print $$ref;                   # bar
 ```
 
 ```perl
 use strict 'refs';
-
+$foo = "bar";
 $ref = "foo";
 print $$ref;
 # Can't use string ("foo") as a SCALAR ref
@@ -1185,10 +1205,16 @@ print $$x, "\n";               # foo
 
 ```perl
 use strict 'subs';
-$x = \"foo";                   # ok
 $x = \foo;
 # Bareword "foo" not allowed
 #     while "strict subs" in use
+```
+
+```perl
+use strict 'subs';
+sub foo { "bar" }
+$x = \foo;                     # ok
+print $$x, "\n";               # bar
 ```
 
 ---
@@ -1208,6 +1234,26 @@ my $ref = "var";
 print $$ref;
 # Can't use string ("var") as a SCALAR ref
 #     while "strict refs" in use
+```
+
+---
+
+# Прагмы
+
+## Модуль `vars`
+
+```perl
+use strict;
+
+package Some::Package;
+use vars qw/$foo @bar/;
+$foo = 1;                     # ok
+print $foo;                   # 1
+
+package main;
+print $foo;
+# Global symbol "$foo" requires
+#     explicit package name
 ```
 
 ---
