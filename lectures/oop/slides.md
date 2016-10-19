@@ -33,7 +33,8 @@ layout: true
     * `overload`: перегрузка операторов при работе с объектами
     * `tie`: объект под капотом переменной
     * `AUTOLOAD`: неявно существующие методы
-1. Примеры применения
+1. Примеры применения ООП в perl
+1. Паттерны проектирования
 1. `Moose` и `Mouse`: "принципиально новая" концепция
 
 ---
@@ -126,6 +127,8 @@ if ($card->has_passes) {
     * экземпляр `класса`
     * набор значений `свойств`, привязанный к классу и его `методам`
 
+.center[.normal-width[![image](mandarinki.jpg)]]
+
 ---
 
 layout: true
@@ -147,6 +150,7 @@ layout: true
 # Особенности ООП в perl
 
 * набор свойств не описывается в классе и ограничивается лишь базовой структурой
+.floatright[![Right-aligned image](woodpecker-destroyer.jpg)]
     * вы можете использовать любые элементы базовой структуры в качестве свойств объекта
     * нельзя ограничить набор свойств конкретным списком
     * сокрытие реализации отсутствует: нет возможности сделать private-свойства, все свойства доступны снаружи и могут быть изменены
@@ -160,6 +164,28 @@ layout: true
 ---
 
 layout: false
+
+# Базовый синтаксис
+
+### Задача: переделать на объекты пример из предыдущей лекции (модуль `Local::User` и скрипт для проверки авторизации)
+
+* выбор базовой структуры и пакета, описание свойств и методов
+* методы класса и методы объекта: синтаксис и различия
+* функция `bless` и написание конструкторов
+* использование аксессоров
+* деструкторы
+* наследование
+
+???
+Исходные файлы лежат в lecture/mod/example
+Не забываем убрать Exporter и ликвидировать импортирование функций из сторонних модулей.
+Дойдя до написания bless показать пару слайдов про него.
+Дойдя до аксессоров показать слайд "name - свойство или метод?" и следующие за ним 2 слайда
+Деструкторы можно показать на слайде.
+Наследование: разбить welcome_text на методы greeting и name, показать наследование для класса Local::Teacher (greeting = Уважаемый преподаватель)
+По возможности показать наследование конструктора с более сложной инициализацией в потомке
+
+---
 
 # Базовый синтаксис
 
@@ -197,73 +223,9 @@ layout: false
 
 ## Пишем класс `Local::User`
 
-```perl
-#!/usr/bin/perl
-use strict;
-use feature 'say';
-use Local::User;
+### Все в консоль!
 
-my ($email, $passwd) = @ARGV;
-die "USAGE: $0 <email> <password>\n“
-    unless length $email && length $passwd;
-
-my $user = get_by_email($email);
-die "Пользователь с адресом '$email' не найден\n"
-    unless $user;
-die "Введен неправильный пароль\n"
-    unless is_password_valid($user, $passwd);
-
-say welcome_string($user);
-say 'Добро пожаловать';
-```
-
----
-
-# Базовый синтаксис
-
-## Пишем класс `Local::User`
-
-```perl
-#!/usr/bin/perl
-use strict;
-use feature 'say';
-use Local::User;
-
-my ($email, $passwd) = @ARGV;
-die "USAGE: $0 <email> <password>\n“
-    unless length $email && length $passwd;
-
-my $user = Local::User->get_by_email($email);
-die "Пользователь с адресом '$email' не найден\n"
-    unless $user;
-die "Введен неправильный пароль\n"
-    unless $user->is_password_valid($passwd);
-
-say $user->welcome_string;
-say 'Добро пожаловать';
-```
-
----
-
-# Базовый синтаксис
-
-## Пишем класс `Local::User`
-
-```perl
-# `first` imported from List::Util
-sub get_by_email {
-  my $email = shift;
-  my $user_data =
-    first { $_->{email} eq $email } @USERS;
-* # ????
-  return $user_object;
-}
-```
-
----
-
-layout: true
-.footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
+.center[.normal-width[![image](donald-dance.jpg)]]
 
 ---
 
@@ -321,74 +283,6 @@ print blessed $obj;           # Local::User
 
 # Базовый синтаксис
 
-## Методы класса
-
-```perl
-sub new {
-  my ($class) = shift;
-  my %params = @_;
-  $params{name} =
-    "$params{first_name} $params{last_name}";
-  bless \%params, $class;
-}
-```
-
-```perl
-$user = Local::User->new(
-    email => 'vasily@pupkin.ru',
-    gender => 'm',
-    # ...
-);
-$class = "Local::User";
-$user = $class->new;
-```
-
----
-
-# Базовый синтаксис
-
-## Методы объекта
-
-```perl
-sub name {
-  my $self = shift;
-  return join ' ',
-    grep { length $_ }
-      map { $self->{$_} }
-        qw/first_name middle_name last_name/;
-}
-print $user->name;           # Василий Пупкин
-# print $user->name();       # same
-```
-
-```perl
-sub some_method {
-    my $proto = shift;
-    my $class = ref($proto) || $proto;
-    ...
-}
-```
-
----
-
-# Базовый синтаксис
-
-## Непрямой вызов методов
-
-```perl
-new Local::User(email => 'vasily@pupkin.ru');
-# Local::User->new(email => 'vasily@pupkin.ru');
-```
-
-```perl
-is_valid_password $user("123");
-# $user->is_valid_password("123");
-```
-
----
-
-# Базовый синтаксис
-
 ## Непрямой вызов методов
 
 ```perl
@@ -419,47 +313,7 @@ exit 0;
 error->Syntax( ! exit(0) );
 ```
 
----
-
-# Базовый синтаксис
-
-## Пишем класс `Local::User`
-
-```perl
-# $user_obj = Local::User->get_by_email($email);
-
-sub get_by_email {
-  my ($class, $email) = @_;
-  my $user_data =
-    first { $_->{email} eq $email } @USERS;
-* my $user_object = bless $user_data, $class;
-  return $user_object;
-}
-```
-
----
-
-# Базовый синтаксис
-
-## Пишем класс `Local::User`
-
-```perl
-sub welcome_string {
-  my $self = shift;
-  return $self->greeting . ' ' . $self->name . "!";
-}
-sub greeting {
-  my $self = shift;
-  return (
-    $self->gender eq 'm' ?
-    "Уважаемый" : "Уважаемая"
-  );
-}
-sub is_password_valid {
-  my ($self, $passwd) = @_;
-  # ...
-}
-```
+.center[.normal-width[![image](woodpecker-alldone.jpg)]]
 
 ---
 
@@ -482,6 +336,7 @@ print $user->name();              # Василий Пупкин
 ```perl
 sub first_name {
     my $self = shift;
+    $self->{first_name} = $_[0] if @_;
     return $self->{first_name};
 }
 ```
@@ -492,7 +347,7 @@ sub first_name {
 sub get_first_name { $_[0]->{first_name} }
 sub set_first_name {
     my $self = shift;
-    $self->{first_name} = $_[0] if @_;
+    $self->{first_name} = $_[0];
     return $self->{first_name};
 }
 ```
@@ -524,22 +379,6 @@ use Class::XSAccessor {
 
 # Базовый синтаксис
 
-## Пишем класс `Local::User`
-
-```perl
-sub name {
-  my $self = shift;
-  return join ' ',
-    grep { length $_ }
-*     map { my $m="${_}_name"; $self->$m }
-        qw/first middle last/;
-}
-```
-
----
-
-# Базовый синтаксис
-
 ## Деструкторы
 
 ```perl
@@ -547,7 +386,7 @@ package Local::User;
 
 sub DESTROY {
   my ($self) = @_;
-  print 'DESTROYED: ', $self->name;
+  print 'DESTROYED: ', $self->name, "\n";
 }
 ```
 
@@ -576,6 +415,8 @@ sub DESTROY {
   $self->{handle}->close() if $self->{handle};
 }
 ```
+
+.center[.normal-width[![image](woodpecker-gun.jpg)]]
 
 ---
 
@@ -635,47 +476,6 @@ say Local::User->VERSION;                   # 1.4
 
 # Базовый синтаксис
 
-## Пишем класс `Local::User`
-
-```perl
-package Local::Teacher;
-use strict;
-use warnings;
-use base 'Local::User';
-
-sub greeting {
-  my $self = shift;
-  return (
-    $self->gender eq 'm' ?
-      "Уважаемый преподаватель" :
-      "Уважаемая преподаватель"
-  );
-}
-
-```
-
----
-
-# Базовый синтаксис
-
-## Пишем класс `Local::User`
-
-```perl
-package Local::Teacher;
-use strict;
-use warnings;
-use base 'Local::User';
-
-sub greeting {
-  my $self = shift;
-  return $self->SUPER::greeting . "преподаватель";
-}
-```
-
----
-
-# Базовый синтаксис
-
 ## Множественное наследование
 
 ```perl
@@ -715,15 +515,15 @@ $resident_user->name(); # ???
 ```
 
 ```perl
-IOStream->method();
+IOStream->some_method();
 # IOStream InStream Stream Object
 #     CacheableOutStream Cacheable
 ```
 
 ```perl
-$self->SUPER::method(@params);
+$self->SUPER::some_method(@params);
 
-$self->Cacheable::method(@params);
+$self->Cacheable::some_method(@params);
 ```
 
 ---
@@ -745,7 +545,7 @@ $self->Cacheable::method(@params);
 ```perl
 use mro 'c3';
 
-IOStream->method();
+IOStream->some_method();
 # IOStream InStream CacheableOutStream
 #     Stream Object Cacheable
 ```
@@ -876,6 +676,8 @@ print ref $hash{x};
 # WTF???
 ```
 
+.center[.normal-width[![image](donald-facepalm.jpg)]]
+
 ---
 
 # Расширенный синтаксис
@@ -912,6 +714,8 @@ $hash{x} = 'vasily@pupkin.ru';
 print $hash{x};
 # Василий Пупкин <vasily@pupkin.ru>
 ```
+
+.center[.normal-width[![image](donald-facepalm2.jpg)]]
 
 ---
 layout: true
@@ -1084,7 +888,45 @@ my $k = uint64("12345678901234567890");
 
 # ООП: примеры применения
 
-## Паттерн проектирования singleton
+## Модули `IO::Handle`, `IO::File`, `IO::Socket`
+
+```perl
+$io = IO::Handle->new;
+if ($io->fdopen(fileno(STDOUT),"w")) {
+    $io->print("Some text\n");
+*   print $io "Other text\n";
+    $io->close;
+}
+```
+
+```perl
+if ($io = IO::File->new($filename, "w")) {
+    $io->autoflush(1);
+    $io->print("Some text\n");
+}
+```
+
+```perl
+$sock = IO::Socket::INET->new(PeerAddr => $host,
+                              PeerPort => $port);
+$sock->print("Some data");
+```
+
+---
+
+# ООП: паттерны проектирования
+
+* singleton
+* adapter
+* decorator
+* iterator
+* ...
+
+---
+
+# ООП: паттерны проектирования
+
+## Паттерн singleton
 
 ```perl
 $a = Some::Singleton->instance;
@@ -1095,7 +937,73 @@ $b = Some::Singleton->instance;   # same as $a
 our $INSTANCE;
 sub instance {
     my $class = shift;
-    ${ "${class}::INSTANCE" } ||= $class->_new;
+    ${ "${class}::INSTANCE" } ||= bless {}, $class;
+}
+```
+
+```perl
+use parent 'Class::Singleton';
+sub _new_instance {
+    my $class = shift;
+    bless {}, $class;
+}
+```
+
+---
+
+# ООП: паттерны проектирования
+
+## Паттерн adapter
+
+```perl
+sub set_name {
+    my $self = shift;
+    my $name = shift;
+*   $self->name($name);
+}
+
+sub get_name {
+    my $self = shift;
+*   $self->name;
+}
+```
+
+---
+
+# ООП: паттерны проектирования
+
+## Паттерн decorator
+
+```perl
+*package Local::Math;
+sub new { bless {}, $_[0] }
+sub exp {
+    my ($self, $num, $exp) = @_;
+    return $num ** $exp;
+}
+*package Local::Math::Fast;
+sub new {
+    my ($class, $local_math_obj) = @_;
+    bless {obj=>$local_math_obj,cache=>{}}, $class;
+}
+sub exp {
+    my ($self, $num, $exp) = @_;
+    $self->{cache}{"$num**$exp"} ||=
+        $self->{obj}->exp($num, $exp);
+}
+```
+    
+---
+
+# ООП: паттерны проектирования
+
+## Паттерн iterator
+
+```perl
+my @fetched_data;
+my $iterator = Some::Iterator->new($data_source);
+while ($iterator->has_next) {
+    push @fetched_data, $iterator->next;
 }
 ```
 
@@ -1103,7 +1011,7 @@ sub instance {
 
 # ООП: best practices
 
-* Композиция vs наследование
+* композиция vs наследование
 * `AUTOLOAD` vs генерация методов
 * аксессоры vs использование базовой структуры
 * паттерны проектирования
@@ -1205,8 +1113,8 @@ sub _build_is_adult {
 ```
 
 ```perl
-package SuperMan;
-extends 'Person';
+package Local::SuperMan;
+extends 'Local::User';
 sub _build_is_adult { return 1; }
 ```
 
@@ -1228,10 +1136,10 @@ has [qw(
   # ...
 );
 
-sub _build_fh           { open(file_name) }
-sub _build_file_content { read(fh) }
-sub _build_xml_document { parse(file_content) }
-sub _build_data         { find(xml_document) }
+sub _build_fh           { open($self->file_name) }
+sub _build_file_content { read($self->fh) }
+sub _build_xml_document { parse($self->file_content) }
+sub _build_data         { find($self->xml_document) }
 ```
 
 ---
@@ -1322,6 +1230,8 @@ $meta = $class->meta;
 * Mo
 * M
 
+.center[.normal-width[![image](donald-laugh.jpg)]]
+
 ---
 
 # Домашнее задание
@@ -1331,6 +1241,12 @@ https://github.com/Nikolo/Technosfera-perl/
 `/homeworks/oop_reducer`
 
 Требуется написать классы для проведения над логами операции [схлопывания](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) (reduce).
+
+---
+
+# Всем спасибо!
+
+.center[.normal-width[![image](donald-leaves.jpg)]]
 
 ---
 
