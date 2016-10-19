@@ -1219,8 +1219,13 @@ print "Goodbye$/";
 
 ---
 
-layout: true
+layout: false
+
+class:lastpage title
+
 # Домашнее задание
+
+## Сетевой калькулятор
 
 ---
 
