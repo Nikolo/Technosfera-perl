@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 9;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -155,7 +155,7 @@ INPUT
 OUTPUT
 ;
 test_bin
-'more print filters', '--band B --year 12',
+'several filters', '--band B --year 12',
 <<INPUT
 ./B/1 - A/m.mp3
 ./A/12 - B/t.flac
@@ -174,50 +174,3 @@ INPUT
 OUTPUT
 ;
 
-test_bin
-'more print filters and columns', '--band B --year 12 --columns year,band,band,track,album,band,year',
-<<INPUT
-./B/1 - AA/music.mp3
-./B/12 - BA/track.flac
-./B/012 - AB/song.ogg
-./B/13 - AB/song.ogg
-./A/12 - BQ/song.mp3
-./B/12 - BB/o.ogg
-./A/12 - AC/A.A
-./B/3 - CQ/a.abc
-INPUT
-,
-<<OUTPUT
-/------------------------------------\\
-|  12 | B | B | track | BA | B |  12 |
-|-----+---+---+-------+----+---+-----|
-| 012 | B | B |  song | AB | B | 012 |
-|-----+---+---+-------+----+---+-----|
-|  12 | B | B |     o | BB | B |  12 |
-\\------------------------------------/
-OUTPUT
-;
-
-test_bin
-'more print filters and columns and sort', '--sort album --band B --year 12 --columns year,band,band,album,band,year',
-<<INPUT
-./B/1 - AA/music.mp3
-./B/12 - BA/track.flac
-./B/012 - AB/song.ogg
-./B/13 - AB/song.ogg
-./A/12 - BQ/song.mp3
-./B/12 - BB/o.ogg
-./A/12 - AC/A.A
-./B/3 - CQ/a.abc
-INPUT
-,
-<<OUTPUT
-/----------------------------\\
-| 012 | B | B | AB | B | 012 |
-|-----+---+---+----+---+-----|
-|  12 | B | B | BA | B |  12 |
-|-----+---+---+----+---+-----|
-|  12 | B | B | BB | B |  12 |
-\\----------------------------/
-OUTPUT
-;
