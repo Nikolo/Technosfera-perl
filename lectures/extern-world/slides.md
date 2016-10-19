@@ -1190,10 +1190,12 @@ print "Goodbye$/";
 ---
 
 layout: false
-class:lastpage
+
+class:lastpage title
+
 # Домашнее задание
 
-Многопоточный сетевой калькулятор
+## Сетевой калькулятор
 
 ---
 
