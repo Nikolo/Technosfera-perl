@@ -57,36 +57,36 @@
 В очень малом числе случаев модулю действительно нужно сообщить, успешно ли он загружен~--- в таких случаях используются специальные проверки.
 
 Синтаксис с двойными двоеточиями позволяет указать путь до модуля:
-\begin{minted}{perl}
-require Module; # Module.pm
-require Module::My; # Module/My.pm
-\end{minted}
+\inputminted
+  [frame=leftline,linenos,firstline=1]
+  {perl}
+  {lectures/L3/L3-example-include-require-path.pl}
+
 Данный код сработает вне зависимости от операционной системы и используемого в ней разделителя каталогов.
 
-Поиск модулей \verb|require| выполняет в каталогах, содержащихся в массиве $@INC$ (на самом деле~--- функция \verb|do| делает тоже самое):
-\begin{minted}{bash}
-perl -e 'print join "\n", @INC'
-/etc/perl
-/usr/local/lib/perl/5.14.2
-/usr/local/share/perl/5.14.2
-/usr/lib/perl5
-/usr/share/perl5
-/usr/lib/perl/5.14
-/usr/share/perl/5.14
-/usr/local/lib/site_perl
-\end{minted}
-Добавить каталог (чтобы \verb|require| искал модуль в нем) в этот массив можно (кроме непосредственной работы с ним) следующими способами:
+Поиск модулей \verb|require| выполняет в каталогах, содержащихся в массиве
+\verb|@INC| (на самом деле функция \verb|do| делает то же самое):
+\inputminted
+  [frame=leftline,linenos,firstline=1]
+  {bash}
+  {lectures/L3/L3-example-include-require-inc.bash}
+
+Добавить каталог в этот массив (для того, чтобы \verb|require| искал модуль и в нем) можно следующими способами:
 \begin{enumerate}
-	\item Добавив каталог в переменную окружения PERL5LIB:
-  \begin{minted}{perl}
-  $ PERL5LIB=/tmp/lib perl ...
-  \end{minted}
-	\item Используя ключ I интерпретатора:
-  \begin{minted}{bash}
-  $ perl -I /tmp/lib ...
-  \end{minted}
+  \item Добавив каталог в переменную окружения \verb|PERL5LIB|:
+    \begin{minted}[frame=leftline,linenos]{bash}
+$ PERL5LIB=/tmp/lib perl ...
+    \end{minted}
+  \item Используя ключ \verb|-I| интерпретатора:
+    \begin{minted}[frame=leftline,linenos]{bash}
+$ perl -I /tmp/lib ...
+    \end{minted}
 \end{enumerate}
-В данной главе были рассмотрены основные способы подключения модулей. Существует, однако, ещё один способ, о котором будет сказано позднее.
+Помимо указанных способов, можно также явно модифицировать массив
+\verb|@INC|, но такой подход очень редко оправдан.
+
+На данный момент рассмотрены основные методы подключения модулей.
+Существует, однако, ещё один способ, о котором будет сказано позднее.
 
 % ------------------------------------------------------
 \section{Блоки фаз} %7:56
