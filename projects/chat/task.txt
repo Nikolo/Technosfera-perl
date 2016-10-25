@@ -144,7 +144,6 @@ Resp: <resp_nick> <plain_text>
 9. fortune
    Выводит случайные цитаты выдаваемые командой fortune 1 раз в минуту
    Пример:
-   запрос от клиента: fortune
    ответ: If there are epigrams, there must be meta-epigrams.
 ID: fortune
 Req: <bot_nick>
