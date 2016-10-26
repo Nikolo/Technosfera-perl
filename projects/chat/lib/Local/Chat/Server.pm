@@ -16,7 +16,7 @@ use Socket;
 use Data::Dumper;
 use Time::HiRes qw(time);
 
-has 'version', is => 'rw', default => 1;
+has 'version', is => 'rw', default => 2;
 
 has 'host', is => 'rw', required => 1, default => '0.0.0.0';
 has 'port', is => 'rw', required => 1, default => 3456;
@@ -27,6 +27,7 @@ has 'delayed_events', is => 'rw', default => sub {[]};
 
 has 'peers', is => 'ro', default => sub {{}};
 has 'users', is => 'ro', default => sub {{}};
+has 'authorized', is => 'rw', default => 0;
 
 has 'send_message_to_sender', is => 'rw', default => 1;
 
@@ -123,7 +124,8 @@ sub process_delayed_events {
 sub accept_client {
 	my $self = shift;
 	my $peer = shift;
-
+	my $pass = shift;
+		
 	my $remote = $peer->peerhost.':'.$peer->peerport;
 	say "Server accepted connection from $remote";
 	fh_nonblocking($peer,1);
@@ -136,7 +138,8 @@ sub accept_client {
 		fh     => $peer,
 		server => $self,
 		netlog => 1,
-		nick   => $nick, 
+		nick   => $nick,
+	   	pass   => $pass,	
 		active => time(),
 	);
 	$self->sel->add( $peer );
@@ -161,8 +164,10 @@ sub accept_client {
 	$client->on_msg(sub {
 		my ($client,$data) = @_;
 		my $to = $data->{to};
+		print "WARNING 1";
 		my $room = $to ? $self->rooms->{$to} : $self->default_room;
 		if ($room->have($client)) {
+			print "WARNING 2";
 			$room->message({
 				from => $client->nick,
 				text => $data->{text},
@@ -207,9 +212,30 @@ sub randname {
 	return;
 }
 
+sub validate_pass{
+	my $self = shift;
+	my $client = shift;
+	my $current_pass = shift;
+
+	if (defined $client->pass && $current_pass eq $client->pass){
+		$client->authorized( 1 )}
+	else {
+		$client->authorized( 0 );
+	}
+}
+
+sub register_user {
+	my $self = shift;
+	my ($client, $nick, $pass) = @_;
+	$self->users->{$nick} = $pass;
+	$client->nick($nick);
+	$client->pass($pass);
+	$client->authorized( 1 );
+}
+
 sub validate_nick {
 	my $self = shift;
-	my ( $client,$nick ) = @_;
+	my ( $client, $nick ) = @_;
 
 	my $current = $client->nick;
 
@@ -217,7 +243,6 @@ sub validate_nick {
 	if (exists $self->users->{$nick}) {
 		# Name is taken.
 		# If user is authorized, then fallback to current
-
 		if ($client->authorized) {
 			$self->log("Nickname $nick is taken. Revert to $current");
 			$client->event("nick", { nick => $client->nick });
@@ -232,13 +257,18 @@ sub validate_nick {
 			$client->disconnect("Failed to accept nickname");
 			return;
 		}
+	} else {
+		if ($client->version == 2) {
+			return 0;
+		}
 	}
+	
+	if ($client->version == 1) {
+		$client->nick($nick);
 
-	$client->nick($nick);
-
-	# Notify client about it's nickname
-	$client->event("nick", { nick => $client->nick });
-
+		# Notify client about it's nickname
+		$client->event("nick", { nick => $client->nick });
+	}
 	return 1;
 }
 

@@ -36,6 +36,8 @@ has 'on_join',    is => 'rw';
 has 'on_part',    is => 'rw';
 has 'on_rename',  is => 'rw';
 
+has 'pass', is => 'rw';
+
 has 'nick',       is => 'rw', trigger => sub {
 	my $self = shift;
 	if ($self->connected) {
@@ -140,7 +142,7 @@ sub packet {
 		given ($pkt->{event}) {
 			when ("hello") {
 				if (length $self->nick) {
-					$self->command( 'nick', { nick => $self->nick } );
+					$self->command( 'nick', { nick => $self->nick, pass => $self->pass } );
 				}
 			}
 			when ("nick") {
