@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
