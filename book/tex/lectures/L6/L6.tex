@@ -136,60 +136,53 @@ Perl вывести не успевает, так как программа за
 
 \section{Примеры использования ООП}% 22:54
 \subsection{Модуль DBI}
-Модуль \textbf{DBI} (database interface) задаёт интерфейс работы с абстрактной базой данных. От него наследуются все реализации движков конкретных баз данных. Метод DBI->connect позволяет задать параметры подключения и возвращает  \textbf{dbh} (database handler):
-\begin{minted}{perl}
-$dbh = DBI->connect(
-  $data_source,
-  $username,
-  $auth,
-  \%attr
-);
+Модуль \textbf{DBI} (database interface) задаёт интерфейс работы с абстрактной базой данных. От него наследуются все реализации движков конкретных систем управления базами данных (СУБД).
+Метод \verb|DBI->connect| позволяет задать параметры подключения и возвращает
+\textbf{DBH} (database handler):
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-oop-dbi.pl}
 
-$rv = $dbh->do('DELETE FROM table');
-\end{minted}
-Метод \textbf{do} объекта \textbf{dbh} позволяет исполнять запросы. Он вернёт указатель на следующий объект, из которого уже можно будет вычислить результат.
+Метод \verb|do| объекта \verb|dbh| позволяет выполнять запросы.
+Он возвращает указатель на следующий объект, из которого уже можно получить результат.
 
 
 \subsection{XML::LibXML}%16 23:56
 Библиотека \textbf{XML::LibXML}~--- работает с системами библиотек LibXML и используется для парсинга XML:
-\begin{minted}{perl}
-use XML::LibXML;
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-oop-dbi.pl}
 
-my $document = XML::LibXML->load_xml(
-    string => '...'
-);
-
-my $list = $document->findnodes('...');
-    # XML::LibXML::NodeList
-\end{minted}
-
-Метод \verb|load_xml| парсит XML из строчки в xml-объект, у которого есть методы для работы с XML. Например, \verb|findnodes| возвращает список nodes определённого типа. В этой библиотеке широко используется наследование:
+Метод \verb|load_xml| парсит XML из строчки в XML-объект, у которого есть методы для работы с XML.
+Например, \verb|findnodes| возвращает список nodes определённого типа. В этой библиотеке широко используется наследование:
 \begin{verbatim}
-       XML::LibXML::Node
-      /                 \
- XML::LibXML::Document  XML::LibXML::Element
+             XML::LibXML::Node
+              /             \
+XML::LibXML::Document  XML::LibXML::Element
 \end{verbatim}
 % TODO про производительность
 
-\subsection{File::Spec}%17 25:38
-Базовый модуль \textbf{File::Spec} содержит метод \textbf{catfile}, который склеивает из кусков пусть к файлу:
-\begin{minted}{perl}
-use File::Spec;
 
-print File::Spec->catfile('a', 'b', 'c');
-\end{minted}
+\subsection{File::Spec}%17 25:38
+Базовый модуль \textbf{File::Spec} содержит метод \verb|catfile|,
+который склеивает из фрагментов путь к файлу:
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-oop-file.pl}
+
 \textbf{File::Spec} автоматически убирает дублирующие слеши, а также учитывает особенности используемой операционной системы.
 
+
 \subsection{JSON} %18 26:37
-У модуля JSON, помимо необъектного существует объектный интерфейс.
+У модуля JSON помимо необъектного существует объектный интерфейс.
 Каждый его метод возвращает одну и ту же ссылку, но меняет при этом внутренние атрибуты.
-\begin{minted}{perl}
-use JSON;
-
-JSON->new->utf8->decode('...');
-
-decode_json '...';
-\end{minted}
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-oop-json.pl}
 
 
 \section{Наследование}%20 28:59
