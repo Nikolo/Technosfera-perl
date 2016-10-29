@@ -75,7 +75,7 @@ foo $obj(123);  # $obj->foo(123);
     [frame=leftline,framesep=1em,linenos,firstline=1]
     {perl}
     {lectures/L6/L6-example-intro-syntax-error.pl}
-Это пример проходит проверку синтаксиса, хотя совершенно не похож на перловый код.
+Этот пример проходит проверку синтаксиса, хотя совершенно не похож на перловый код.
 Здесь из класса \verb|error| вызывается метод \verb|Syntax|, для которого
 восклицательный знак и \verb|exit 0;| являются параметром:
 \inputminted
@@ -88,64 +88,51 @@ foo $obj(123);  # $obj->foo(123);
 Ошибку о том, что в пакете \verb|error| нет метода \verb|Syntax|,
 Perl вывести не успевает, так как программа завершает исполнение раньше.
 
-Во всех классах определён метод can:
-\begin{minted}{perl}
-{
-  package A;
+Во всех классах определён метод \verb|can|:
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-can.pl}
+Метод \verb|can| позволяет проверить, может ли использоваться метод,
+имя которого передано в параметрах.
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-can-bless.pl}
+Метод \verb|can| возвращает ref метода в случае, если метод существует:
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-can-ref.pl}
+Здесь передается строка \verb|'A'| в качестве параметра,
+так как \verb|can| возвращает уже не метод, а функцию.
 
-  sub test {
-    return 42;
-  }
-}
+Метод \verb|can| можно вызывать не только из классов, но и из объектов:
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-can-bless.pl}
 
-if (A->can('test')) {
-  print A->test;
-}
-\end{minted}
-Этот метод возвращает, может ли использоваться метод, имя которого передается в параметрах.
-\begin{minted}{perl}
-my $obj = bless {}, 'A';
-$obj->can('test');
-\end{minted}
-\textbf{can} может возвращать также ref метода, если он существует:
-\begin{minted}{perl}
-print A->can('test')->('A');
-\end{minted}
-Здесь передается <<A>> в качестве параметра, так как can возвращает уже не метод, а функцию.
-
-Метод can можно вызывать не только из классов, но и из объектов:
-\begin{minted}{perl}
-my $obj = bless {}, 'A';
-$obj->can('test');
-\end{minted}
-
-\textbf{Filehandles}~--- тоже объекты, у которых есть, в том числе, следующие методы:
+\textbf{Filehandle}~--- тоже объект, у которого есть, в том числе, следующие методы:
 \begin{itemize}
   \item \verb|autoflush|~--- сброс буфера,
   \item \verb|print|~--- печать
 \end{itemize}
 
-\begin{minted}{perl}
-open(my $fh, '>', 'path/to/file');
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-filehandle.pl}
+Соответственно, предустановленные \verb|STDOUT| и \verb|STDERR|~--- тоже объекты,
+и из них можно вызывать методы.
 
-$fh->autoflush();
-$fh->print('content');
+На прошлой лекции не было сказано, почему при вызове \verb|use| и \verb|no| в качестве первого аргумента передается имя пакета.
+Теперь понятно, что на самом деле вызывается функция из пакета, первым параметром которой является имя пакета.
+\inputminted
+    [frame=leftline,framesep=1em,linenos,firstline=1]
+    {perl}
+    {lectures/L6/L6-example-intro-use.pl}
 
-STDOUT->autoflush();
-\end{minted}
-Соответственно, предустановленные STDOUT и STDERR - тоже объекты и из них можно вызывать методы.
-
-На прошлой лекции не было сказано, почему при вызове use и no в качестве первого аргумента подается имя пакета. Теперь понятно, что на самом деле вызывается функция из пакета, первым параметром которой является имя пакета.
-\begin{minted}{perl}
-use Some::Package qw(a b c);
-# Some::Package->import(qw(a b c));
-
-no Some::Package;
-# Some::Package->unimport;
-
-use Some::Package 10.01
-# Some::Package->VERSION(10.01);
-\end{minted}
 
 \section{Примеры использования ООП}% 22:54
 \subsection{Модуль DBI}
