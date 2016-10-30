@@ -1,13 +1,21 @@
-﻿class: center, middle
-layout:false
+﻿class:firstpage, title
 # Веб-приложения изнутри
 
 ---
 
+class:note_and_mark title
+
+# Отметьтесь на портале!
+ 
+---
+
 # Содержание
-1. *Протокол HTTP*
+1. **Протокол HTTP**
 1. CGI, mod_perl, FastCGI, PSGI
 1. Веб-фреймворки
+	- Dancer
+	- Mojolicious
+	- Catalyst
 1. Механизмы безопасности в приложениях
 
 ---
@@ -132,12 +140,13 @@ DELETE | удаляет ресурс с сервера.
 layout:false
 # Содержание
 
-.bigger_font[
 1. Протокол HTTP
-1. *CGI, mod_perl, FastCGI, PSGI*
+1. **CGI, mod_perl, FastCGI, PSGI**
 1. Веб-фреймворки
+	- Dancer
+	- Mojolicious
+	- Catalyst
 1. Механизмы безопасности в приложениях
-]
 ---
 
 layout: true
@@ -185,7 +194,7 @@ PSGI - Перловый суперклей для веб-фреймворков 
 
 **mod_perl**
 
-Самый частовстречающийся вариант
+Самый часто встречающийся вариант
 
 На него легко перенести ранее написанное CGI приложение
 
@@ -293,12 +302,13 @@ my $app = sub {
 layout:false
 # Содержание
 
-.bigger_font[
 1. Протокол HTTP
 1. CGI, mod_perl, FastCGI, PSGI
-1. *Веб-фреймворки*
+1. **Веб-фреймворки**
+	- Dancer
+	- Mojolicious
+	- Catalyst
 1. Механизмы безопасности в приложениях
-]
 
 ---
 
@@ -817,12 +827,13 @@ if ($c->check_user_roles('admin')) {
 layout:false
 # Содержание
 
-.bigger_font[
 1. Протокол HTTP
 1. CGI, mod_perl, FastCGI, PSGI
 1. Веб-фреймворки
-1. *Механизмы безопасности в приложениях*
-]
+	- Dancer
+	- Mojolicious
+	- Catalyst
+1. **Механизмы безопасности в приложениях**
 
 ---
 
@@ -916,4 +927,14 @@ layout: false
   - страница просмотра/редактирования рейт-лимитов
   - страница просмотра зарегичстрированных пользователей
   - страница удаления пользователя
+
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
 

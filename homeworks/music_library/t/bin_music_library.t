@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -186,5 +186,25 @@ INPUT
 /------------------------------\\
 | --A-B--C-- | 1 | A | m | mp3 |
 \\------------------------------/
+OUTPUT
+;
+
+test_bin
+'several filters', '--band B --year 12',
+<<INPUT
+./B/1 - A/m.mp3
+./A/12 - B/t.flac
+./B/012 - AB/s.ogg
+./B/12 - B/o.ogg
+./A/12 - A/A.A
+./B/3 - C/a.abc
+INPUT
+,
+<<OUTPUT
+/------------------------\\
+| B | 012 | AB | s | ogg |
+|---+-----+----+---+-----|
+| B |  12 |  B | o | ogg |
+\\------------------------/
 OUTPUT
 ;
