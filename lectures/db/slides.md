@@ -1,6 +1,14 @@
-class: firstpage
+class: firstpage title
 
-# Работа с базами данных
+# Программирование на Perl
+
+## Работа с базами данных
+
+---
+
+class:note_and_mark title
+
+# Отметьтесь на портале!
 
 ---
 
@@ -74,6 +82,16 @@ $name = $dbh->quote($name);
 ```
 
 ---
+
+class:center
+# SQL injections
+
+.img-xkcd[
+![image]( xkcd.png )
+]
+
+---
+
 
 # prepare, execute
 
@@ -652,5 +670,15 @@ $memd->get('skey');
 https://github.com/Nikolo/Technosfera-perl/
 
 `/homeworks/habr`
+
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
 
 
