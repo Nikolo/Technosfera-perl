@@ -665,6 +665,16 @@ $memd->get('skey');
 
 ---
 
+# NoSQL
+
+* Redis
+* MongoDB
+* Cassandra
+* Tarantool
+* Octopus
+
+---
+
 # ДЗ
 
 https://github.com/Nikolo/Technosfera-perl/
