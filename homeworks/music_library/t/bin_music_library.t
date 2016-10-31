@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -238,9 +238,9 @@ INPUT
 /------\\
 | Band |
 |------|
-|    B |
-|------|
 |    A |
+|------|
+|    B |
 \\------/
 OUTPUT
 ;
@@ -257,9 +257,9 @@ INPUT
 /------\\
 | Band |
 |------|
-|    B |
-|------|
 |    A |
+|------|
+|    B |
 \\------/
 OUTPUT
 ;
