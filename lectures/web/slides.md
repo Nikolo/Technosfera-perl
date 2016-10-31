@@ -848,6 +848,7 @@ layout: true
 - XSS
 - CSRF
 - Response-splitting
+- Poison NULL byte
 - Innumeration
 - Sql-injection
 - Code-including
@@ -871,6 +872,32 @@ layout: true
 *Response-splitting*
 
 ![Right-aligned image](splitting.png)
+
+---
+
+*Poison NULL byte*
+
+```perl
+my $tpl_name = $c->param('tpl') || 'main.tpl';
+if ( $tpl_name !~ /\.tpl$/s ) {
+    $tpl_name = 'main.tpl';
+}
+$tpl_name = "templates/$tpl_name";
+open( my $hTPL, '<', $tpl_name )
+  or die "can't open $tpl_name: $OS_ERROR";
+print for $hTPL;
+close $hTPL;
+```
+
+---
+
+*Poison NULL byte*
+
+```
+http://my.site/?tpl=../../../../../etc/passwd%00.tpl
+```
+
+.center[.normal-width[![image](butthurt.png)]]
 
 ---
 
