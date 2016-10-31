@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 11;
+use Test::More tests => 14;
 
 sub test_bin {
     my ($name, $params, $input, $output) = @_;
@@ -10,7 +10,7 @@ sub test_bin {
     $input_fh->print($input);
     $input_fh->close();
 
-    system("$^X bin/music_library.pl $params < input.tmp > output.tmp");
+    system("$^X bin/music_library.pl $params < input.tmp > output.tmp 2>stderr.tmp");
 
     my $real_output;
     {
@@ -20,10 +20,15 @@ sub test_bin {
         $output_fh->close();
     }
 
-    is($real_output, $output, $name);
+    if (-s "stderr.tmp") {
+        fail("'$name' test failed because of warnings");
+    } else {
+        is($real_output, $output, $name);
+    }
 
     unlink('input.tmp');
     unlink('output.tmp');
+    unlink('stderr.tmp');
 }
 
 test_bin
@@ -206,5 +211,55 @@ INPUT
 |---+-----+----+---+-----|
 | B |  12 |  B | o | ogg |
 \\------------------------/
+OUTPUT
+;
+
+test_bin
+'invalid lines', q{},
+<<INPUT
+./ABC/1 - A/m.mp3.
+./ABC/a - A/m.mp3
+./ABC/DEF/1 - A/m.mp3
+INPUT
+,
+<<OUTPUT
+OUTPUT
+;
+
+test_bin
+'single column', '--columns band',
+<<INPUT
+./Band/123 - Album/track.mp3
+./A/3210 - AlbumAlbum/t.format
+./B/123 - AlbumAlbum/blah.ogg
+INPUT
+,
+<<OUTPUT
+/------\\
+| Band |
+|------|
+|    A |
+|------|
+|    B |
+\\------/
+OUTPUT
+;
+
+test_bin
+'invalid options', '--column band',
+<<INPUT
+./Band/123 - Album/track.mp3
+./A/3210 - AlbumAlbum/t.format
+./B/123 - AlbumAlbum/blah.ogg
+INPUT
+,
+<<OUTPUT
+/------\\
+| Band |
+|------|
+|    A |
+|------|
+|    B |
+\\------/
 OUTPUT
 ;
