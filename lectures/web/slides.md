@@ -23,6 +23,54 @@ class:note_and_mark title
 layout: true
 # Протокол HTTP
 
+
+---
+
+**Пример простейшего запроса**
+
+```perl
+say 'GET / HTTP/1.1\r\nHost:search.cpan.org\r\n\r\n';
+```
+
+```http
+GET / HTTP/1.1
+Host: search.cpan.org
+```
+
+**Ответ**
+
+```http
+HTTP/1.1 200 OK
+Date: Mon, 13 Apr 2015 20:19:35 GMT
+Server: Plack/Starman (Perl)
+Content-Length: 3623
+Content-Type: text/html
+
+__CONTENT__
+
+```
+---
+
+**Формат ответа**
+
+```rfc
+ Response      = Status-Line  ; Section 6.1
+ *(( general-header           ; Section 4.5
+ | response-header            ; Section 6.2
+ | entity-header ) CRLF)      ; Section 7.1
+ CRLF
+ [ message-body ]             ; Section 7.2
+
+ Status-Line = HTTP-Version SP Status-Code SP 
+               Reason-Phrase CRLF
+
+```
+**Статус**
+- 1** - информационные сообщения от сервера клиенту
+- 2** - успешная обработка запроса
+- 3** - контент находится в другом месте или не изменялся
+- 4** - ошибка обработки запроса (клиент неправильно сформировал пакет)
+- 5** - ошибка обработки запроса (проблема на сервере)
 ---
 
 **HTTP/1.1 messages (HTTP/1.1 сообщения)**
@@ -56,54 +104,6 @@ HTTP = HyperText Transfer Protocol
 
 ![Right-aligned image](http.png)
 
----
-
-**Формат ответа**
-
-```rfc
- Response      = Status-Line  ; Section 6.1
- *(( general-header           ; Section 4.5
- | response-header            ; Section 6.2
- | entity-header ) CRLF)      ; Section 7.1
- CRLF
- [ message-body ]             ; Section 7.2
-
- Status-Line = HTTP-Version SP Status-Code SP 
-               Reason-Phrase CRLF
-
-```
-**Статус**
-- 1** - информационные сообщения от сервера клиенту
-- 2** - успешная обработка запроса
-- 3** - контент находится в другом месте или не изменялся
-- 4** - ошибка обработки запроса (клиент неправильно сформировал пакет)
-- 5** - ошибка обработки запроса (проблема на сервере)
-
----
-
-**Пример простейшего запроса**
-
-```perl
-say 'GET / HTTP/1.1\r\nHost:search.cpan.org\r\n\r\n';
-```
-
-```http
-GET / HTTP/1.1
-Host: search.cpan.org
-```
-
-**Ответ**
-
-```http
-HTTP/1.1 200 OK
-Date: Mon, 13 Apr 2015 20:19:35 GMT
-Server: Plack/Starman (Perl)
-Content-Length: 3623
-Content-Type: text/html
-
-__CONTENT__
-
-```
 
 ---
 
