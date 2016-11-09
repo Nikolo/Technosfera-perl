@@ -10,6 +10,7 @@ use Local::Row::JSON;
 my $sum_reducer = Local::Reducer::Sum->new(
     field => 'price',
     source => Local::Source::Array->new(array => [
+        '{"price": 0}',
         '{"price": 1}',
         '{"price": 2}',
         '{"price": 3}',
@@ -20,7 +21,7 @@ my $sum_reducer = Local::Reducer::Sum->new(
 
 my $sum_result;
 
-$sum_result = $sum_reducer->reduce_n(1);
+$sum_result = $sum_reducer->reduce_n(2);
 is($sum_result, 1, 'sum reduced 1');
 is($sum_reducer->reduced, 1, 'sum reducer saved');
 
