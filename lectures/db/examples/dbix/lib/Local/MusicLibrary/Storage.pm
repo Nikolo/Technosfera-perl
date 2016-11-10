@@ -73,7 +73,7 @@ sub load_data {
         },
         {
             ($sort ? ( order_by => $fields_map{$sort} ) : ()),
-            join => [qw/band album/]
+            prefetch => [qw/band album/]
         }
     );
     while(my $r = $rs->next) {
