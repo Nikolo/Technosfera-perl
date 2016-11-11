@@ -1,4 +1,4 @@
-.remark-container.remark-presenter-mode .remark-slides-area {
+/*.remark-container.remark-presenter-mode .remark-slides-area {
     height: 80%;
     opacity: 0.3;
 }
@@ -8,6 +8,7 @@
     bottom: 30%;
     left: 7%;
 }
+*/
 
 .remark-slide-content:not(.title) h1:first-of-type {
     top: 0px;
