@@ -23,6 +23,49 @@ class:note_and_mark, title
 
 ---
 
+# Зачем?
+Perl vs C
+```perl
+$ts = time();
+
+for($i = 0; $i < 1e7; $i++) { $sum += $i; }
+
+say "Perl: " . (time() - $ts);
+$ts = time(); $sum = mysum();
+say "C:    " . (time() - $ts);
+
+__END__
+__C__
+SV * mysum() {
+	unsigned long sum = 0;
+	for(unsigned i = 0; i < 1e7; i++) sum += i;
+	newSViv(sum);
+}
+```
+
+---
+
+<br>
+
+# Зачем?
+
+## Кто быстрее? На сколько?
+
+---
+
+# Зачем?
+
+<br>
+
+## Кто быстрее? На сколько?
+```html
+Perl: 0.613094091415405
+C:    0.00823593139648438
+```
+C в 75 раз быстрее!
+
+---
+
 layout:false
 
 # Содержание
@@ -55,7 +98,10 @@ C::Scan - модуль для парсинга хеадер-файла для г
 ```html
 $ h2xs -n Local::Base58::XS -O -x "include/base58.h"
 ```
-.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlnewmod](http://perldoc.perl.org/perlnewmod.html)]
+.footnote[
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
+[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
+]
 
 ???
 
@@ -84,7 +130,8 @@ Writing Local-Base58-XS/MANIFEST
 ```
 
 .footnote[
-См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
+[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
 ]
 
 ???
@@ -117,8 +164,10 @@ Result: PASS
 
 $ make install
 ```
+
 .footnote[
-См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
+[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
 ]
 
 ---
@@ -149,24 +198,26 @@ xsubpp - компилятор который собирает С код из м�
 
 TYPEMAP - правила преобразования типов данных
 
-```txt
- __________
-| TYPEMAP  |___
-|__________|   \       ___________       _________
-                \_____|  XSUBPP   |_____| C-File  |
-                /     |___________|     |_________|
- __________    /                             ^
-|  XS-file |__/                          ____|____
-|__________|                            | PM-file |
-                                        |_________|
-```
+.center[.normal-width[![image](img/xsubpp.svg)]]
 
 .footnote[
-См. разделы <b>perlxstut</b> и <b>xsubpp</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
+[xsubpp](http://perldoc.perl.org/xsubpp.html) в perldoc
 ]
 
 ???
 
+```txt
+ __________
+| TYPEMAP  |___
+|__________|   \      ___________       _________
+                \____|  XSUBPP   |_____| C-File  |
+                /    |___________|     |_________|
+ __________    /                            ^
+|  XS-file |__/                         ____|____
+|__________|                           | PM-file |
+                                       |_________|
+```
 xsub - функции написанные в xs-модуле
 
 ---

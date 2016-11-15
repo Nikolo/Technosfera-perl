@@ -54,10 +54,16 @@ h1, h2, h3 {
     bottom: 12px;
     left: 80px;
     background-color: #e8e8e8;
-    color: #c1010d;
+    /* color: #c1010d; */
+    color: #444444;
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 20px;
+}
+
+.footnote a {
+    color: #444444;
+    font-weight: bold;
 }
 
 .remark-code {
