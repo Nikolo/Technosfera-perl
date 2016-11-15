@@ -1,17 +1,28 @@
-﻿class:firstpage
+﻿class:firstpage, title
 # Программирование на Perl
 
 ---
 
-class:note_and_mark
+class:note_and_mark, title
 
 # Отметьтесь на портале!
  
 ---
 
-class: firstpage
-# Ускоряем перл
-# Расширяем «C»
+class: firstpage, title
+# Ускоряем перл.<br><br>Расширяем «C»
+
+---
+
+# Зачем?
+
+- оптимизация производительности
+  - сокращаем потребление памяти
+  - сокращаем потребление CPU
+- увеличение скорости разработки
+  - использование готового кода и библиотек
+  - некоторые задачи проще решать на C
+  - в Perl есть регулярные выражения и не только
 
 ---
 
@@ -25,6 +36,7 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
@@ -33,19 +45,23 @@ layout: true
 
 ---
 
-```bash
-% perl -V:make
+<br>
+```html
+$ perl -V:make
 
-make='dmake';
+make='make';
 
-% h2xs -b 5.10.1 -n local::sferamail::perlxs
+$ h2xs -n Local::Base58::XS -b 5.18.0
+```
+C::Scan - модуль для парсинга хеадер-файла для генерации xsubs.
+
+```html
+$ h2xs -n Local::Base58::XS -O -x "include/base58.h"
 ```
 
-C::Scan - модуль для парсинга хеадер-файла для генерации xsubs
-
-```bash
-h2xs -n local::sferamail::locale -O -x "F:\locale.h"
-```
+.footnote[
+См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
+]
 
 ???
 
@@ -58,35 +74,58 @@ h2xs -n local::sferamail::locale -O -x "F:\locale.h"
 
 Базовый набор файлов, необходимых для создания модуля.
 
-```bash
-Writing local-sferamail-perlxs/ppport.h
-Writing local-sferamail-perlxs/lib/local/sferamail/perlxs.pm
-Writing local-sferamail-perlxs/perlxs.xs
-Writing local-sferamail-perlxs/fallback/const-c.inc
-Writing local-sferamail-perlxs/fallback/const-xs.inc
-Writing local-sferamail-perlxs/Makefile.PL
-Writing local-sferamail-perlxs/README
-Writing local-sferamail-perlxs/t/local-sferamail-perlxs.t
-Writing local-sferamail-perlxs/Changes
-Writing local-sferamail-perlxs/MANIFEST
+```html
+$ h2xs -n Local::Base58::XS -b 5.18.0
+Writing Local-Base58-XS/ppport.h
+Writing Local-Base58-XS/lib/local/Base58/XS.pm
+Writing Local-Base58-XS/XS.xs
+Writing Local-Base58-XS/fallback/const-c.inc
+Writing Local-Base58-XS/fallback/const-xs.inc
+Writing Local-Base58-XS/Makefile.PL
+Writing Local-Base58-XS/README
+Writing Local-Base58-XS/t/local-Base58-XS.t
+Writing Local-Base58-XS/Changes
+Writing Local-Base58-XS/MANIFEST
+
 ```
+
+.footnote[
+См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
+]
+
+???
+
+- ppport.h
+- XS.pm
+- XS.xs
+- const-{c,xs}.inc
+- Makefile.PL
+- README
+- local-Base58-XS.t
+- Changes
+- MANIFEST
 
 ---
 
 Сборка и тестирование модуля
 
-```bash
-% perl Makefile.PL
-% dmake
-% dmake test
+```html
+$ perl Makefile.PL
+$ make
+$ make test
 
-t/sferamail-perlxs.t .. ok
+t/local-Base58-XS.t .. ok
 All tests successful.
-Files=1, Tests=1,  0 wallclock secs ( 0.00 usr +  0.08 sys =  0.08 CPU)
+Files=1, Tests=1,  0 wallclock secs ( 0.04 usr  0.⤶
+00 sys +  0.03 cusr  0.00 csys =  0.07 CPU)
 Result: PASS
 
-% dmake install
+
+$ make install
 ```
+.footnote[
+См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
+]
 
 ---
 
@@ -100,6 +139,7 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
@@ -108,7 +148,6 @@ layout: true
 
 ---
 
-xsub - функции написанные в xs-модуле
 
 XS - набор макросов
 
@@ -128,6 +167,14 @@ TYPEMAP - правила преобразования типов данных
                                         |_________|
 ```
 
+.footnote[
+См. разделы <b>perlxstut</b> и <b>xsubpp</b> в perldoc
+]
+
+???
+
+xsub - функции написанные в xs-модуле
+
 ---
 
 layout:false
@@ -140,6 +187,7 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
@@ -152,16 +200,50 @@ layout: true
 - AV  Array Value
 - HV  Hash Value
 
-.floatright[![Right-aligned image](svhead.png)]
+.floatright[![Right-aligned image](img/svhead.png)]
 
 - SV:
- - IV - signed integer value 
- - UV - unsigned integer value 
- - NV - double
+ - IV - signed integer value
+ - UV - unsigned integer value
+ - NV - double value
  - PV - pointer value
- - SV
+ - <span style="opacity: 0.5">RV - references value</span>
 
-.center[.normal-width[![image](flags.png)]] 
+.center[.normal-width[![image](img/flags.png)]] 
+
+.footnote[
+См. модуль <b>illguts</b> на <i style="opacity: 0.5">meta</i>cpan.org
+]
+
+???
+
+ - NULL - PL\_sv\_\{undef|yes|no\}
+
+---
+
+<br>
+.center[.normal-width[![image](img/svtypes.png)]]
+.center[SvIV]
+.center[.normal-width[![image](img/sviv-14.png)]]
+
+.footnote[
+См. модуль <b>illguts</b> на <i style="opacity: 0.5">meta</i>cpan.org
+]
+
+???
+
+In addition to the simple type names already mentioned, the following names are found in the hierarchy figure:
+    An PVIV value can hold a string and an integer value.
+    An PVNV value can hold a string, an integer and a double value.
+    The PVMG is used when magic is attached or the value is blessed.
+    The PVLV represents a LValue object.
+    RV is now a seperate scalar of type SVt_IV.
+    CV is a code value, which represents a perl function/subroutine/closure or contains a pointer to an XSUB.
+    GV is a glob value and IO contains pointers to open files and directories and various state information about these.
+    The PVFM is used to hold information on forms.
+    P5RX was formerly called PVBM for Boyer-Moore (match information), but contains now regex information.
+    BIND was a unused placeholder for read-only aliases or VIEW. (#29544, #29642)
+    INVLIST is an CORE internal inversion list object only, used for faster utf8 matching, since 5.19.2. Same layout as a PV.
 
 ---
 
@@ -210,9 +292,13 @@ SV* newSVpvf(const char*, ...);
 SV* newSVsv(SV*);
 ```
 
+.footnote[
+См. раздел <b>perlapi</b> в perldoc
+]
+
 ---
 
-*Определение значения переменной*
+*Установка значения переменной*
 
 ```perlxs
 void  sv_setiv(SV*, IV);
@@ -224,26 +310,36 @@ void  sv_setpvf(SV*, const char*, ...); //sprintf
 void  sv_setsv(SV*, SV*);
 ```
 
+.footnote[
+См. раздел <b>perlapi</b> в perldoc
+]
+
 ---
 
-*Установка значения переменной*
+*Получение значения переменной*
 
 ```perlxs
 SvIV(SV*)
 SvUV(SV*)
 SvNV(SV*)
-SvPV(SV*, STRLEN len) //возвращается длинна строки 
+SvPV(SV*, STRLEN len) //возвращается длина строки
 SvPV_nolen(SV*)
 ```
 
 *Проверка типа SV-шки*
 
 ```perlxs
+SvOK(SV*)
 SvIOK(SV*)
 SvNOK(SV*)
 SvPOK(SV*)
+SvOK(SV*)
 SvTRUE(SV*)
 ```
+
+.footnote[
+См. раздел <b>perlapi</b> в perldoc
+]
 
 ---
 
@@ -252,23 +348,24 @@ SvTRUE(SV*)
 ```c
 SvCUR(SV*) - длина
 SvCUR_set(SV*, I32 val)
-
 SvGROW(sv, needlen + 1)
-
 SvUTF8_off(sv);
 
-SvEND(SV*) // Ссылка на последний байт в строке
+SvEND(SV*) // a pointer to last character + 1
 
 sv_setpvn(sv, "", 0);
 
 s = SvGROW(sv, needlen + 1);
-// something that modifies up to needlen bytes 
-// at s, but modifies newlen bytes
-// eg. newlen = read(fd, s, needlen); 
+// remember trailing NUL
 
 s[newlen] = '\0';
 SvCUR_set(sv, newlen);
 ```
+
+.footnote[
+См. раздел <b>perlapi</b> в perldoc
+]
+
 ---
 
 layout:false
@@ -281,6 +378,7 @@ layout:false
 1. **Работа со стеком**
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
@@ -528,6 +626,7 @@ layout:false
 1. Работа со стеком
 1. **Typemaps**
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
@@ -727,6 +826,7 @@ layout: false
 1. Работа со стеком
 1. Typemaps
 1. **Встраивание Perl (perlembed)**
+1. Альтернативы
 
 ---
 
@@ -753,7 +853,8 @@ int main(int argc, char **argv, char **env)
 }
 ```
 
----
+???
+DELME
 
 ```bash
 perl -MExtUtils::Embed -e ccopts -e ldopts
@@ -764,7 +865,7 @@ cc -o interp interp.c `perl -MExtUtils::Embed \
    -e ccopts -e ldopts`
 ```
 
----
+???
 
 Что хотим использовать:
 ```html
@@ -857,6 +958,64 @@ print_var(char *var_name, char *var)
 ```
 
 ---
+
+layout: false
+# Содержание
+
+1. Генерация XS модулей
+1. Макропроцессор
+1. Типы данных изнутри
+1. Работа со стеком
+1. Typemaps
+1. Встраивание Perl (perlembed)
+1. **Альтернативы**
+
+---
+
+# Inline::C
+
+<br>
+
+```perl
+use Inline C => DATA => libs => '-lz';
+
+say CRC32("1234");
+say unpack('H*', pack('N', CRC32("1234")));
+
+__END__
+__C__
+#include <zlib.h>
+
+SV * CRC32(SV * sv_buf) {
+	STRLEN len;
+	unsigned char * buf;
+	buf = SvPV(sv_buf, len);
+	newSViv(crc32(NULL, buf, len));
+}
+```
+
+---
+
+# FFI::Raw
+
+<br>
+
+```perl
+use FFI::Raw;
+
+# ZEXTERN uLong ZEXPORT
+# crc32 OF((uLong crc, const Bytef *buf, uInt len));
+my $crc32 = FFI::Raw->new("libz.so", "crc32",
+	FFI::Raw::uint64, # uLong
+	FFI::Raw::uint64, # uLong
+	FFI::Raw::str,    # const Bytef *
+	FFI::Raw::uint    # uInt
+);
+say unpack('H*',
+  pack('N', $crc32->call(0, "1234", 4)));
+```
+
+---
 layout: false
 # Домашнее задание
 
@@ -870,7 +1029,7 @@ layout: false
 
 ---
 
-class:lastpage
+class:lastpage, title
 
 # Оставьте отзыв
 
@@ -879,3 +1038,5 @@ class:lastpage
 Николай Шуляковский
 
 Email & Agent: n.shulyakovskiy@corp.mail.ru
+
+???
