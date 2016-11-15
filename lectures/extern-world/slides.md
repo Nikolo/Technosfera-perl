@@ -74,7 +74,7 @@ fopen(3) r , r+ , w , w+ , a
 open(my $fh_cp,'<:encoding(CP-1251)','cp1251.txt');
 open(my $fh_utf, '>:encoding(UTF-8)', 'utf8.txt');
 while( <$fh_cp> ){
-    print $fh_utf $_;
+    print {$fh_utf} $_;
 }
 close($fh_utf);
 close($fh_cp);
@@ -100,7 +100,7 @@ $line = <$handle>
 ```perl
 print $var;
 
-print $fh $var;
+print {$fh} $var;
 
 print STDERR $var;
 ```

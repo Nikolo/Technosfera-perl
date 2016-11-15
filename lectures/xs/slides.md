@@ -1,17 +1,14 @@
 ﻿class:firstpage, title
 # Программирование на Perl
 
+## Ускоряем перл (XS)
+
 ---
 
 class:note_and_mark, title
 
 # Отметьтесь на портале!
  
----
-
-class: firstpage, title
-# Ускоряем перл.<br><br>Расширяем «C»
-
 ---
 
 # Зачем?
@@ -58,10 +55,7 @@ C::Scan - модуль для парсинга хеадер-файла для г
 ```html
 $ h2xs -n Local::Base58::XS -O -x "include/base58.h"
 ```
-
-.footnote[
-См. разделы <b>perlxstut</b> и <b>perlnewmod</b> в perldoc
-]
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlnewmod](http://perldoc.perl.org/perlnewmod.html)]
 
 ???
 
@@ -1029,14 +1023,10 @@ layout: false
 
 ---
 
-class:lastpage, title
+class:lastpage title
 
-# Оставьте отзыв
+# Спасибо за внимание!
 
-Спасибо за внимание!
+## Оставьте отзыв
 
-Николай Шуляковский
-
-Email & Agent: n.shulyakovskiy@corp.mail.ru
-
-???
+.teacher[![teacher]()]
