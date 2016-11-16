@@ -68,9 +68,6 @@ h1, h2, h3 {
 
 .remark-code {
     border-radius: 4px;
+    line-height: 1.2em;
 /*    font-size: 20px;*/
-}
-
-.compress {
-    line-height: 1.4em;
 }

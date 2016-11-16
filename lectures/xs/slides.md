@@ -45,9 +45,9 @@ SV * mysum() {
 
 ---
 
-<br>
-
 # Зачем?
+
+<div style="height:1em;"></div>
 
 ## Кто быстрее? На сколько?
 
@@ -55,7 +55,7 @@ SV * mysum() {
 
 # Зачем?
 
-<br>
+<div style="height:1em;"></div>
 
 ## Кто быстрее? На сколько?
 ```html
@@ -85,7 +85,8 @@ layout: true
 
 ---
 
-<br>
+<div style="height:1em;"></div>
+
 ```html
 $ perl -V:make
 
@@ -294,7 +295,8 @@ struct STRUCT_SV {		/* struct sv { */
 
 ---
 
-<br>
+<div style="height:1em;"></div>
+
 .center[.normal-width[![image](img/svtypes.png)]]
 .center[SvIV]
 .center[.normal-width[![image](img/sviv-14.png)]]
@@ -606,6 +608,8 @@ void distance_point(x1,y1,x2,y2)
 
 ---
 
+<div style="height:1em;"></div>
+
 ```c
 void distance_ext_point(x1,y1,x2,y2)
     double x1
@@ -646,7 +650,8 @@ The mark stack keeps bookmarks to locations in the argument stack usable by each
 
 ---
 
-<br>
+<div style="height:1em;"></div>
+
 ```c
 dXSARGS; //dSP and dMARK and dITEMS
 if (items != 4) croak_xs_usage(cv, "x1,y1,x2,y2");
@@ -787,7 +792,7 @@ sub get_points {
 ---
 
 *Вызов перл функции с аргументами*
-.compress[
+
 ```c
 double distance_call_arg_point()
  PPCODE:
@@ -807,7 +812,6 @@ double distance_call_arg_point()
   FREETMPS; LEAVE;
   PUSHs(sv_2mortal(newSVnv(dist)));
 ```
-]
 
 ---
 
@@ -831,7 +835,7 @@ layout: true
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```typemap
 TYPEMAP
 int                     T_IV
@@ -851,7 +855,7 @@ OUTPUT
 T_PV
     sv_setpv((SV*)$arg, $var);
 ```
-]
+
 
 .footnote[
 см. раздел
@@ -862,7 +866,7 @@ T_PV
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
 double distance_pointobj(r_point1, r_point2)
   SV *r_point1
@@ -882,12 +886,11 @@ double distance_pointobj(r_point1, r_point2)
      || SvTYPE(_point2) != SVt_PVHV)
       croak("Point must be a hashref");
 ```
-]
 
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
   point1 = (HV*)_point1;
   point2 = (HV*)_point2;
@@ -908,17 +911,15 @@ double distance_pointobj(r_point1, r_point2)
     sqrt(pow(x1-x2,2) + pow(y1-y2,2))
   )));
 ```
-]
 
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
 typedef struct { double x, y; } GEOM_POINT;
 ```
-]
-.compress[
+
 ```c
 TYPEMAP
 WORD                    T_IV
@@ -936,7 +937,6 @@ CV *                    T_CVREF
 GEOM_POINT*             T_HVREF
 
 ```
-]
 
 .footnote[
 см. раздел
@@ -947,7 +947,7 @@ GEOM_POINT*             T_HVREF
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
 INPUT
 T_HVREF
@@ -968,21 +968,18 @@ T_HVREF
   $var = ($type)pt;
   }
 ```
-]
 
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
 OUTPUT
 T_HVREF
   croak(\"Unimplemented output $type\");
 
 ```
-]
 
-.compress[
 ```c
 double distance_pointstruct(point1, point2)
     GEOM_POINT *point1
@@ -997,12 +994,11 @@ double distance_pointstruct(point1, point2)
     OUTPUT:
     RETVAL
 ```
-]
 
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ```c
 TYPEMAP
 HV* T_HVREF_3D
@@ -1023,12 +1019,11 @@ T_HVREF_3D
      && hv_exists(typemap_point,\"z\",1)))
        croak(\"x, y, z keys is required\");
 ```
-]
 
 ---
 
 <div style="height:1em;"></div>
-.compress[
+
 ``` c
   SV **tm__x=hv_fetch(typemap_point,\"x\",1,0);
   SV **tm__y=hv_fetch(typemap_point,\"y\",1,0);
@@ -1045,7 +1040,6 @@ T_HVREF_3D
   $var = ($type)pt;
   }
 ```
-]
 
 ---
 
@@ -1067,6 +1061,8 @@ layout: true
 
 ---
 
+*Интерпретатор Perl*
+
 ```c
 #include <EXTERN.h>
 #include <perl.h>
@@ -1086,6 +1082,8 @@ int main(int argc, char **argv, char **env)
 ```
 
 ---
+
+*Интерпретатор Perl*
 
 ```bash
 perl -MExtUtils::Embed -e ccopts -e ldopts
@@ -1119,9 +1117,10 @@ Sum: <--[num1]-->
 
 ---
 
+<div style="height:1em;"></div>
+
 ```c
-int main (int argc, char **argv, char **env)
-{
+int main (int argc, char **argv, char **env) {
   ...
   char *perl_argv[]={"",module,include_dir,"-e0"};
   PERL_SYS_INIT3(&argc,&argv,&env);
@@ -1142,17 +1141,17 @@ int main (int argc, char **argv, char **env)
 
 ---
 
+<div style="height:1em;"></div>
+
 ```c
 static void
-call_func(char *func_name, int argv, char **argc )
-{
+call_func(char *func_name, int argv, char **argc){
   int count, f;
-  dSP;       
-  ENTER; SAVETMPS; PUSHMARK(SP);
+  dSP; ENTER; SAVETMPS; PUSHMARK(SP);
   for(f=0;f<argv;f++){
     XPUSHs(sv_2mortal(newSVpv(argc[f],
                       strlen(argc[f])))); }
-  PUTBACK;                        
+  PUTBACK;
   count = call_pv(func_name, G_SCALAR|G_EVAL); 
   SPAGAIN; PUTBACK;
   if (SvTRUE(ERRSV)){error_tmpl(SvPV_nolen(ERRSV);}
@@ -1167,14 +1166,15 @@ call_func(char *func_name, int argv, char **argc )
 
 ---
 
+<div style="height:1em;"></div>
+
 ```c
 static void
-print_var(char *var_name, char *var)
-{
+print_var(char *var_name, char *var) {
   HV *h_var;
   h_var = get_hv(var_name, 0);
   if(!h_var) error_tmpl("Vars hash not exist");
-  SV **sr_var=hv_fetch(h_var,var,(int)strlen(var),0);
+  SV **sr_var=hv_fetch(h_var, var, strlen(var), 0);
   if(!sr_var) error_tmpl("Var not exist");
   if(SvTYPE(*sr_var) == SVt_IV)
     printf( "%li", SvIV(*sr_var));
@@ -1205,7 +1205,7 @@ layout: false
 
 # Inline::C
 
-<br>
+<div style="height:1em;"></div>
 
 ```perl
 use Inline C => DATA => libs => '-lz';
@@ -1229,7 +1229,7 @@ SV * CRC32(SV * sv_buf) {
 
 # FFI::Raw
 
-<br>
+<div style="height:1em;"></div>
 
 ```perl
 use FFI::Raw;
