@@ -774,6 +774,8 @@ double distance_call_point()
 
 ---
 
+*Вызов перл функции с аргументами*
+
 ```perl
 sub get_points {
     if( !$_[0] )      { return 1,1,1,3 }
@@ -784,20 +786,20 @@ sub get_points {
 
 ---
 
+*Вызов перл функции с аргументами*
+.compress[
 ```c
 double distance_call_arg_point()
  PPCODE:
   int count; double x1, y1, x2, y2;
-  ENTER; SAVETMPS; PUSHMARK(SP); 
+  ENTER; SAVETMPS; PUSHMARK(SP);
   XPUSHs(sv_2mortal(newSViv(1))); PUTBACK;
-  count=call_pv("local::perlxs::get_points",
-                G_ARRAY);
+  count = call_pv("perlxs::get_points", G_ARRAY);
   SPAGAIN;
   if (count!=2) croak("call get_points trouble\n");
   x1 = POPn; y1 = POPn;PUSHMARK(SP);
   XPUSHs(sv_2mortal(newSViv(2)));PUTBACK;
-  count=call_pv("local::perlxs::get_points", 
-                G_ARRAY);
+  count = call_pv("perlxs::get_points", G_ARRAY);
   SPAGAIN;
   if (count!=2) croak("call get_points trouble\n");
   x2 = POPn; y2 = POPn;
@@ -805,6 +807,7 @@ double distance_call_arg_point()
   FREETMPS; LEAVE;
   PUSHs(sv_2mortal(newSVnv(dist)));
 ```
+]
 
 ---
 
@@ -827,10 +830,10 @@ layout: true
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```typemap
 TYPEMAP
-WORD                    T_IV
-LONG                    T_IV
 int                     T_IV
 unsigned                T_IV
 char                    T_CHAR
@@ -848,9 +851,18 @@ OUTPUT
 T_PV
     sv_setpv((SV*)$arg, $var);
 ```
+]
+
+.footnote[
+см. раздел
+[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)
+в perldoc
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
 double distance_pointobj(r_point1, r_point2)
   SV *r_point1
@@ -870,9 +882,12 @@ double distance_pointobj(r_point1, r_point2)
      || SvTYPE(_point2) != SVt_PVHV)
       croak("Point must be a hashref");
 ```
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
   point1 = (HV*)_point1;
   point2 = (HV*)_point2;
@@ -893,12 +908,17 @@ double distance_pointobj(r_point1, r_point2)
     sqrt(pow(x1-x2,2) + pow(y1-y2,2))
   )));
 ```
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
 typedef struct { double x, y; } GEOM_POINT;
 ```
+]
+.compress[
 ```c
 TYPEMAP
 WORD                    T_IV
@@ -914,10 +934,20 @@ HV *                    T_HVREF
 CV *                    T_CVREF
 ...
 GEOM_POINT*             T_HVREF
+
 ```
+]
+
+.footnote[
+см. раздел
+[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)
+в perldoc
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
 INPUT
 T_HVREF
@@ -938,18 +968,21 @@ T_HVREF
   $var = ($type)pt;
   }
 ```
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
 OUTPUT
 T_HVREF
   croak(\"Unimplemented output $type\");
 
 ```
+]
 
----
-
+.compress[
 ```c
 double distance_pointstruct(point1, point2)
     GEOM_POINT *point1
@@ -964,9 +997,12 @@ double distance_pointstruct(point1, point2)
     OUTPUT:
     RETVAL
 ```
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ```c
 TYPEMAP
 HV* T_HVREF_3D
@@ -987,9 +1023,12 @@ T_HVREF_3D
      && hv_exists(typemap_point,\"z\",1)))
        croak(\"x, y, z keys is required\");
 ```
+]
 
 ---
 
+<div style="height:1em;"></div>
+.compress[
 ``` c
   SV **tm__x=hv_fetch(typemap_point,\"x\",1,0);
   SV **tm__y=hv_fetch(typemap_point,\"y\",1,0);
@@ -1006,6 +1045,7 @@ T_HVREF_3D
   $var = ($type)pt;
   }
 ```
+]
 
 ---
 
@@ -1045,8 +1085,7 @@ int main(int argc, char **argv, char **env)
 }
 ```
 
-???
-DELME
+---
 
 ```bash
 perl -MExtUtils::Embed -e ccopts -e ldopts
@@ -1057,7 +1096,7 @@ cc -o interp interp.c `perl -MExtUtils::Embed \
    -e ccopts -e ldopts`
 ```
 
-???
+---
 
 Что хотим использовать:
 ```html

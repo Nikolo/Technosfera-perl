@@ -70,3 +70,7 @@ h1, h2, h3 {
     border-radius: 4px;
 /*    font-size: 20px;*/
 }
+
+.compress {
+    line-height: 1.4em;
+}
