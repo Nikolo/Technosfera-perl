@@ -257,12 +257,40 @@ layout: true
 .center[.normal-width[![image](img/flags.png)]] 
 
 .footnote[
-См. модуль <b>illguts</b> на <i style="opacity: 0.5">meta</i>cpan.org
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
 ]
 
 ???
 
  - NULL - PL\_sv\_\{undef|yes|no\}
+
+
+```c
+struct STRUCT_SV {		/* struct sv { */
+    _SV_HEAD(void*);
+    _SV_HEAD_UNION;
+}
+
+
+#define _SV_HEAD(ptrtype) \
+    ptrtype	sv_any;		/* pointer to body */	\
+    U32		sv_refcnt;	/* how many references to us */	\
+    U32		sv_flags	/* what we are */
+
+#define _SV_HEAD_UNION \
+    union {				\
+	char*   svu_pv;		/* pointer to malloced string */	\
+	IV      svu_iv;			\
+	UV      svu_uv;			\
+	_NV_BODYLESS_UNION		\
+	SV*     svu_rv;		/* pointer to another SV */		\
+	struct regexp* svu_rx;		\
+	SV**    svu_array;		\
+	HE**	svu_hash;		\
+	GP*	svu_gp;			\
+	PerlIO *svu_fp;			\
+    }	sv_u
+```
 
 ---
 
@@ -271,8 +299,9 @@ layout: true
 .center[SvIV]
 .center[.normal-width[![image](img/sviv-14.png)]]
 
+
 .footnote[
-См. модуль <b>illguts</b> на <i style="opacity: 0.5">meta</i>cpan.org
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
 ]
 
 ???
@@ -294,33 +323,49 @@ In addition to the simple type names already mentioned, the following names are 
 
 SvPV
 
-.center[.normal-width[![image](svpv-14.png)]] 
+.center[.normal-width[![image](svpv-14.png)]]
 
 SvOOK
 
-.center[.normal-width[![image](ook-14.png)]] 
+.center[.normal-width[![image](ook-14.png)]]
 
----
-
-SvPVMG
-
-.center[.normal-width[![image](svpvmg-14.png)]] 
+.footnote[
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
+]
 
 ---
 
 SvRV
 
-.center[.normal-width[![image](svrv.png)]] 
+.center[.normal-width[![image](svrv.png)]]
 
 SvAV
 
-.center[.normal-width[![image](av-14.png)]] 
+.center[.normal-width[![image](av-14.png)]]
+
+.footnote[
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
+]
 
 ---
 
 SvHV
 
-.center[.normal-width[![image](hv-14.png)]] 
+.center[.normal-width[![image](hv-14.png)]]
+
+.footnote[
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
+]
+
+---
+
+SvPVMG
+
+.center[.normal-width[![image](svpvmg-14.png)]]
+
+.footnote[
+См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
+]
 
 ---
 
@@ -338,7 +383,10 @@ SV* newSVsv(SV*);
 ```
 
 .footnote[
-См. раздел <b>perlapi</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlapi](http://perldoc.perl.org/perlapi.html)
+в perldoc
 ]
 
 ---
@@ -356,7 +404,10 @@ void  sv_setsv(SV*, SV*);
 ```
 
 .footnote[
-См. раздел <b>perlapi</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlapi](http://perldoc.perl.org/perlapi.html)
+в perldoc
 ]
 
 ---
@@ -383,7 +434,10 @@ SvTRUE(SV*)
 ```
 
 .footnote[
-См. раздел <b>perlapi</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlapi](http://perldoc.perl.org/perlapi.html)
+в perldoc
 ]
 
 ---
@@ -408,7 +462,10 @@ SvCUR_set(sv, newlen);
 ```
 
 .footnote[
-См. раздел <b>perlapi</b> в perldoc
+См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlapi](http://perldoc.perl.org/perlapi.html)
+в perldoc
 ]
 
 ---
@@ -436,7 +493,8 @@ layout: true
 
 Получение переменной из стека
 ```perlxs
-ST(n)
+ST(n) // n < items
+
 ```
 
 Установка переменной в стек
@@ -449,6 +507,11 @@ PUSHs(SV*);
 ```perlxs
 XPUSHs(SV*);
 ```
+
+.footnote[
+См. раздел [perlguts](http://perldoc.perl.org/perlguts.html)
+в perldoc
+]
 
 ---
 
@@ -467,9 +530,16 @@ INCLUDE: const-xs.inc
 
 ```
 
+.footnote[
+См. разделы
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlguts](http://perldoc.perl.org/perlguts.html)
+в perldoc
+]
+
 ---
 
-*CODE + OUTPUT = dSP + xPUSHs + ...* 
+*CODE + OUTPUT = dSP + XPUSHs + ...*
 
 ```c
 #include <math.h>
@@ -489,6 +559,18 @@ double distance_point(x1,y1,x2,y2)
     RETVAL
 ```
 
+.footnote[
+См. разделы
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlguts](http://perldoc.perl.org/perlguts.html)
+в perldoc
+]
+
+???
+```c
+#define dSP		SV **sp = PL_stack_sp
+#define XPUSHs(s)	STMT_START { EXTEND(sp,1); *++sp = (s); } STMT_END
+```
 ---
 
 *PPCODE*
@@ -506,6 +588,20 @@ void distance_point(x1,y1,x2,y2)
     double ret;
     ret = sqrt( pow(x1-x2, 2) + pow(y1-y2, 2) );
     PUSHn((double)ret);
+```
+
+.footnote[
+См. разделы
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlguts](http://perldoc.perl.org/perlguts.html)
+в perldoc
+]
+
+???
+
+```
+#define PUSHs(s)	(*++sp = (s))
+#define PUSHn(n)	STMT_START { sv_setnv(TARG, (NV)(n)); PUSHTARG; } STMT_END
 ```
 
 ---
@@ -527,12 +623,30 @@ void distance_ext_point(x1,y1,x2,y2)
     PUSHs(sv_2mortal(newSVnv(dy)));
 ```
 
+.footnote[
+См. разделы
+[perlxs](http://perldoc.perl.org/perlxs.html) и
+[perlguts](http://perldoc.perl.org/perlguts.html)
+в perldoc
+]
+
 ---
 
-.center[.normal-width[![image](stack.png)]] 
+.center[.normal-width[![image](stack.png)]]
+
+.footnote[
+См. раздел
+[perlinterp](http://perldoc.perl.org/perlinterp.html)
+в perldoc
+]
+
+???
+
+The mark stack keeps bookmarks to locations in the argument stack usable by each function.
 
 ---
 
+<br>
 ```c
 dXSARGS; //dSP and dMARK and dITEMS
 if (items != 4) croak_xs_usage(cv, "x1,y1,x2,y2");
@@ -549,40 +663,67 @@ PUSHs(sv_2mortal(newSVnv(dx)));
 PUSHs(sv_2mortal(newSVnv(dy)));
 PUTBACK;
 return;
+```
 
+.footnote[
+см. раздел
+[perlinterp](http://perldoc.perl.org/perlinterp.html)
+в perldoc
+]
+
+???
+
+The mark stack keeps bookmarks to locations in the argument stack usable by each function.
+
+```c
+#define dSP		SV **sp = PL_stack_sp
+#define dMARK		SV **mark = PL_stack_base + POPMARK
+#define dITEMS I32 items = (I32)(SP - MARK)
+#define PUTBACK		PL_stack_sp = sp
+#define PUSHs(s)	(*++sp = (s))
 ```
 
 ---
 
 .center[.normal-width[![image](scope.png)]] 
 
+.footnote[
+см. раздел
+[perlinterp](http://perldoc.perl.org/perlinterp.html)
+в perldoc
+]
+
 ---
 
+*mortal переменные*
 ```c
 int SvREFCNT(SV* sv);
 SV* SvREFCNT_inc(SV* sv);
 void SvREFCNT_dec(SV* sv);
+SV* newRV_noinc(SV *const sv);
 
-SV*        newRV_noinc(SV *const sv);
-
-```
-
-```c
 SV*  sv_newmortal()
 SV*  sv_2mortal(SV*)
 SV*  sv_mortalcopy(SV*)
 
 ENTER; SAVETMPS;
 
-sv_2mortal(newSVnv(sqrt(pow(x1-x2,2)+pow(y1-y2,2))));
+sv_2mortal(newSVnv(sqrt(pow(x1-x2,2)+pow(y1-y2,2))))
 
-SV *tmp = sv_newmortal();
-sv_setiv(tmp, an_integer);
+SV *tmp = sv_newmortal(); sv_setiv(tmp, an_integer);
 
 FREETMPS; LEAVE;
 ```
 
+.footnote[
+см. раздел
+[perlinterp](http://perldoc.perl.org/perlinterp.html)
+в perldoc
+]
+
 ---
+
+*Создание объекта*
 
 ```c
 ST(0) = sv_2mortal(
@@ -600,6 +741,12 @@ ST(0) = sv_2mortal(
 );
 
 ```
+
+.footnote[
+см. раздел
+[perlapi](http://perldoc.perl.org/perlapi.html)
+в perldoc
+]
 
 ---
 
