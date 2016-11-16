@@ -502,8 +502,11 @@ ST(n) // n < items
 Установка переменной в стек
 
 ```perlxs
-EXTEND(SP, num);
-PUSHs(SV*);
+// GIMME_V returns G_VOID G_SCALAR or G_ARRAY
+if((GIMME_V != G_VOID)) {
+    EXTEND(SP, num);
+    PUSHs(SV*);
+}
 ```
 
 ```perlxs
