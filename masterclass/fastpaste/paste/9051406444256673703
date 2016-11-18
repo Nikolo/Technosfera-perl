@@ -1,0 +1,23 @@
+[fastpaste:86802] core @2016-11-14 01:42:04> Entering hook plugin.database.database_connected in (eval 71) l. 1
+[fastpaste:86802] core @2016-11-14 01:42:04> Entering hook core.app.after_request in (eval 71) l. 1
+127.0.0.1 - - [14/Nov/2016:01:42:04 +0300] "GET /0000000000000000 HTTP/1.1" 404 3090 "http://localhost:5000/0000000000000000" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:04 +0300] "GET /css/style.css HTTP/1.1" 200 2868 "http://localhost:5000/0000000000000000" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:04 +0300] "GET /css/style_dancer.css HTTP/1.1" 200 2489 "http://localhost:5000/0000000000000000" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:04 +0300] "GET /images/perldancer-bg.jpg HTTP/1.1" 200 7125 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:04 +0300] "GET /images/perldancer.jpg HTTP/1.1" 200 2240 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+[fastpaste:86802] core @2016-11-14 01:42:06> looking for get /ca193b64c186eee6 in /Library/Perl/5.18/Dancer2/Core/App.pm l. 34
+[fastpaste:86802] core @2016-11-14 01:42:06> Entering hook core.app.before_request in (eval 71) l. 1
+[fastpaste:86802] core @2016-11-14 01:42:06> Entering hook core.app.after_request in (eval 71) l. 1
+127.0.0.1 - - [14/Nov/2016:01:42:06 +0300] "GET /ca193b64c186eee6 HTTP/1.1" 200 1802 "http://localhost:5000/0000000000000000" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:06 +0300] "GET /css/style.css HTTP/1.1" 200 2868 "http://localhost:5000/ca193b64c186eee6" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:06 +0300] "GET /css/style_dancer.css HTTP/1.1" 200 2489 "http://localhost:5000/ca193b64c186eee6" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:06 +0300] "GET /images/perldancer-bg.jpg HTTP/1.1" 200 7125 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:06 +0300] "GET /images/perldancer.jpg HTTP/1.1" 200 2240 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+[fastpaste:86802] core @2016-11-14 01:42:08> looking for get /1985e4fb4535e20b in /Library/Perl/5.18/Dancer2/Core/App.pm l. 34
+[fastpaste:86802] core @2016-11-14 01:42:08> Entering hook core.app.before_request in (eval 71) l. 1
+[fastpaste:86802] core @2016-11-14 01:42:08> Entering hook core.app.after_request in (eval 71) l. 1
+127.0.0.1 - - [14/Nov/2016:01:42:08 +0300] "GET /1985e4fb4535e20b HTTP/1.1" 200 1795 "http://localhost:5000/ca193b64c186eee6" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:08 +0300] "GET /css/style.css HTTP/1.1" 200 2868 "http://localhost:5000/1985e4fb4535e20b" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:08 +0300] "GET /css/style_dancer.css HTTP/1.1" 200 2489 "http://localhost:5000/1985e4fb4535e20b" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:08 +0300] "GET /images/perldancer-bg.jpg HTTP/1.1" 200 7125 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"
+127.0.0.1 - - [14/Nov/2016:01:42:08 +0300] "GET /images/perldancer.jpg HTTP/1.1" 200 2240 "http://localhost:5000/css/style.css" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36"

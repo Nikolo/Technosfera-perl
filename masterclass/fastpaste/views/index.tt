@@ -1,0 +1,32 @@
+<% IF err %><center class="error"><ol><li>Error:</li><%FOR e IN err %><li><% e %></li><% END %></ol></center><% END %>
+
+<h3>New Fast Paste</h3>
+<form class="paste_form" id="pasteform" name="pasteform" method="post" onsubmit="document.getElementById('submit').disable=true; document.getElementById('submit').value='Posting...';">
+    <div class="textarea_paste">
+        <textarea name="textpaste" class="paste_textarea" rows="15" style="oveflow: hidden; word-wrap: break-word; resize: none; height: 400px;"><% text %></textarea>
+    </div>
+    <div class="content_title">Paste settings</div>
+    <div class="form_frame_left" style="width:460px;min-width:460px">
+        <div class="form_frame">
+            <div class="form_left">Paste expiration:</div>
+            <div class="form_right">
+                <select name="expire">
+                    <option value="0" <% IF expire == 0 %>selected="selected"<% END %>>Never</option>
+                    <option value="600" <% IF expire == 600 %>selected="selected"<% END %>>10 min</option>
+                    <option value="3600" <% IF expire == 3600 %>selected="selected"<% END %>>1 hour</option>
+                    <option value="86400" <% IF expire == 86400 %>selected="selected"<% END %>>1 day</option>
+                    <option value="604800" <% IF expire == 604800 %>selected="selected"<% END %>>1 week</option>
+                    <option value="31536000" <% IF expire == 31536000 %>selected="selected"<% END %>>365 day</option>
+                </select>
+            </div>
+        </div>
+        <div class="form_frame">
+            <div class="form_left">Paste name</div>
+            <div class="form_right"><input type"text" name="title" size="20" maxlength="60" value="<% title %>" class="post_input"></div>
+        </div>
+        <div class="form_frame">
+            <div class="form_left">&nbsp;</div>
+            <div class="form_right"><input type="submit" name="submit" value="New Fast Paste!" id="submit"></div>
+        </div>
+    </div>
+</form>
