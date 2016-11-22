@@ -43,4 +43,8 @@ h1, h2, h3 {
     color: rgb(84, 65, 148);
 }
 
-
+.remark-code {
+    border-radius: 4px;
+    line-height: 1.2em;
+/*    font-size: 20px;*/
+}
