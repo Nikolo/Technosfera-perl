@@ -780,6 +780,15 @@ double distance_call_point()
     PUSHs(sv_2mortal(newSVnv(dist)));
 ```
 
+???
+
+```c
+#define POPs		(*sp--)
+#define POPn		(SvNVx(POPs))
+```
+
+PUSHMARK Opening bracket for arguments on a callback. See PUTBACK and perlcall.
+
 ---
 
 *Вызов перл функции с аргументами*
@@ -815,6 +824,11 @@ double distance_call_arg_point()
   FREETMPS; LEAVE;
   PUSHs(sv_2mortal(newSVnv(dist)));
 ```
+
+???
+
+PUSHMARK Opening bracket for arguments on a callback. See PUTBACK and perlcall.
+PUTBACK Closing bracket for XSUB arguments. This is usually handled by xsubpp 
 
 ---
 
@@ -1273,3 +1287,18 @@ class:lastpage title
 ## Оставьте отзыв
 
 .teacher[![teacher]()]
+
+???
+
+http://search.cpan.org/~rjbs/perl-5.24.0/utils/h2xs.PL
+http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html
+http://perldoc.perl.org/xsubpp.html
+http://perldoc.perl.org/perlcall.html
+http://perldoc.perl.org/perlapi.html
+http://perldoc.perl.org/perlnewmod.html
+http://perldoc.perl.org/perlxstypemap.html
+http://perldoc.perl.org/perlguts.html
+http://perldoc.perl.org/perlxstut.html
+http://perldoc.perl.org/perlinterp.html
+http://perldoc.perl.org/perlxs.html
+http://perldoc.perl.org/functions/tie.html
