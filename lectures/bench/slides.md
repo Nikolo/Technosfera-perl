@@ -1,18 +1,19 @@
-class:center,middle
-
+class:firstpage
 # Программирование на Perl
-Лекция 12
 
 ---
-class:center,middle
 
+class:firstpage
 # Профилирование и анализ<br/>производительности кода 
 
+---
+class:note_and_mark
+# Отметьтесь на портале!
 
 ---
-class:center,middle
+class:note_and_mark
 
-# Последняя! :)
+# Последняя лекция! :)
 
 ---
 
@@ -28,6 +29,11 @@ layout:false
 ---
 
 > ***Профилирование*** — сбор характеристик работы программы, таких как время выполнения отдельных фрагментов или потребления иных ресурсов
+
+---
+class:center,middle
+
+# Ресурс №1: CPU
 
 ---
 
@@ -50,12 +56,12 @@ layout:true
 
 ---
 
-```
+```sh
 $ time perl -MLWP::UserAgent -E \
 'LWP::UserAgent->new->get("https://mail.ru/");'
 ```
 
-```
+```sh
 real    0m0.056s
 user    0m0.043s
 sys     0m0.008s
@@ -65,13 +71,13 @@ sys     0m0.008s
 
 ---
 
-```
+```sh
 $ time perl -MLWP::UserAgent -E \
 'LWP::UserAgent->new->get("https://mail.ru/")
  for 1..100;'
 ```
 
-```
+```sh
 real    0m0.164s
 user    0m0.104s
 sys     0m0.022s
@@ -86,7 +92,7 @@ layout:true
 ---
 
 ### New York Times Profiler
-```
+```sh
 $ perl `-d:NYTProf` -MLWP::UserAgent -E \
 'LWP::UserAgent->new->get("https://mail.ru/")
  for 1..100;'
@@ -109,7 +115,7 @@ drwxr-xr-x 200 mons staff 6800     nytprof
 ---
 
 .center[
-#Inclusive time vs Exclusive time
+##Inclusive time vs Exclusive time
 ]
 
 .img[
@@ -118,7 +124,7 @@ drwxr-xr-x 200 mons staff 6800     nytprof
 
 ---
 
-```
+```sh
 $ `NYTPROF=start=init` \
   perl -d:NYTProf -MLWP::UserAgent -E \
  'LWP::UserAgent->new->get("https://mail.ru/")
@@ -134,7 +140,7 @@ $ nytprofhtml
 
 ---
 
-```
+```sh
 $ `NYTPROF=start=no` \
   perl -d:NYTProf -MLWP::UserAgent -E \
  'my $ua = LWP::UserAgent->new;
@@ -163,7 +169,7 @@ $ nytprofhtml
 
 ---
 
-```
+```sh
 spent 11.7ms (10.9+865µs) within
     HTTP::Headers::_header which was called
     600 times, avg 20µs/call:
@@ -178,13 +184,13 @@ spent 11.7ms (10.9+865µs) within
 
 ---
 
-```
+```perl
 unless ($field =~ /^:/) {
     # spent   130µs making 600 calls to
     HTTP::Headers::CORE:match, avg 216ns/call
 ```
 
-```
+```perl
 $old =~ s/\b(\w)/\u$1/g;
     # spent   449µs making 600 calls to
         HTTP::Headers::CORE:substcont,
@@ -197,17 +203,19 @@ $old =~ s/\b(\w)/\u$1/g;
 ---
 layout:false
 
->Первое правило оптимизации программ:
+## Первое правило оптимизации программ:
+
 # Не делайте этого
 
->Второе правило оптимизации программ<br/>
->(только для экспертов):
+## Второе правило оптимизации программ<br/>(только для экспертов):
+
 # Не делайте этого пока
-.align-right[Michael A. Jackson]
+
+.right[Michael A. Jackson]
 
 ---
 
-## Как профилировать правильно
+# Как профилировать правильно
 
 1. Даём репрезентативную нагрузку
 2. Смотрим общее время функций
@@ -218,7 +226,8 @@ layout:false
 7. Производительность хорошая? СТОП!
 8. Повторите 1-2 раза
 9. Переходите к другим улучшениям
-.align-right[Tim Bunce]
+
+.right[Tim Bunce]
 
 ---
 
@@ -248,11 +257,11 @@ timethis(1e6,\&func1);
 timethis(-1,\&func1);
 ```
 
-```
+```perl
 timethis 1000000:  0 wallclock secs
     ( 0.20 usr +  0.01 sys =  0.21 CPU)
         @ 4761904.76/s (n=1000000)
-(warning: too few iterations for a reliable count)
+*(warning: too few iterations for a reliable count)
 
 timethis for 1:  1 wallclock secs
     ( 1.02 usr +  0.00 sys =  1.02 CPU)
@@ -270,7 +279,7 @@ timethese -1, {
 };
 ```
 
-```
+```sh
 Benchmark: running copy, inplace for
     at least 1 CPU seconds...
 copy:  2 wallclock secs
@@ -283,13 +292,13 @@ inplace:  1 wallclock secs
 ---
 
 ```perl
-cmpthese timethese -1, {
+`cmpthese` timethese -1, {
     inplace => \&func1,
     copy    => \&func2,
 };
 ```
 
-```
+```sh
 Benchmark: running copy, inplace for
     at least 1 CPU seconds...
 copy:  2 wallclock secs
@@ -321,7 +330,7 @@ $bench->run();
 $bench->report();
 ```
 
-```
+```sh
 inplace: Ran 93 iterations (26 outliers).
 inplace: Rounded run time per iteration:
     1.5462e-07 +/- 3.4e-10 (0.2%)
@@ -351,7 +360,7 @@ printf "%0.3fs CPU, %0.1fns/call\n",
 $cpu2-$cpu1, (1e9/$N)*($cpu2-$cpu1);
 ```
 
-```
+```sh
 1.320s CPU, 330.0ns/call
 1.460s CPU, 365.0ns/call
 ```
@@ -490,9 +499,13 @@ class: center, middle
 
 ---
 
-# Оптимизация алгоритмов
+# Оптимизация алгоритмов:
 
-O(n²) -> O(n log n) -> O(n) -> O(log n) -> O(1)
+# O(n²)
+# O(n log n)
+# O(n)
+# O(log n)
+# O(1)
 
 ---
 
@@ -537,7 +550,7 @@ Devel::Leak::CheckSV($handle);
 
 # use Devel::Leak;
 
-```
+```sh
 new 0x7fc84b021b28 : 
 new 0x7fc84b021b40 : 
 new 0x7fc84b021b58 : 
@@ -552,7 +565,7 @@ new 0x7fc84b004ec8 :
 
 # perl built with -DDEBUGGING
 
-```
+```sh
 new 0x2410de8 : SV = PVHV(0x2416e40) at 0x2410de8
   REFCNT = 2
   FLAGS = (SHAREKEYS)
@@ -577,7 +590,7 @@ new 0x2410f68 : SV = IV(0x2410f58) at 0x2410f68
 
 # XS version
 
-```
+```c
 int checkpoint = PL_sv_count;
 
 /* ...some leaky code... */
@@ -590,7 +603,7 @@ printf("leaked by %d SV's",
 
 # /dev/hands
 
-```
+```sh
 /proc/[pid]/statm
   Provides information about memory usage.
 
@@ -639,7 +652,7 @@ layout:true
 
 ---
 
-```
+```c
 void test(SV *var)
 PPCODE:
     SV *leaky = newSVpvs("dummy");
@@ -653,13 +666,13 @@ LeakTest::test($smth);
 Devel::Leak::CheckSV($chk);
 ```
 
-```
+```sh
 new 0x1496a68 : 
 ```
 
 ---
 
-```
+```c
 void test(SV *var)
 PPCODE:
     SV *leaky = newSVpvs("dummy");
@@ -669,7 +682,7 @@ PPCODE:
     XSRETURN_UNDEF;
 ```
 
-```
+```sh
 var = `0x2075c38`
 SV = NULL(0x0) at `0x2075c38`
   REFCNT = 1
@@ -677,13 +690,13 @@ SV = NULL(0x0) at `0x2075c38`
 new `0x2058a68` : 
 ```
 
-```
+```sh
 0x2058a68 - 0x2075c38 = -119248
 ```
 
 ---
 
-```
+```c
 void test(SV *var)
 PPCODE:
     SV *leaky = newSVpvs("dummy");
@@ -693,7 +706,7 @@ PPCODE:
     XSRETURN_UNDEF;
 ```
 
-```
+```sh
 var = 0x20f2c38
 SV = PV(0x20d3cf0) at `0x20d5a68`
   REFCNT = 1
@@ -706,17 +719,17 @@ new `0x20d5a68` :
 
 ---
 
-```
+```c
 void test(SV *var)
 PPCODE:
-    SV *leaky = sv_2mortal(newSVpvs("dummy"));
+    SV *leaky = `sv_2mortal`(newSVpvs("dummy"));
     printf("var = %p\n",var);
     SV * ghost = (SV *) ( (char *)var - `119248` );
     sv_dump( ghost );
     XSRETURN_UNDEF;
 ```
 
-```
+```sh
 var = 0x20f2c38
 SV = PV(0x20d3cf0) at `0x20d5a68`
   REFCNT = 1
@@ -801,7 +814,7 @@ Object destroyed at - line 7 `during global destruction`.
 
 [Debugging-Perl-Memory-Usage](http://perldoc.perl.org/perldebguts.html#Debugging-Perl-Memory-Usage)
 
-```
+```sh
   $ PERL_DEBUG_MSTATS=2 perl -e "require Carp"
   Memory allocation statistics after compilation: (buckets 4(4)..8188(8192)
      14216 free:   130   117    28     7     9   0   2     2   1 0 0
@@ -819,12 +832,12 @@ Object destroyed at - line 7 `during global destruction`.
 
 ---
 
-```
+```perl
 use Devel::Gladiator qw(arena_table);
 say arena_table();
 ```
 
-```
+```sh
 ARENA COUNTS:
  1471 SCALAR
   237 GLOB
@@ -896,7 +909,10 @@ layout: false
 # \_\_END\_\_
 
 ---
-class: center, middle
-layout: false
+class:lastpage
 
-# +5 каждому )
+# Оставьте отзыв на портале
+
+Спасибо за внимание!
+
+Mons Anderson &lt;<mons@cpan.org>&gt;

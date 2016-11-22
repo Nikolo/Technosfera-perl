@@ -7,6 +7,10 @@ class:firstpage
 # Асинхронно-событийное программирование
 
 ---
+class:note_and_mark
+# Отметьтесь на портале!
+
+---
 layout:false
 # Содержание
 
@@ -1190,6 +1194,11 @@ cede;
 ]
 
 ---
+class: lastpage, center, middle
+
+# А теперь мастеркласс!
+
+---
 
 # Домашнее задание
 
@@ -1209,6 +1218,35 @@ $AnyEvent::HTTP::MAX_PER_HOST = 100;
 ```
 
 ---
-class: lastpage, center, middle
 
-# \_\_END\_\_
+# Домашнее задание (альтернативное)
+
+Написать HTTP сервер или HTTP клиент на AnyEvent
+
+* Внутри реализации можно использовать как `io` и `timer`, так и `AnyEvent::Handle`.
+* Внутри реализации не должны встречаться вызовы cv->recv/send
+
+Интерфейс HTTP-сервера:
+```perl
+http_server $host,$port, sub {
+    my $request = shift;
+    $request->reply($status, $body, $headers);
+};
+```
+
+Интерфейс HTTP-клиента:
+```perl
+http_request $method, $url, (%options), sub {
+    my ($status, $body, $headers) = @_;
+};
+# в options должен поддерживаться timeout
+```
+
+---
+class:lastpage
+
+# Оставьте отзыв на портале
+
+Спасибо за внимание!
+
+Mons Anderson &lt;<mons@cpan.org>&gt;
