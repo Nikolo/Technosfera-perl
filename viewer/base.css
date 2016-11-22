@@ -10,11 +10,11 @@
 }
 */
 
-/*.remark-slide-content:not(.title) h1:first-of-type {
+.remark-slide-content:not(.title):not(.center) h1:first-of-type {
     top: 0px;
     position: absolute;
 }
-*/
+
 .apos .remark-code-span-highlighted {
     background-color: #e8e8e8;
 

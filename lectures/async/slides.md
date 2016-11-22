@@ -1,12 +1,16 @@
 class:firstpage, title
+
 # Программирование на Perl
 ## Асинхронно-событийное программирование
 
 ---
+
 class:note_and_mark title
+
 # Отметьтесь на портале!
 
 ---
+
 layout:false
 # Содержание
 
@@ -61,6 +65,7 @@ class:center, middle
 
 # Состояние процесса
 
+<div style="height:1em;"></div>
 .center[
 ![image]( 119.svg )
 ]
