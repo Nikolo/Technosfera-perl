@@ -28,11 +28,12 @@
     color: #ffffff;
 }
 
-.remark-slide-content:not(.title) {
+/*.remark-slide-content:not(.title) {
     background-image: url('atom/head.png');
     background-position: top;
     padding-top: 70px;
 }
+*/
 
 .remark-slide-content.optable {
     padding-top: 80px;

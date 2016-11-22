@@ -1,13 +1,9 @@
-class:firstpage
+class:firstpage, title
 # Программирование на Perl
+## Асинхронно-событийное программирование
 
 ---
-
-class:firstpage
-# Асинхронно-событийное программирование
-
----
-class:note_and_mark
+class:note_and_mark title
 # Отметьтесь на портале!
 
 ---
@@ -52,6 +48,8 @@ class:center, middle
 исполнение нескольких процессов на разных процессорах с доступом к общей памяти
 
 ---
+
+class:center, middle
 
 # Что такое псевдопаралеллизм?
 
@@ -210,6 +208,8 @@ read(...) -> FATAL ERROR
 
 ---
 
+# Pseudocode sample
+
 ```perl
 while (1) {
     for my $fh (@fds) {
@@ -217,7 +217,7 @@ while (1) {
         if ($res) {
             # do work
         }
-        elsif ($! ~~ FATAL_ERROR) { # pseudocode
+        elsif ($! ~~ FATAL_ERROR) {
             # close fh, remove from @fds
         }
         else {
@@ -395,9 +395,7 @@ my $fd = socket...
 wait_socket_readable($fd, sub {
     read($fd, ...)
 })
-
 # ...
-
 our %waiters;
 sub wait_socket_readable {
     my ($fd,$cb) = @_;
@@ -535,8 +533,7 @@ unshift @deadlines, [$deadline, $cb];
 ---
 
 ```perl
-our `$now`;
-our @deadlines;
+our `$now`; our @deadlines;
 
 sub wait_timeout {
     my ($t,$cb) = @_;
@@ -589,8 +586,7 @@ AE::now();
 # AE::io
 
 ```perl
-AE::io \*STDIN, 0, sub {
-    # stdin is readable;
+AE::io \*STDIN, 0, sub { # stdin is readable;
     my $line = <STDIN>;
     AE::io \*STDOUT, 1, sub {
         # stdout is writable
