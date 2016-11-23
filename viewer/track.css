@@ -71,3 +71,9 @@ h1, h2, h3 {
     line-height: 1.2em;
 /*    font-size: 20px;*/
 }
+
+.remark-slide-content:not(.title):not(.center) h1:first-of-type {
+    top: 0px;
+    position: absolute;
+}
+
