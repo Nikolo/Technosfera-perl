@@ -1,12 +1,6 @@
-class: firstpage
-
-# Тестирование
-
----
-
-class: center, middle
-
-.center[.normal-width[![image](book.jpg)]]
+class:firstpage, title
+# Программирование на Perl
+## Тестирование
 
 ---
 
@@ -134,50 +128,12 @@ Result: FAIL
 
 ---
 
-# TAP::Harness
-
-```perl
-use TAP::Harness;
-
-my $h = TAP::Harness->new(\%args);
-
-$h->runtests("A", "B", "C");
-```
-
----
-
-# Test::Builder
-
-```perl
-use Test::Builder;
-
-my $test = Test::Builder->new;
-
-$test->ok(1 == 1, 'one');
-$test->is_eq 2, 7, 'two';
-
-$test->done_testing();
-```
-
-```bash
-ok 1 - one
-not ok 2 - two
-#   Failed test 'two'
-#   at T.pm line 6.
-#          got: '2'
-#     expected: '7'
-1..2
-# Looks like you failed 1 test of 2.
-```
-
----
-
 # Test::Simple
 
 ```perl
 use Test::Simple tests => 42;
 
-ok(sin(0), 0, 'Sin(0)');
+ok(sin(0) == 0, 'Sin(0)');
 ```
 
 ---
@@ -220,16 +176,6 @@ unlike($error, qr/forbidden/, '...');
 
 ---
 
-# cmp_ok
-
-```perl
-cmp_ok($x, '==', $y);
-
-cmp_ok($x, '&&', $y);
-```
-
----
-
 # can_ok
 
 ```perl
@@ -239,18 +185,6 @@ can_ok($dog,  qw(bark run));
 foreach my $method (qw(bark run)) {
   can_ok($dog, $method, "method $method");
 }
-```
-
----
-
-
-# isa_ok, new_ok
-
-```perl
-my $obj = Some::Module->new;
-isa_ok( $obj, 'Some::Module' );
-
-new_ok("Dog" => ['Pluto', 42]);
 ```
 
 ---
@@ -281,17 +215,6 @@ ok 1 - sinus
 my $name = '...';
 pass($name);
 fail($name);
-```
-
----
-
-# require_ok, use_ok
-
-```perl
-require_ok 'My::Module';
-require_ok 'My/Module.pm';
-
-BEGIN { use_ok('Some::Module', qw(foo bar)) }
 ```
 
 ---
@@ -407,30 +330,6 @@ not ok 2 - B # TODO we are learning
 #   at T.pm line 7.
 ok 3 - C # TODO we are learning
 ok 4 - D # TODO we are learning
-```
-
----
-
-# todo_skip
-
-```perl
-TODO: {
-  local $TODO = 'we are learning';
-
-  todo_skip('Learning!', 4);
-
-  fail('A');
-  fail('B');
-  pass('C');
-  pass('D');
-}
-```
-
-```bash
-not ok 1 # TODO & SKIP Learning!
-not ok 2 # TODO & SKIP Learning!
-not ok 3 # TODO & SKIP Learning!
-not ok 4 # TODO & SKIP Learning!
 ```
 
 ---
@@ -756,49 +655,7 @@ $schema->resultset($source_name)->populate([...]);
 
 ---
 
-# ...::PopulateMore
-
-```perl
-{Gender => {
-        fields => 'label',
-        data => {
-                male => 'male',
-                female => 'female',
-        }}},
-
-{Person => {
-        fields => ['name', 'age', 'gender'],
-        data => {
-                john => ['john', 38,
-                    "!Index:Gender.male"],
-                jane => ['jane', 40,
-                    '!Index:Gender.female'],
-        }}},
-```
-
----
-
-# ...::PopulateMore
-
-```perl
-{FriendList => {
-        fields => [
-            'person',
-            'friend',
-            'created_date'
-        ],
-        data => {
-                john_jane => [
-                        '!Index:Person.john',
-                        '!Index:Person.jane'
-                        '!Date: March 30, 1996',
-                ],
-        }}},
-```
-
----
-
-# DBIx::Class::Factory :-)
+# DBIx::Class::Factory
 
 ```perl
 package My::UserFactory;
@@ -823,7 +680,7 @@ __PACKAGE__->field(superuser => 1);
 
 ---
 
-# DBIx::Class::Factory :-]
+# DBIx::Class::Factory
 
 ```perl
 my $user = My::UserFactory->create();
@@ -848,14 +705,14 @@ $superuser->insert();
 
 ---
 
-# Test::MockModule;
+# Test::MockModule
 
 ```perl
 use Module::Name;
 use Test::MockModule;
 
 {
-    my $module = Test::MockModule-
+    my $module = Test::MockModule->
         new('Module::Name');
     $module->mock('subroutine', sub { ... });
     Module::Name::subroutine(@args); # mocked
@@ -866,7 +723,7 @@ Module::Name::subroutine(@args); # orig
 
 ---
 
-# Test::MockObject;
+# Test::MockObject
 
 ```perl
 use Test::MockObject;
@@ -881,3 +738,78 @@ $mock->set_true('foo')
         'a', 'b', 'c');
 );
 ```
+
+---
+
+# Test::Spec
+
+```perl
+use Test::Spec;
+describe "A date" => sub {
+	describe "in a leap year" => sub {
+        my $date;
+		before each => sub {
+			$date = DateTime->new(
+                year => 2000, month => 2, day => 28 );
+		};
+		it "should know that it is in a leap year" => sub {
+			ok( $date->is_leap_year );
+		};
+		it "should recognize Feb. 29" => sub {
+			is( $date->add( days => 1 )->day, 29 );
+		};
+	};
+	describe "not in a leap year" => sub {
+        # ...
+	};
+};
+runtests unless caller;
+```
+
+---
+
+# Test::Spec
+
+```
+# ok 1 - A date in a leap year should know that it is in a leap year
+# ok 2 - A date in a leap year should recognize Feb. 29
+# ok 3 - A date not in a leap year should know that it is NOT in a leap year
+# ok 4 - A date not in a leap year should NOT recognize Feb. 29
+# 1..4
+```
+
+---
+
+# Test::Spec
+
+```perl
+describe "An Asker" => sub {
+	my $asker = Asker->new;
+	it "returns true when a yes_or_no question is answered 'yes'" => sub {
+		my $console_stub = stub(
+            read_line => "yes" );
+		# $console_stub->read_line returns "yes"
+		ok( $asker->yes_or_no(
+            $console_stub, "Am I awesome?" ) );
+	};
+	it "returns true when a yes_or_no question is answered 'yes'" => sub {
+		my $console_mock = mock();
+		$console_mock
+            ->expects('read_line')
+            ->returns("yes");
+		# $console_mock->read_line returns "yes"
+		ok( $asker->yes_or_no(
+            $console_mock, "Am I awesome?" ) );
+	};
+};
+```
+
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
