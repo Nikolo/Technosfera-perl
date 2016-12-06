@@ -47,15 +47,11 @@ SV * mysum() {
 
 # Зачем?
 
-<div style="height:1em;"></div>
-
 ## Кто быстрее? На сколько?
 
 ---
 
 # Зачем?
-
-<div style="height:1em;"></div>
 
 ## Кто быстрее? На сколько?
 ```html
@@ -82,10 +78,9 @@ layout:false
 
 layout: true
 # Генерация XS модулей
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlnewmod](http://perldoc.perl.org/perlnewmod.html)]
 
 ---
-
-<div style="height:1em;"></div>
 
 ```html
 $ perl -V:make
@@ -99,10 +94,6 @@ C::Scan - модуль для парсинга хеадер-файла для г
 ```html
 $ h2xs -n Local::Base58::XS -O -x "include/base58.h"
 ```
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
-[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
-]
 
 ???
 
@@ -129,11 +120,6 @@ Writing Local-Base58-XS/Changes
 Writing Local-Base58-XS/MANIFEST
 
 ```
-
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
-[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
-]
 
 ???
 
@@ -166,11 +152,6 @@ Result: PASS
 $ make install
 ```
 
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
-[perlnewmod](http://perldoc.perl.org/perlnewmod.html) в perldoc
-]
-
 ---
 
 layout:false
@@ -189,9 +170,9 @@ layout:false
 
 layout: true
 # Макропроцессор
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [xsubpp](http://perldoc.perl.org/xsubpp.html)]
 
 ---
-
 
 XS - набор макросов
 
@@ -200,11 +181,6 @@ xsubpp - компилятор который собирает С код из м�
 TYPEMAP - правила преобразования типов данных
 
 .center[.normal-width[![image](img/xsubpp.svg)]]
-
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html) и
-[xsubpp](http://perldoc.perl.org/xsubpp.html) в perldoc
-]
 
 ???
 
@@ -239,6 +215,7 @@ layout:false
 
 layout: true
 # Типы данных изнутри
+.footer[[illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)]
 
 ---
 
@@ -256,10 +233,6 @@ layout: true
  - <span style="opacity: 0.5">RV - references value</span>
 
 .center[.normal-width[![image](img/flags.png)]] 
-
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
 
 ???
 
@@ -295,16 +268,10 @@ struct STRUCT_SV {		/* struct sv { */
 
 ---
 
-<div style="height:1em;"></div>
-
 .center[.normal-width[![image](img/svtypes.png)]]
 .center[SvIV]
 .center[.normal-width[![image](img/sviv-14.png)]]
 
-
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
 
 ???
 
@@ -331,10 +298,6 @@ SvOOK
 
 .center[.normal-width[![image](ook-14.png)]]
 
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
-
 ---
 
 SvRV
@@ -345,19 +308,11 @@ SvAV
 
 .center[.normal-width[![image](av-14.png)]]
 
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
-
 ---
 
 SvHV
 
 .center[.normal-width[![image](hv-14.png)]]
-
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
 
 ---
 
@@ -365,9 +320,11 @@ SvPVMG
 
 .center[.normal-width[![image](svpvmg-14.png)]]
 
-.footnote[
-См. [illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)
-]
+---
+
+layout: true
+# Типы данных изнутри
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlxs](http://perldoc.perl.org/perlxs.html) [perlapi](http://perldoc.perl.org/perlapi.html)]
 
 ---
 
@@ -384,13 +341,6 @@ SV* newSVpvf(const char*, ...);
 SV* newSVsv(SV*);
 ```
 
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlapi](http://perldoc.perl.org/perlapi.html)
-в perldoc
-]
-
 ---
 
 *Установка значения переменной*
@@ -404,13 +354,6 @@ void  sv_setpvn(SV*, const char*, STRLEN)
 void  sv_setpvf(SV*, const char*, ...); //sprintf
 void  sv_setsv(SV*, SV*);
 ```
-
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlapi](http://perldoc.perl.org/perlapi.html)
-в perldoc
-]
 
 ---
 
@@ -435,13 +378,6 @@ SvOK(SV*)
 SvTRUE(SV*)
 ```
 
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlapi](http://perldoc.perl.org/perlapi.html)
-в perldoc
-]
-
 ---
 
 *Работа со строками*
@@ -463,13 +399,6 @@ s[newlen] = '\0';
 SvCUR_set(sv, newlen);
 ```
 
-.footnote[
-См. разделы [perlxstut](http://perldoc.perl.org/perlxstut.html),
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlapi](http://perldoc.perl.org/perlapi.html)
-в perldoc
-]
-
 ---
 
 layout:false
@@ -488,6 +417,7 @@ layout:false
 
 layout: true
 # Работа со стеком
+.footer[[perlxs](http://perldoc.perl.org/perlxs.html) [perlguts](http://perldoc.perl.org/perlguts.html)]
 
 ---
 
@@ -513,11 +443,6 @@ if((GIMME_V != G_VOID)) {
 XPUSHs(SV*);
 ```
 
-.footnote[
-См. раздел [perlguts](http://perldoc.perl.org/perlguts.html)
-в perldoc
-]
-
 ---
 
 perlxs.xs
@@ -534,13 +459,6 @@ MODULE = local::perlxs PACKAGE = local::perlxs
 INCLUDE: const-xs.inc
 
 ```
-
-.footnote[
-См. разделы
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlguts](http://perldoc.perl.org/perlguts.html)
-в perldoc
-]
 
 ---
 
@@ -563,13 +481,6 @@ double distance_point(x1,y1,x2,y2)
     OUTPUT:
     RETVAL
 ```
-
-.footnote[
-См. разделы
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlguts](http://perldoc.perl.org/perlguts.html)
-в perldoc
-]
 
 ???
 ```c
@@ -595,13 +506,6 @@ void distance_point(x1,y1,x2,y2)
     PUSHn((double)ret);
 ```
 
-.footnote[
-См. разделы
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlguts](http://perldoc.perl.org/perlguts.html)
-в perldoc
-]
-
 ???
 
 ```
@@ -610,8 +514,6 @@ void distance_point(x1,y1,x2,y2)
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 void distance_ext_point(x1,y1,x2,y2)
@@ -630,30 +532,21 @@ void distance_ext_point(x1,y1,x2,y2)
     PUSHs(sv_2mortal(newSVnv(dy)));
 ```
 
-.footnote[
-См. разделы
-[perlxs](http://perldoc.perl.org/perlxs.html) и
-[perlguts](http://perldoc.perl.org/perlguts.html)
-в perldoc
-]
+---
+
+layout: true
+# Работа со стеком
+.footer[[perlinterp](http://perldoc.perl.org/perlinterp.html)]
 
 ---
 
 .center[.normal-width[![image](stack.png)]]
-
-.footnote[
-См. раздел
-[perlinterp](http://perldoc.perl.org/perlinterp.html)
-в perldoc
-]
 
 ???
 
 The mark stack keeps bookmarks to locations in the argument stack usable by each function.
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 dXSARGS; //dSP and dMARK and dITEMS
@@ -673,12 +566,6 @@ PUTBACK;
 return;
 ```
 
-.footnote[
-см. раздел
-[perlinterp](http://perldoc.perl.org/perlinterp.html)
-в perldoc
-]
-
 ???
 
 The mark stack keeps bookmarks to locations in the argument stack usable by each function.
@@ -694,12 +581,6 @@ The mark stack keeps bookmarks to locations in the argument stack usable by each
 ---
 
 .center[.normal-width[![image](scope.png)]] 
-
-.footnote[
-см. раздел
-[perlinterp](http://perldoc.perl.org/perlinterp.html)
-в perldoc
-]
 
 ---
 
@@ -723,11 +604,10 @@ SV *tmp = sv_newmortal(); sv_setiv(tmp, an_integer);
 FREETMPS; LEAVE;
 ```
 
-.footnote[
-см. раздел
-[perlinterp](http://perldoc.perl.org/perlinterp.html)
-в perldoc
-]
+---
+
+layout: true
+# Работа со стеком
 
 ---
 
@@ -750,11 +630,7 @@ ST(0) = sv_2mortal(
 
 ```
 
-.footnote[
-см. раздел
-[perlapi](http://perldoc.perl.org/perlapi.html)
-в perldoc
-]
+.footer[[perlapi](http://perldoc.perl.org/perlapi.html)]
 
 ---
 
@@ -848,10 +724,9 @@ layout:false
 
 layout: true
 # Typemaps
+.footer[[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)]
 
 ---
-
-<div style="height:1em;"></div>
 
 ```typemap
 TYPEMAP
@@ -874,15 +749,7 @@ T_PV
 ```
 
 
-.footnote[
-см. раздел
-[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)
-в perldoc
-]
-
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 double distance_pointobj(r_point1, r_point2)
@@ -905,8 +772,6 @@ double distance_pointobj(r_point1, r_point2)
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
   point1 = (HV*)_point1;
@@ -931,8 +796,6 @@ double distance_pointobj(r_point1, r_point2)
 
 ---
 
-<div style="height:1em;"></div>
-
 ```c
 typedef struct { double x, y; } GEOM_POINT;
 ```
@@ -955,15 +818,7 @@ GEOM_POINT*             T_HVREF
 
 ```
 
-.footnote[
-см. раздел
-[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)
-в perldoc
-]
-
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 INPUT
@@ -987,8 +842,6 @@ T_HVREF
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 OUTPUT
@@ -1014,8 +867,6 @@ double distance_pointstruct(point1, point2)
 
 ---
 
-<div style="height:1em;"></div>
-
 ```c
 TYPEMAP
 HV* T_HVREF_3D
@@ -1038,8 +889,6 @@ T_HVREF_3D
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ``` c
   SV **tm__x=hv_fetch(typemap_point,\"x\",1,0);
@@ -1134,8 +983,6 @@ Sum: <--[num1]-->
 
 ---
 
-<div style="height:1em;"></div>
-
 ```c
 int main (int argc, char **argv, char **env) {
   ...
@@ -1157,8 +1004,6 @@ int main (int argc, char **argv, char **env) {
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 static void
@@ -1182,8 +1027,6 @@ call_func(char *func_name, int argv, char **argc){
 ```
 
 ---
-
-<div style="height:1em;"></div>
 
 ```c
 static void
@@ -1222,8 +1065,6 @@ layout: false
 
 # Inline::C
 
-<div style="height:1em;"></div>
-
 ```perl
 use Inline C => DATA => libs => '-lz';
 
@@ -1245,8 +1086,6 @@ SV * CRC32(SV * sv_buf) {
 ---
 
 # FFI::Raw
-
-<div style="height:1em;"></div>
 
 ```perl
 use FFI::Raw;
