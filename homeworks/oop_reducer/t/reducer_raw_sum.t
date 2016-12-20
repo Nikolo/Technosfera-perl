@@ -9,7 +9,7 @@ use Local::Row::Raw;
 
 my $sum_reducer = Local::Reducer::Sum->new(
     field => 'value',
-    source => Local::Source::Array->new(array => [ "invalid", -1..6, "bad", 3.14 ]),
+    source => Local::Source::Array->new(array => [ "invalid", -1..6, "bad", 3.14, "5.10.1" ]),
     row_class => 'Local::Row::Raw',
     initial_value => 5,
 );
