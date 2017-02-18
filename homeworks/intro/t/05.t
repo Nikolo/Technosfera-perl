@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use FindBin;
 use Test::More;
-do "$FindBin::Bin/../bin/04.pl" or die "Can't open $FindBin::Bin/../bin/04.pl: $!";
+do "$FindBin::Bin/../bin/05.pl" or die "Can't open $FindBin::Bin/../bin/05.pl: $!";
 
 my @TESTS = (
     [ ['e#ab#c1de#ab#ab#cf', 'ab' ], '3'],
