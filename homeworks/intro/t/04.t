@@ -3,14 +3,12 @@ use strict;
 use warnings;
 use FindBin;
 use Test::More;
-do "$FindBin::Bin/../bin/01.pl" or die "Can't open $FindBin::Bin/../bin/01.pl: $!";
+do "$FindBin::Bin/../bin/04.pl" or die "Can't open $FindBin::Bin/../bin/04.pl: $!";
 
 my @TESTS = (
-    [ [0, 1, 2], 'No solution!' ],
-    [ [-2, 0, 128], '-8, 8' ], 
-    [ [12, 9, 0], '0, -0.75' ],
-    [ [1, 2, -3], '1, -3' ],
-    [ [5, 6, 7], 'No solution!' ],
+    [ 0xffff0000, '17' ],
+    [ 0x80000000, '32' ],
+    [ 0, '0'],
 );
 
 plan tests => scalar(@TESTS);
@@ -22,12 +20,12 @@ close STDOUT;
 open STDOUT, '>', \$stdout or die "Can't open STDOUT: $!";
 
 foreach my $item (@TESTS) {
-  run(@{$item->[0]});
+  run($item->[0]);
 }
 
 my @result = split "\n", $stdout;
 for (my $i = 0; $i < scalar(@TESTS); $i++) {
-    my $test_name = join ', ', @{$TESTS[$i]->[0]};
+    my $test_name = sprintf "%x value", $TESTS[$i]->[0];
     is($result[$i], $TESTS[$i]->[1], $test_name);
 }
 

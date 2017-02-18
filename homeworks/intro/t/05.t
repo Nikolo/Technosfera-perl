@@ -3,14 +3,12 @@ use strict;
 use warnings;
 use FindBin;
 use Test::More;
-do "$FindBin::Bin/../bin/01.pl" or die "Can't open $FindBin::Bin/../bin/01.pl: $!";
+do "$FindBin::Bin/../bin/04.pl" or die "Can't open $FindBin::Bin/../bin/04.pl: $!";
 
 my @TESTS = (
-    [ [0, 1, 2], 'No solution!' ],
-    [ [-2, 0, 128], '-8, 8' ], 
-    [ [12, 9, 0], '0, -0.75' ],
-    [ [1, 2, -3], '1, -3' ],
-    [ [5, 6, 7], 'No solution!' ],
+    [ ['e#ab#c1de#ab#ab#cf', 'ab' ], '3'],
+    [ ['e#ab#c1de#ab#ab#cf#ab', 'ab' ], '4'],
+    [ ['e#abab#deab', 'ab' ], '3'],
 );
 
 plan tests => scalar(@TESTS);
