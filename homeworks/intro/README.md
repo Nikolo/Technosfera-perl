@@ -13,5 +13,5 @@ t/*.t
 
 Запуск:
 
-#perl Makefile.PL
-#make test
+perl Makefile.PL
+make test
