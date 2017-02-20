@@ -6,9 +6,8 @@ use Test::More;
 do "$FindBin::Bin/../bin/04.pl" or die "Can't open $FindBin::Bin/../bin/04.pl: $!";
 
 my @TESTS = (
-    [ 0xffff0000, '17' ],
-    [ 0x80000000, '32' ],
-    [ 0, '0'],
+    [ 0xffff0000, '16' ],
+    [ 0x80000000, '31' ],
 );
 
 plan tests => scalar(@TESTS);
