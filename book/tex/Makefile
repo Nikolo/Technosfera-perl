@@ -3,10 +3,10 @@ LUALATEX = /Library/TeX/texbin/lualatex --halt-on-error --synctex=1 --shell-esca
 all: prepare first second
 
 first:
-	$(LUALATEX) -output-directory=build main.tex
+	ulimit -n 1024 && $(LUALATEX) -output-directory=build main.tex
 
 second:
-	$(LUALATEX) -output-directory=build main.tex
+	ulimit -n 1024 && $(LUALATEX) -output-directory=build main.tex
 
 prepare:
 	mkdir build
