@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+﻿#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -30,6 +30,13 @@ sub run {
     # ...
     # Вычисление номера первого ненулевого бита 
     # ...
+	for ($i = 0; $i<32;$i++)
+	{	
+	if($x & (1<<$i))
+	{
+		$num = $i;
+		last;		
+	}
 
     print "$num\n";
 }
