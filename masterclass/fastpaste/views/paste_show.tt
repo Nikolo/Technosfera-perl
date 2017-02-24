@@ -1,0 +1,10 @@
+<h3>Paste "<% title || 'untitled' %>"</h3>
+<div class="show_paste">
+    <ol>
+    <% FOR t IN text %><li class="li_paste"><div class="single_line"><% t %></div></li><% END %>
+    </ol>
+</div>
+<h3>Raw data</h3>
+<div class="textarea_border">
+    <textarea name="textpaste" class="paste_textarea" rows="15" style="oveflow: hidden; word-wrap: break-word; resize: none; height: 400px;"><% raw %></textarea>
+</div>

@@ -1,0 +1,132 @@
+input.post_input, select.post_select {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    color: #181818;
+    font-family: "segoe ui","trebuchet MS","Lucida Sans Unicode","Lucida Sans",Sans-Serif;
+    font-size: 1em;
+    width: 272px;
+    padding: 8px;
+}
+
+#page {
+    width: 1250px;
+}
+
+#content {
+    width: 1000px;
+}
+
+.error ol, .error li {
+    list-style-type: none;
+    background-color: #fff;
+    color: red !important;
+    margin-bottom: 0px !important;
+} 
+
+a {
+    color: #C03 !important;
+    text-decoration: none;
+    background-color: #fff !important;
+}
+
+a:hover {
+    color: #999 !important;
+    text-decoration: none;
+    background-color: #fff !important;
+}
+
+ol {
+    color: #ccc;
+    background: #F7F7F7;
+    margin: 0;
+    padding: 0 0 0 55px !important;
+}
+
+.links {
+    font-size: .75em;
+    line-height: 16px;
+}
+
+.links a {
+    color: #C03 !important;
+    background-color: #ddd !important;
+}
+
+.links span {
+    color: #999;
+    display: block;
+}
+
+.show_paste {
+    border: 1px solid #ddd;
+    color: #ddd;
+    font-family: Consolas,Menlo,Monaco,"Lucida Console","Liberation Mono","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace,serif;
+    line-height: 1.5em;
+    font-size: 14px !important;
+}
+
+.show_paste li{
+    margin-bottom: 0px !important;
+    font-size: 12px !important;
+    background: #fff;
+}
+
+.show_paste ol {
+    list-style-type: decimal;
+    color: #ACACAC;
+}
+
+.single_line {
+    border-left: 1px solid #ddd;
+    padding: 0 8px;
+    color: #000;
+    font-size: 12px;
+}
+
+textarea.paste_text, textarea.paste_textarea {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-sizing: border-box;
+    display: block;
+    font-family: Consolas,Menlo,Monaco,"Lucida Console","Liberation Mono","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace,serif;
+    font-size: 13px;
+    height: 200px;
+    min-height: 200px;
+    line-height: 21px;
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+}
+
+.content_title {
+    border-bottom: 2px solid #ddd;
+    color: #333;
+    font-size: 1em;
+    font-weight: 600;
+    padding: 0 0 5px;
+}
+
+.form_right {
+    float: left;
+    line-height: 35px;
+    min-width: 300px;
+    text-align: left;
+    margin: 0 0 10px;
+}
+
+.form_left {
+    float: left;
+    line-height: 35px;
+    width: 150px;
+    margin: 0 0 10px;
+}
+
+.form_frame {
+    font-size: .8em;
+}
+
+

@@ -1,17 +1,64 @@
-﻿class:firstpage
+﻿class:firstpage, title
 # Программирование на Perl
+
+## Ускоряем перл (XS)
 
 ---
 
-class:note_and_mark
+class:note_and_mark, title
 
 # Отметьтесь на портале!
  
 ---
 
-class: firstpage
-# Ускоряем перл
-# Расширяем «C»
+# Зачем?
+
+- оптимизация производительности
+  - сокращаем потребление памяти
+  - сокращаем потребление CPU
+- увеличение скорости разработки
+  - использование готового кода и библиотек
+  - некоторые задачи проще решать на C
+  - в Perl есть регулярные выражения и не только
+
+---
+
+# Зачем?
+Perl vs C
+```perl
+$ts = time();
+
+for($i = 0; $i < 1e7; $i++) { $sum += $i; }
+
+say "Perl: " . (time() - $ts);
+$ts = time(); $sum = mysum();
+say "C:    " . (time() - $ts);
+
+__END__
+__C__
+SV * mysum() {
+	unsigned long sum = 0;
+	for(unsigned i = 0; i < 1e7; i++) sum += i;
+	newSViv(sum);
+}
+```
+
+---
+
+# Зачем?
+
+## Кто быстрее? На сколько?
+
+---
+
+# Зачем?
+
+## Кто быстрее? На сколько?
+```html
+Perl: 0.613094091415405
+C:    0.00823593139648438
+```
+C в 75 раз быстрее!
 
 ---
 
@@ -25,26 +72,27 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
 layout: true
 # Генерация XS модулей
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlnewmod](http://perldoc.perl.org/perlnewmod.html)]
 
 ---
 
-```bash
-% perl -V:make
+```html
+$ perl -V:make
 
-make='dmake';
+make='make';
 
-% h2xs -b 5.10.1 -n local::sferamail::perlxs
+$ h2xs -n Local::Base58::XS -b 5.18.0
 ```
+C::Scan - модуль для парсинга хеадер-файла для генерации xsubs.
 
-C::Scan - модуль для парсинга хеадер-файла для генерации xsubs
-
-```bash
-h2xs -n local::sferamail::locale -O -x "F:\locale.h"
+```html
+$ h2xs -n Local::Base58::XS -O -x "include/base58.h"
 ```
 
 ???
@@ -58,34 +106,50 @@ h2xs -n local::sferamail::locale -O -x "F:\locale.h"
 
 Базовый набор файлов, необходимых для создания модуля.
 
-```bash
-Writing local-sferamail-perlxs/ppport.h
-Writing local-sferamail-perlxs/lib/local/sferamail/perlxs.pm
-Writing local-sferamail-perlxs/perlxs.xs
-Writing local-sferamail-perlxs/fallback/const-c.inc
-Writing local-sferamail-perlxs/fallback/const-xs.inc
-Writing local-sferamail-perlxs/Makefile.PL
-Writing local-sferamail-perlxs/README
-Writing local-sferamail-perlxs/t/local-sferamail-perlxs.t
-Writing local-sferamail-perlxs/Changes
-Writing local-sferamail-perlxs/MANIFEST
+```html
+$ h2xs -n Local::Base58::XS -b 5.18.0
+Writing Local-Base58-XS/ppport.h
+Writing Local-Base58-XS/lib/local/Base58/XS.pm
+Writing Local-Base58-XS/XS.xs
+Writing Local-Base58-XS/fallback/const-c.inc
+Writing Local-Base58-XS/fallback/const-xs.inc
+Writing Local-Base58-XS/Makefile.PL
+Writing Local-Base58-XS/README
+Writing Local-Base58-XS/t/local-Base58-XS.t
+Writing Local-Base58-XS/Changes
+Writing Local-Base58-XS/MANIFEST
+
 ```
+
+???
+
+- ppport.h
+- XS.pm
+- XS.xs
+- const-{c,xs}.inc
+- Makefile.PL
+- README
+- local-Base58-XS.t
+- Changes
+- MANIFEST
 
 ---
 
 Сборка и тестирование модуля
 
-```bash
-% perl Makefile.PL
-% dmake
-% dmake test
+```html
+$ perl Makefile.PL
+$ make
+$ make test
 
-t/sferamail-perlxs.t .. ok
+t/local-Base58-XS.t .. ok
 All tests successful.
-Files=1, Tests=1,  0 wallclock secs ( 0.00 usr +  0.08 sys =  0.08 CPU)
+Files=1, Tests=1,  0 wallclock secs ( 0.04 usr  0.⤶
+00 sys +  0.03 cusr  0.00 csys =  0.07 CPU)
 Result: PASS
 
-% dmake install
+
+$ make install
 ```
 
 ---
@@ -100,15 +164,15 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
 layout: true
 # Макропроцессор
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [xsubpp](http://perldoc.perl.org/xsubpp.html)]
 
 ---
-
-xsub - функции написанные в xs-модуле
 
 XS - набор макросов
 
@@ -116,17 +180,22 @@ xsubpp - компилятор который собирает С код из м�
 
 TYPEMAP - правила преобразования типов данных
 
+.center[.normal-width[![image](img/xsubpp.svg)]]
+
+???
+
 ```txt
  __________
 | TYPEMAP  |___
-|__________|   \       ___________       _________
-                \_____|  XSUBPP   |_____| C-File  |
-                /     |___________|     |_________|
- __________    /                             ^
-|  XS-file |__/                          ____|____
-|__________|                            | PM-file |
-                                        |_________|
+|__________|   \      ___________       _________
+                \____|  XSUBPP   |_____| C-File  |
+                /    |___________|     |_________|
+ __________    /                            ^
+|  XS-file |__/                         ____|____
+|__________|                           | PM-file |
+                                       |_________|
 ```
+xsub - функции написанные в xs-модуле
 
 ---
 
@@ -140,11 +209,13 @@ layout:false
 1. Работа со стеком
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
 layout: true
 # Типы данных изнутри
+.footer[[illguts](http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html)]
 
 ---
 
@@ -152,48 +223,108 @@ layout: true
 - AV  Array Value
 - HV  Hash Value
 
-.floatright[![Right-aligned image](svhead.png)]
+.floatright[![Right-aligned image](img/svhead.png)]
 
 - SV:
- - IV - signed integer value 
- - UV - unsigned integer value 
- - NV - double
+ - IV - signed integer value
+ - UV - unsigned integer value
+ - NV - double value
  - PV - pointer value
- - SV
+ - <span style="opacity: 0.5">RV - references value</span>
 
-.center[.normal-width[![image](flags.png)]] 
+.center[.normal-width[![image](img/flags.png)]] 
+
+???
+
+ - NULL - PL\_sv\_\{undef|yes|no\}
+
+
+```c
+struct STRUCT_SV {		/* struct sv { */
+    _SV_HEAD(void*);
+    _SV_HEAD_UNION;
+}
+
+
+#define _SV_HEAD(ptrtype) \
+    ptrtype	sv_any;		/* pointer to body */	\
+    U32		sv_refcnt;	/* how many references to us */	\
+    U32		sv_flags	/* what we are */
+
+#define _SV_HEAD_UNION \
+    union {				\
+	char*   svu_pv;		/* pointer to malloced string */	\
+	IV      svu_iv;			\
+	UV      svu_uv;			\
+	_NV_BODYLESS_UNION		\
+	SV*     svu_rv;		/* pointer to another SV */		\
+	struct regexp* svu_rx;		\
+	SV**    svu_array;		\
+	HE**	svu_hash;		\
+	GP*	svu_gp;			\
+	PerlIO *svu_fp;			\
+    }	sv_u
+```
+
+---
+
+.center[.normal-width[![image](img/svtypes.png)]]
+.center[SvIV]
+.center[.normal-width[![image](img/sviv-14.png)]]
+
+
+???
+
+In addition to the simple type names already mentioned, the following names are found in the hierarchy figure:
+    An PVIV value can hold a string and an integer value.
+    An PVNV value can hold a string, an integer and a double value.
+    The PVMG is used when magic is attached or the value is blessed.
+    The PVLV represents a LValue object.
+    RV is now a seperate scalar of type SVt_IV.
+    CV is a code value, which represents a perl function/subroutine/closure or contains a pointer to an XSUB.
+    GV is a glob value and IO contains pointers to open files and directories and various state information about these.
+    The PVFM is used to hold information on forms.
+    P5RX was formerly called PVBM for Boyer-Moore (match information), but contains now regex information.
+    BIND was a unused placeholder for read-only aliases or VIEW. (#29544, #29642)
+    INVLIST is an CORE internal inversion list object only, used for faster utf8 matching, since 5.19.2. Same layout as a PV.
 
 ---
 
 SvPV
 
-.center[.normal-width[![image](svpv-14.png)]] 
+.center[.normal-width[![image](svpv-14.png)]]
 
 SvOOK
 
-.center[.normal-width[![image](ook-14.png)]] 
-
----
-
-SvPVMG
-
-.center[.normal-width[![image](svpvmg-14.png)]] 
+.center[.normal-width[![image](ook-14.png)]]
 
 ---
 
 SvRV
 
-.center[.normal-width[![image](svrv.png)]] 
+.center[.normal-width[![image](svrv.png)]]
 
 SvAV
 
-.center[.normal-width[![image](av-14.png)]] 
+.center[.normal-width[![image](av-14.png)]]
 
 ---
 
 SvHV
 
-.center[.normal-width[![image](hv-14.png)]] 
+.center[.normal-width[![image](hv-14.png)]]
+
+---
+
+SvPVMG
+
+.center[.normal-width[![image](svpvmg-14.png)]]
+
+---
+
+layout: true
+# Типы данных изнутри
+.footer[[perlxstut](http://perldoc.perl.org/perlxstut.html) [perlxs](http://perldoc.perl.org/perlxs.html) [perlapi](http://perldoc.perl.org/perlapi.html)]
 
 ---
 
@@ -212,7 +343,7 @@ SV* newSVsv(SV*);
 
 ---
 
-*Определение значения переменной*
+*Установка значения переменной*
 
 ```perlxs
 void  sv_setiv(SV*, IV);
@@ -226,22 +357,24 @@ void  sv_setsv(SV*, SV*);
 
 ---
 
-*Установка значения переменной*
+*Получение значения переменной*
 
 ```perlxs
 SvIV(SV*)
 SvUV(SV*)
 SvNV(SV*)
-SvPV(SV*, STRLEN len) //возвращается длинна строки 
+SvPV(SV*, STRLEN len) //возвращается длина строки
 SvPV_nolen(SV*)
 ```
 
 *Проверка типа SV-шки*
 
 ```perlxs
+SvOK(SV*)
 SvIOK(SV*)
 SvNOK(SV*)
 SvPOK(SV*)
+SvOK(SV*)
 SvTRUE(SV*)
 ```
 
@@ -252,23 +385,20 @@ SvTRUE(SV*)
 ```c
 SvCUR(SV*) - длина
 SvCUR_set(SV*, I32 val)
-
 SvGROW(sv, needlen + 1)
-
 SvUTF8_off(sv);
 
-SvEND(SV*) // Ссылка на последний байт в строке
+SvEND(SV*) // a pointer to last character + 1
 
 sv_setpvn(sv, "", 0);
 
 s = SvGROW(sv, needlen + 1);
-// something that modifies up to needlen bytes 
-// at s, but modifies newlen bytes
-// eg. newlen = read(fd, s, needlen); 
+// remember trailing NUL
 
 s[newlen] = '\0';
 SvCUR_set(sv, newlen);
 ```
+
 ---
 
 layout:false
@@ -281,11 +411,13 @@ layout:false
 1. **Работа со стеком**
 1. Typemaps
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
 layout: true
 # Работа со стеком
+.footer[[perlxs](http://perldoc.perl.org/perlxs.html) [perlguts](http://perldoc.perl.org/perlguts.html)]
 
 ---
 
@@ -293,14 +425,18 @@ layout: true
 
 Получение переменной из стека
 ```perlxs
-ST(n)
+ST(n) // n < items
+
 ```
 
 Установка переменной в стек
 
 ```perlxs
-EXTEND(SP, num);
-PUSHs(SV*);
+// GIMME_V returns G_VOID G_SCALAR or G_ARRAY
+if((GIMME_V != G_VOID)) {
+    EXTEND(SP, num);
+    PUSHs(SV*);
+}
 ```
 
 ```perlxs
@@ -326,7 +462,7 @@ INCLUDE: const-xs.inc
 
 ---
 
-*CODE + OUTPUT = dSP + xPUSHs + ...* 
+*CODE + OUTPUT = dSP + XPUSHs + ...*
 
 ```c
 #include <math.h>
@@ -346,6 +482,11 @@ double distance_point(x1,y1,x2,y2)
     RETVAL
 ```
 
+???
+```c
+#define dSP		SV **sp = PL_stack_sp
+#define XPUSHs(s)	STMT_START { EXTEND(sp,1); *++sp = (s); } STMT_END
+```
 ---
 
 *PPCODE*
@@ -363,6 +504,13 @@ void distance_point(x1,y1,x2,y2)
     double ret;
     ret = sqrt( pow(x1-x2, 2) + pow(y1-y2, 2) );
     PUSHn((double)ret);
+```
+
+???
+
+```
+#define PUSHs(s)	(*++sp = (s))
+#define PUSHn(n)	STMT_START { sv_setnv(TARG, (NV)(n)); PUSHTARG; } STMT_END
 ```
 
 ---
@@ -386,7 +534,17 @@ void distance_ext_point(x1,y1,x2,y2)
 
 ---
 
-.center[.normal-width[![image](stack.png)]] 
+layout: true
+# Работа со стеком
+.footer[[perlinterp](http://perldoc.perl.org/perlinterp.html)]
+
+---
+
+.center[.normal-width[![image](stack.png)]]
+
+???
+
+The mark stack keeps bookmarks to locations in the argument stack usable by each function.
 
 ---
 
@@ -406,7 +564,18 @@ PUSHs(sv_2mortal(newSVnv(dx)));
 PUSHs(sv_2mortal(newSVnv(dy)));
 PUTBACK;
 return;
+```
 
+???
+
+The mark stack keeps bookmarks to locations in the argument stack usable by each function.
+
+```c
+#define dSP		SV **sp = PL_stack_sp
+#define dMARK		SV **mark = PL_stack_base + POPMARK
+#define dITEMS I32 items = (I32)(SP - MARK)
+#define PUTBACK		PL_stack_sp = sp
+#define PUSHs(s)	(*++sp = (s))
 ```
 
 ---
@@ -415,31 +584,34 @@ return;
 
 ---
 
+*mortal переменные*
 ```c
 int SvREFCNT(SV* sv);
 SV* SvREFCNT_inc(SV* sv);
 void SvREFCNT_dec(SV* sv);
+SV* newRV_noinc(SV *const sv);
 
-SV*        newRV_noinc(SV *const sv);
-
-```
-
-```c
 SV*  sv_newmortal()
 SV*  sv_2mortal(SV*)
 SV*  sv_mortalcopy(SV*)
 
 ENTER; SAVETMPS;
 
-sv_2mortal(newSVnv(sqrt(pow(x1-x2,2)+pow(y1-y2,2))));
+sv_2mortal(newSVnv(sqrt(pow(x1-x2,2)+pow(y1-y2,2))))
 
-SV *tmp = sv_newmortal();
-sv_setiv(tmp, an_integer);
+SV *tmp = sv_newmortal(); sv_setiv(tmp, an_integer);
 
 FREETMPS; LEAVE;
 ```
 
 ---
+
+layout: true
+# Работа со стеком
+
+---
+
+*Создание объекта*
 
 ```c
 ST(0) = sv_2mortal(
@@ -457,6 +629,8 @@ ST(0) = sv_2mortal(
 );
 
 ```
+
+.footer[[perlapi](http://perldoc.perl.org/perlapi.html)]
 
 ---
 
@@ -482,7 +656,18 @@ double distance_call_point()
     PUSHs(sv_2mortal(newSVnv(dist)));
 ```
 
+???
+
+```c
+#define POPs		(*sp--)
+#define POPn		(SvNVx(POPs))
+```
+
+PUSHMARK Opening bracket for arguments on a callback. See PUTBACK and perlcall.
+
 ---
+
+*Вызов перл функции с аргументами*
 
 ```perl
 sub get_points {
@@ -494,20 +679,20 @@ sub get_points {
 
 ---
 
+*Вызов перл функции с аргументами*
+
 ```c
 double distance_call_arg_point()
  PPCODE:
   int count; double x1, y1, x2, y2;
-  ENTER; SAVETMPS; PUSHMARK(SP); 
+  ENTER; SAVETMPS; PUSHMARK(SP);
   XPUSHs(sv_2mortal(newSViv(1))); PUTBACK;
-  count=call_pv("local::perlxs::get_points",
-                G_ARRAY);
+  count = call_pv("perlxs::get_points", G_ARRAY);
   SPAGAIN;
   if (count!=2) croak("call get_points trouble\n");
   x1 = POPn; y1 = POPn;PUSHMARK(SP);
   XPUSHs(sv_2mortal(newSViv(2)));PUTBACK;
-  count=call_pv("local::perlxs::get_points", 
-                G_ARRAY);
+  count = call_pv("perlxs::get_points", G_ARRAY);
   SPAGAIN;
   if (count!=2) croak("call get_points trouble\n");
   x2 = POPn; y2 = POPn;
@@ -515,6 +700,11 @@ double distance_call_arg_point()
   FREETMPS; LEAVE;
   PUSHs(sv_2mortal(newSVnv(dist)));
 ```
+
+???
+
+PUSHMARK Opening bracket for arguments on a callback. See PUTBACK and perlcall.
+PUTBACK Closing bracket for XSUB arguments. This is usually handled by xsubpp 
 
 ---
 
@@ -528,18 +718,18 @@ layout:false
 1. Работа со стеком
 1. **Typemaps**
 1. Встраивание Perl (perlembed)
+1. Альтернативы
 
 ---
 
 layout: true
 # Typemaps
+.footer[[perlxstypemap](http://perldoc.perl.org/perlxstypemap.html)]
 
 ---
 
 ```typemap
 TYPEMAP
-WORD                    T_IV
-LONG                    T_IV
 int                     T_IV
 unsigned                T_IV
 char                    T_CHAR
@@ -557,6 +747,7 @@ OUTPUT
 T_PV
     sv_setpv((SV*)$arg, $var);
 ```
+
 
 ---
 
@@ -608,6 +799,7 @@ double distance_pointobj(r_point1, r_point2)
 ```c
 typedef struct { double x, y; } GEOM_POINT;
 ```
+
 ```c
 TYPEMAP
 WORD                    T_IV
@@ -623,6 +815,7 @@ HV *                    T_HVREF
 CV *                    T_CVREF
 ...
 GEOM_POINT*             T_HVREF
+
 ```
 
 ---
@@ -656,8 +849,6 @@ T_HVREF
   croak(\"Unimplemented output $type\");
 
 ```
-
----
 
 ```c
 double distance_pointstruct(point1, point2)
@@ -727,6 +918,7 @@ layout: false
 1. Работа со стеком
 1. Typemaps
 1. **Встраивание Perl (perlembed)**
+1. Альтернативы
 
 ---
 
@@ -734,6 +926,8 @@ layout: true
 # Встраивание Perl (perlembed)
 
 ---
+
+*Интерпретатор Perl*
 
 ```c
 #include <EXTERN.h>
@@ -754,6 +948,8 @@ int main(int argc, char **argv, char **env)
 ```
 
 ---
+
+*Интерпретатор Perl*
 
 ```bash
 perl -MExtUtils::Embed -e ccopts -e ldopts
@@ -788,8 +984,7 @@ Sum: <--[num1]-->
 ---
 
 ```c
-int main (int argc, char **argv, char **env)
-{
+int main (int argc, char **argv, char **env) {
   ...
   char *perl_argv[]={"",module,include_dir,"-e0"};
   PERL_SYS_INIT3(&argc,&argv,&env);
@@ -812,15 +1007,13 @@ int main (int argc, char **argv, char **env)
 
 ```c
 static void
-call_func(char *func_name, int argv, char **argc )
-{
+call_func(char *func_name, int argv, char **argc){
   int count, f;
-  dSP;       
-  ENTER; SAVETMPS; PUSHMARK(SP);
+  dSP; ENTER; SAVETMPS; PUSHMARK(SP);
   for(f=0;f<argv;f++){
     XPUSHs(sv_2mortal(newSVpv(argc[f],
                       strlen(argc[f])))); }
-  PUTBACK;                        
+  PUTBACK;
   count = call_pv(func_name, G_SCALAR|G_EVAL); 
   SPAGAIN; PUTBACK;
   if (SvTRUE(ERRSV)){error_tmpl(SvPV_nolen(ERRSV);}
@@ -837,12 +1030,11 @@ call_func(char *func_name, int argv, char **argc )
 
 ```c
 static void
-print_var(char *var_name, char *var)
-{
+print_var(char *var_name, char *var) {
   HV *h_var;
   h_var = get_hv(var_name, 0);
   if(!h_var) error_tmpl("Vars hash not exist");
-  SV **sr_var=hv_fetch(h_var,var,(int)strlen(var),0);
+  SV **sr_var=hv_fetch(h_var, var, strlen(var), 0);
   if(!sr_var) error_tmpl("Var not exist");
   if(SvTYPE(*sr_var) == SVt_IV)
     printf( "%li", SvIV(*sr_var));
@@ -857,25 +1049,95 @@ print_var(char *var_name, char *var)
 ```
 
 ---
-layout: false
-# Домашнее задание
 
-1. Написать xs-модуль который позволяет рассчитать:
-  - расстояние от точки до окружности (принимает 2 параметра, точку и окружность в виде хешей)
-  - возвращает точку пересечения прямой проходящей от заданой точки до центра окружности с этой окружностью
-  - умножает матрицы (принимает 2 AoA на вход), реализовать на чистом перл и на perlxs
-2. Написать программу на С, которая использует в своём коде перловые регулярки + хеши. На вход подаётся файл в base64, внутри которого лежит текст. Необходимо найти все предложения, которые содержат запятые. Найти в них все слова, короче 5 букв, посчитать частотность по каждому.
-  - Сишная часть читает файл, декодирует base64, выводит результат по статистике, которую считает перл
-  - Перловая часть находит слова короче 5 букв и считает статистику
+layout: false
+# Содержание
+
+1. Генерация XS модулей
+1. Макропроцессор
+1. Типы данных изнутри
+1. Работа со стеком
+1. Typemaps
+1. Встраивание Perl (perlembed)
+1. **Альтернативы**
 
 ---
 
-class:lastpage
+# Inline::C
 
-# Оставьте отзыв
+```perl
+use Inline C => DATA => libs => '-lz';
 
-Спасибо за внимание!
+say CRC32("1234");
+say unpack('H*', pack('N', CRC32("1234")));
 
-Николай Шуляковский
+__END__
+__C__
+#include <zlib.h>
 
-Email & Agent: n.shulyakovskiy@corp.mail.ru
+SV * CRC32(SV * sv_buf) {
+	STRLEN len;
+	unsigned char * buf;
+	buf = SvPV(sv_buf, len);
+	newSViv(crc32(NULL, buf, len));
+}
+```
+
+---
+
+# FFI::Raw
+
+```perl
+use FFI::Raw;
+
+# ZEXTERN uLong ZEXPORT
+# crc32 OF((uLong crc, const Bytef *buf, uInt len));
+my $crc32 = FFI::Raw->new("libz.so", "crc32",
+	FFI::Raw::uint64, # uLong
+	FFI::Raw::uint64, # uLong
+	FFI::Raw::str,    # const Bytef *
+	FFI::Raw::uint    # uInt
+);
+say unpack('H*',
+  pack('N', $crc32->call(0, "1234", 4)));
+```
+
+---
+layout: false
+# Домашнее задание
+
+Написать xs-модуль Local::Stats для подсчета статистики.
+- модуль имеет три метода new, add, stat
+- конструктор (new) принимает coderef
+- метод add принимает два аргумента — имя метрики и её значение. Если метрика не встречалась ранее, то должна быть вызвана процедура по coderef для получения настроек метрики. Настройки метрики — список (возможно пустой), содержащий строки "avg", "cnt", "max", "min", "sum"
+- Метод stat возвращает ссылку на хэш со статистикой для метрик с непустым конфигом и обнуляет статистику
+```perl
+{
+  m1 => { avg => 1, sum => 5, max => 2 },
+  m2 => { cnt => 100 }
+}
+```
+---
+
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
+
+???
+
+http://search.cpan.org/~rjbs/perl-5.24.0/utils/h2xs.PL
+http://cpansearch.perl.org/src/RURBAN/illguts-0.49/index-18.html
+http://perldoc.perl.org/xsubpp.html
+http://perldoc.perl.org/perlcall.html
+http://perldoc.perl.org/perlapi.html
+http://perldoc.perl.org/perlnewmod.html
+http://perldoc.perl.org/perlxstypemap.html
+http://perldoc.perl.org/perlguts.html
+http://perldoc.perl.org/perlxstut.html
+http://perldoc.perl.org/perlinterp.html
+http://perldoc.perl.org/perlxs.html
+http://perldoc.perl.org/functions/tie.html

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="<% settings.charset %>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>fastpaste</title>
+  <link rel="stylesheet" href="<% request.uri_base %>/css/style.css">
+  <link rel="stylesheet" href="<% request.uri_base %>/css/style_dancer.css">
+
+<!-- Grab jQuery from a CDN, fall back to local if necessary -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">/* <![CDATA[ */
+    !window.jQuery && document.write('<script type="text/javascript" src="<% request.uri_base %>/javascripts/jquery.js"><\/script>')
+/* ]]> */</script>
+
+</head>
+<body>
+    <div id="page">
+        <div id="sidebar">
+	    <ul id="sidebar-items">
+                <li>
+                    <h3>Last Fast Paste</h3>
+                    <ul class="links"> 
+                        <% FOR lp IN last_paste %><li><a href="/<% lp.id %>"><% lp.title || 'untitled' %></a><span><% lp.create_time %></span></li><% END %></ul>
+                    </ul>
+                </li>
+            </ul>
+	</div>
+	<div id="content">
+	    <div id="header">
+	        <h1><a href="/">Fast Paste</a></h1>
+		<h2>Welcome!</h2>
+	    </div>
+	    <div id="getting-started"><% content %></div>
+	    <div style="clear: both"></div>
+	</div>
+    </div>
+    <div id="footer">Powered by <a href="http://perldancer.org/">Dancer2</a> <% dancer_version %></div>
+</body>
+</html>

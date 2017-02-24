@@ -1,13 +1,19 @@
-class:firstpage
+class:firstpage, title
+
 # Программирование на Perl
+## Асинхронно-событийное программирование
 
 ---
 
-class:firstpage
-# Асинхронно-событийное программирование
+class:note_and_mark title
+
+# Отметьтесь на портале!
 
 ---
 layout:false
+
+<!-- 3 -->
+
 # Содержание
 
 * Работа операционной системы
@@ -30,6 +36,7 @@ layout:false
 
 ---
 class:center, middle
+<!-- 4 -->
 
 # Что такое процесс?
 
@@ -38,8 +45,8 @@ class:center, middle
 экземпляр выполняемоий программы, включая текущие значения счетчика команд,регистров и переменных
 
 ---
-
 class:center, middle
+<!-- 5 -->
 
 # Что такое паралеллизм?
 
@@ -48,6 +55,8 @@ class:center, middle
 исполнение нескольких процессов на разных процессорах с доступом к общей памяти
 
 ---
+class:center, middle
+<!-- 6 -->
 
 # Что такое псевдопаралеллизм?
 
@@ -56,14 +65,17 @@ class:center, middle
 исполнение нескольких процессов на одном физическом процессоре в условиях разделения времени.
 
 ---
+<!-- 7 -->
 
 # Состояние процесса
 
+<div style="height:1em;"></div>
 .center[
 ![image]( 119.svg )
 ]
 
 ---
+<!-- 8 -->
 
 # Переключение контекста
 ## Context switch
@@ -77,6 +89,7 @@ class:center, middle
 
 ---
 class: center, middle
+<!-- 9 -->
 
 #CONFIG_HZ_100
 
@@ -85,6 +98,7 @@ class: center, middle
 Максимум 100 переключений/c
 
 ---
+<!-- 10 -->
 
 # CPU Usage
 
@@ -96,6 +110,7 @@ p: часть времени ожидания ввода-вывода
 ]
 
 ---
+<!-- 11 -->
 
 # Системный вызов
 ## просьба ОС выполнить привилегированную операцию
@@ -108,6 +123,7 @@ p: часть времени ожидания ввода-вывода
 * возврат управления
 
 ---
+<!-- 12 -->
 
 # Системный вызов ввода-вывода
 
@@ -123,6 +139,7 @@ p: часть времени ожидания ввода-вывода
 * возврат управления исходному процессу
 
 ---
+<!-- 13 -->
 
 # Простой tcp сервер
 
@@ -141,6 +158,7 @@ while (1) {
 ```
 
 ---
+<!-- 14 -->
 
 # Ожидание IO: 80%
 
@@ -159,6 +177,7 @@ p = 80%
 20 процессов - 99% CPU
 
 ---
+<!-- 15 -->
 
 # Ожидание IO: 0.01%
 
@@ -177,12 +196,14 @@ p = 0.01%
 10000 процессов - 63% CPU
 
 --
+<!-- 16 -->
 
 ###1Mb/process = 10Gb RAM
 
 ###\+ 10000 CWS
 
 ---
+<!-- 17 -->
 
 # Блокирующее IO
 
@@ -193,6 +214,7 @@ read(...) -> FATAL ERROR
 ```
 
 ---
+<!-- 18 -->
 
 # Неблокирующее IO
 
@@ -205,6 +227,9 @@ read(...) -> FATAL ERROR
 ```
 
 ---
+<!-- 19 -->
+
+# Pseudocode sample
 
 ```perl
 while (1) {
@@ -213,7 +238,7 @@ while (1) {
         if ($res) {
             # do work
         }
-        elsif ($! ~~ FATAL_ERROR) { # pseudocode
+        elsif ($! ~~ FATAL_ERROR) {
             # close fh, remove from @fds
         }
         else {
@@ -224,6 +249,7 @@ while (1) {
 ```
 
 ---
+<!-- 20 -->
 
 # select
 
@@ -246,6 +272,7 @@ say unpack "B*", $readable; # 00000111
 ```
 
 ---
+<!-- 21 -->
 
 # IO::Select
 
@@ -261,6 +288,7 @@ $s->add($fd);
 ```
 
 ---
+<!-- 22 -->
 
 # O_NONBLOCK
 
@@ -275,6 +303,7 @@ $flags = fcntl($fd, F_SETFL, $flags | O_NONBLOCK)
 ```
 
 ---
+<!-- 23 -->
 
 # EAGAIN, EINTR, EWOULDBLOCK
 
@@ -298,6 +327,7 @@ else {
 ```
 
 ---
+<!-- 24 -->
 
 # Event loop
 
@@ -317,6 +347,7 @@ while () {
 ```
 
 ---
+<!-- 25 -->
 
 # Замыкание
 
@@ -331,6 +362,7 @@ while () {
 ```
 
 --
+<!-- 26 -->
 
 ```perl
 {
@@ -343,6 +375,7 @@ while () {
 ```
 
 ---
+<!-- 27 -->
 
 ```perl
 sub decorator {
@@ -362,6 +395,7 @@ say $ds->('test');  # /test/
 ```
 
 ---
+<!-- 28 -->
 
 ```perl
 my @subs;
@@ -385,15 +419,14 @@ for my $sub (@subs) {
 ```
 
 ---
+<!-- 29 -->
 
 ```perl
 my $fd = socket...
 wait_socket_readable($fd, sub {
     read($fd, ...)
 })
-
 # ...
-
 our %waiters;
 sub wait_socket_readable {
     my ($fd,$cb) = @_;
@@ -412,6 +445,7 @@ while () {
 ```
 
 ---
+<!-- 30 -->
 
 ```perl
 my $fd = socket...
@@ -438,6 +472,7 @@ wait_socket_readable($fd, sub {
 ```
 
 ---
+<!-- 31 -->
 
 ```perl
 wait_timeout 1, sub { ... };
@@ -463,6 +498,7 @@ while () {
 ```
 
 ---
+<!-- 32 -->
 
 ```perl
 wait_timeout 1, sub {
@@ -483,6 +519,7 @@ wait_timeout 1, sub {
 ```
 
 ---
+<!-- 33 -->
 
 ```perl
 wait_timeout 1, sub {
@@ -493,6 +530,7 @@ wait_timeout 1, sub {
 ```
 
 --
+<!-- 34 -->
 
 ```perl
 my $deadline = time + $t;
@@ -507,6 +545,7 @@ unshift @deadlines, [$deadline, $cb];
 ```
 
 ---
+<!-- 35 -->
 
 ```perl
 wait_timeout 1, sub {
@@ -529,10 +568,10 @@ unshift @deadlines, [$deadline, $cb];
 ```
 
 ---
+<!-- 36 -->
 
 ```perl
-our `$now`;
-our @deadlines;
+our `$now`; our @deadlines;
 
 sub wait_timeout {
     my ($t,$cb) = @_;
@@ -555,6 +594,7 @@ while () {
 ```
 
 ---
+<!-- 37 -->
 
 # Обобщённый интерфейс
 
@@ -581,12 +621,12 @@ AE::now();
 ```
 
 ---
+<!-- 38 -->
 
 # AE::io
 
 ```perl
-AE::io \*STDIN, 0, sub {
-    # stdin is readable;
+AE::io \*STDIN, 0, sub { # stdin is readable;
     my $line = <STDIN>;
     AE::io \*STDOUT, 1, sub {
         # stdout is writable
@@ -609,6 +649,7 @@ AnyEvent->io( fd=>\*STDIN, poll=>'r',
 ```
 
 ---
+<!-- 39 -->
 
 # Guard
 
@@ -628,6 +669,7 @@ After
 ```
 
 ---
+<!-- 40 -->
 
 # Guard
 
@@ -648,6 +690,7 @@ sub guard(&) {
 ```
 
 ---
+<!-- 41 -->
 
 # Guard
 
@@ -673,6 +716,7 @@ my $w = delayed_action(..., sub { ... });
 ```
 
 ---
+<!-- 42 -->
 
 # AE::io
 
@@ -696,6 +740,7 @@ AE::cv->recv; # Run loop
 ```
 
 ---
+<!-- 43 -->
 
 # AE::timer (after, period)
 
@@ -715,6 +760,7 @@ AE::cv->recv; # Run loop
 ```
 
 ---
+<!-- 44 -->
 
 # AE::signal
 
@@ -728,6 +774,7 @@ AE::cv->recv; # Run loop
 ```
 
 ---
+<!-- 45 -->
 
 # AE::idle, AE::now
 
@@ -755,9 +802,11 @@ while () {
 
 ---
 class:center,middle
+<!-- 46 -->
 ![img]( 123.svg )
 
 ---
+<!-- 47 -->
 
 # AE::cv (condvar)
 
@@ -778,6 +827,7 @@ $cv->recv;
 ```
 
 ---
+<!-- 48 -->
 
 # AE::cv (condvar)
 
@@ -804,6 +854,7 @@ sub condvar::send {
 ```
 
 ---
+<!-- 49 -->
 
 # AE::cv (begin/end)
 
@@ -828,6 +879,7 @@ $cv->recv;
 ```
 
 ---
+<!-- 50 -->
 
 # AE::cv (begin/end)
 
@@ -849,6 +901,7 @@ sub condvar::end {
 ```
 
 ---
+<!-- 51 -->
 
 # AE::cv (begin/end/cb)
 
@@ -874,6 +927,7 @@ $cv->recv;
 ```
 
 ---
+<!-- 52 -->
 
 # AE::cv (begin/end/cb)
 
@@ -901,6 +955,7 @@ $cv->recv;
 
 
 ---
+<!-- 53 -->
 
 ```perl
 sub AE::cv(;&) {
@@ -918,7 +973,6 @@ sub condvar::send {
     my $self = shift;
 
     $self->{sent} = 1;
-
     $self->{args} = [ @_ ];
 
     if ($self->{cb}) { $self->{cb}->() };
@@ -926,6 +980,7 @@ sub condvar::send {
 ```
 
 ---
+<!-- 54 -->
 
 # Simple async function
 
@@ -944,6 +999,7 @@ sub async {
 ```
 
 ---
+<!-- 55 -->
 
 # Параллельное выполнение
 
@@ -964,6 +1020,7 @@ $cv->recv;
 ```
 
 ---
+<!-- 56 -->
 
 # Параллельное выполнение
 
@@ -984,6 +1041,7 @@ for my $cur (@array) {
 ```
 
 ---
+<!-- 57 -->
 
 # Последовательное выполнение
 
@@ -1006,8 +1064,11 @@ $cv->recv;
 ```
 
 ---
+<!-- 58 -->
 
-# Параллельное исполение с ограничением
+# Параллельное выполнение
+
+## Не более 5 задач одновременно
 
 ```perl
 my $cv = AE::cv;
@@ -1028,6 +1089,7 @@ $cv->recv;
 ```
 
 ---
+<!-- 59 -->
 
 ```
 Process 1
@@ -1053,6 +1115,7 @@ Processed 10
 ```
 
 ---
+<!-- 60 -->
 
 ```
 Process 1
@@ -1078,6 +1141,7 @@ Processed 7
 ```
 
 ---
+<!-- 61 -->
 
 ```perl
 my $cv = AE::cv; `$cv->begin`;
@@ -1100,6 +1164,7 @@ my $next; $next = sub {
 ```
 
 ---
+<!-- 62 -->
 
 # Stack
 
@@ -1110,6 +1175,7 @@ while ()
 ```
 
 ---
+<!-- 63 -->
 
 ```perl
 http_request 1..., sub {
@@ -1124,6 +1190,7 @@ http_request 1..., sub {
 ```
 
 ---
+<!-- 64 -->
 
 ```perl
 use Async::Chain;
@@ -1149,10 +1216,11 @@ sub {
 ```
 
 ---
+<!-- 65 -->
 
 # Coro
 
-```
+```perl
 use Coro;
 
 async { # create new stack
@@ -1170,6 +1238,7 @@ cede;
 ```
 
 ---
+<!-- 66 -->
 
 .floatright[
 # Coro
@@ -1190,6 +1259,13 @@ cede;
 ]
 
 ---
+class: lastpage, center, middle
+<!-- 67 -->
+
+# А теперь мастеркласс!
+
+---
+<!-- 68 -->
 
 # Домашнее задание
 
@@ -1209,6 +1285,37 @@ $AnyEvent::HTTP::MAX_PER_HOST = 100;
 ```
 
 ---
-class: lastpage, center, middle
+<!-- 69 -->
 
-# \_\_END\_\_
+# Домашнее задание (вариант 2)
+
+Написать HTTP сервер или HTTP клиент на AnyEvent
+
+* Внутри реализации можно использовать как `io` и `timer`, так и `AnyEvent::Handle`.
+* Внутри реализации не должны встречаться вызовы cv->recv/send
+
+Интерфейс HTTP-сервера:
+```perl
+http_server $host,$port, sub {
+    my $request = shift;
+    $request->reply($status, $body, $headers);
+};
+```
+
+Интерфейс HTTP-клиента:
+```perl
+http_request $method, $url, (%options), sub {
+    my ($status, $body, $headers) = @_;
+};
+# в options должен поддерживаться timeout
+```
+
+---
+<!-- 70 -->
+class:lastpage
+
+# Оставьте отзыв на портале
+
+Спасибо за внимание!
+
+Mons Anderson &lt;<mons@cpan.org>&gt;
