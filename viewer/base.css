@@ -198,6 +198,13 @@ table td, table th {}
     clear: both;
 }
 
+.w70 {
+    width: 69%;
+}
+.w30 {
+    width: 29%;
+}
+
 .clear {
     content: "";
     display: table;
