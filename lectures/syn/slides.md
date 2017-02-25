@@ -10,12 +10,36 @@ class:note_and_mark title
 # Отметьтесь на портале!
 
 ---
+class: center, middle
+
+# TIMTOWTDI
+
+##There’s More Than One Way To Do It
+
+---
+class: center, middle
+
+# The only thing can parse
+# **Perl** (the language) is
+# **perl** (the binary)
+
+---
+
+class: center, middle
+
+## Perl should only be studied as a second language.
+## A good first language would be English.
+.right[
+>Larry Wall
+]
+---
 layout:false
 # Содержание
 
-* Структуры данных
+* **Структуры данных**
     - Массивы
     - Хэши
+    - Ссылки
 * Функции для работы со списками
 * Управление циклами
 * Постфиксная запись
@@ -109,26 +133,6 @@ END
 
 my $ver    = v1.2.3.599;
 ```
-
----
-
-## Ссылки
-```perl
-my $scalar_ref = \$scalar;       # SCALAR
-my $array_ref  = \@array;        # ARRAY
-my $hash_ref   = \%hash;         # HASH
-my $code_ref   = \&function;     # CODE
-my $glob_ref   = \*FH;           # GLOB
-my $ref_ref    = \$scalar_ref;   # REF
-
-my $array_ref  = [ 4,8,15,16 ];
-my $hash_ref   = { one => 1, two => 2 };
-my $code_ref   = sub { ... };
-
-my ($one,$two) = (\"one",\"two");
-my ($one,$two) = \("one","two");
-```
-
 
 ---
 layout:false
@@ -556,28 +560,71 @@ p %hash;
 ```
 
 ---
+class:center
 
-# HASH ops: reverse
+# ARRAY & HASH
+
+![image]( perldata.svg )
+
+---
+
+# Ссылки
 
 ```perl
-my %hash = ( key1 => "value1", key2 => "value2");
+my $scalar_ref = \$scalar;       # SCALAR
+my $array_ref  = \@array;        # ARRAY
+my $hash_ref   = \%hash;         # HASH
+my $code_ref   = \&function;     # CODE
+my $glob_ref   = \*FH;           # GLOB
+my $ref_ref    = \$scalar_ref;   # REF
 
-p %hash;
-#    key1   "value1"
-#    key2   "value2"
+my $array_ref  = [ 4,8,15,16 ];
+my $hash_ref   = { one => 1, two => 2 };
+my $code_ref   = sub { ... };
 
-my %rev = reverse %hash;
-
-p %rev;
-#    value1   "key1",
-#    value2   "key2"
+my ($one,$two) = (\"one",\"two");
+my ($one,$two) = \("one","two");
 ```
 
 ---
 
-# Переменные: ARRAY & HASH
+# ref
 
-![image]( perldata.svg )
+.left[
+```perl
+say ref $scalar;
+say ref \$scalar;
+say ref \\$scalar;
+say ref \@array;
+say ref \%hash;
+say ref [];
+say ref {};
+say ref \&main;
+say ref sub {};
+```
+]
+.right[
+```sh
+''
+SCALAR
+REF
+ARRAY
+HASH
+ARRAY
+HASH
+CODE
+CODE
+```
+]
+
+```perl
+if (ref $val) {
+    ...
+}
+else {
+    ...
+}
+```
 
 ---
 # Содержание
@@ -585,6 +632,7 @@ p %rev;
 * Структуры данных
     - Массивы
     - Хэши
+    - Ссылки
 * **Функции для работы со списками**
 * Управление циклами
 * Постфиксная запись
@@ -687,8 +735,6 @@ for my $k (sort keys %hash) {
 
 # sort: `cmp` vs `<=>`
 
-
-
 ```perl
 say "x" cmp "y"; # -1, x less than y
 say "x" cmp "x"; #  0, x equals to x
@@ -709,6 +755,718 @@ sub smart {
 my @sorted = sort smart @strings;
 ```
 
+---
+
+# reverse
+
+```perl
+my %hash = ( key1 => "value1", key2 => "value2");
+my @array = (1..5);
+p %hash;
+#    key1   "value1"
+#    key2   "value2"
+p @array;
+# 1 2 3 4 5
+
+my %rev_h = reverse %hash;
+my @rev_a = reverse @array;
+p %rev_h;
+#    value1   "key1",
+#    value2   "key2"
+p @rev_a;
+# 5 4 3 2 1
+```
+
+.footer[[reverse](http://perldoc.perl.org/functions/reverse.html)]
+
+---
+
+# split & join
+
+```perl
+my $string = "Just Another Perl Hacker";
+my @letters = split //, $string;
+say "@letters";
+# J u s t   A n o t h e r   P e r l   H a c k e r
+my @words = split / /, $string;
+p @words;
+# 'Just' 'Another' 'Perl' 'Hacker'
+
+my $one = join "", sort @letters;
+say $one;
+# AHJPaceeehklnorrrsttu
+
+my $other = join ", ", reverse @words;
+say $other;
+# 'Hacker, Perl, Another, Just'
+```
+
+.footer[[join](http://perldoc.perl.org/functions/join.html)]
+
+---
+
+# List conversions
+
+```perl
+my %hash = ( key1 => "val1",
+    key2 => "val2", key3 => "val3");
+my @array = %hash;
+# key2 val2 key1 val1 key3 val3
+
+@array = map { $_, $hash{$_} } sort keys %hash;
+# key1 val1 key2 val2 key3 val3
+
+%hash = @array;
+#{key1 => "val1", key3 => "val3", key2 => "val2"}
+```
+
+---
+
+# unique
+
+```perl
+my @with_dups = qw(a b c a e n f a d e a);
+my %uniq;
+my @unique = grep { !$uniq{$_}++ } @with_dups;    
+say "@unique";
+# a b c e n f d
+p %uniq;
+#    a   4,
+#    b   1,
+#    c   1,
+#    d   1,
+#    e   2,
+#    f   1,
+#    n   1,
+```
+
+## Also see List::Util
+
+---
+
+# intersection
+
+```perl
+my @a = 1..55;
+my @b = 45..100;
+
+my %chk;
+@chk{@a} = ();
+# 1 => undef, 2 => undef, ... 55 => undef
+
+my @common = grep { exists $chk{$_} } @b;
+
+say "@common";
+# 45 46 47 48 49 50 51 52 53 54 55
+```
+
+---
+
+# exclusion
+
+```perl
+my @a = 1..10;
+my @odd = grep {$_ % 2} @a; # 1 3 5 7 9
+
+my %odd = map { $_ => 1 } @odd;
+
+my @even = grep { !$odd{ $_ } } @a;
+
+say "@even";
+```
+
+---
+
+# min/max
+
+```perl
+# take 10 random numbers in range [0,50)
+my @a = map { int rand 50 } 1..10;
+say "@a";
+# 37 32 21 19 49 5 3 37 45 43
+
+my $min = (sort { $a <=> $b } @a)[0];
+say $min; # 3
+
+my $max = (sort { $a <=> $b } @a)[-1];
+say $max; # 49
+
+my $max = (sort { $b <=> $a } @a)[0];
+say $max; # 49
+
+# or use List::Util qw(min max);
+```
+
+---
+
+# random, shuffle
+
+```perl
+my @a = map { int rand 50 } 1..10;
+@a = qw(42 14 2 40 39 15 12 36 23 13);
+my @b = sort { $a<=>$b } @a;
+say "@a";
+# 42 14 2 40 39 15 12 36 23 13
+say "@b";
+# 2 12 13 14 15 23 36 39 40 42
+
+say "random item: ", @a[ rand @a ]; # 14
+say "random item: ", @a[ rand($#a+1) ]; # 36
+
+my @c = sort { int(rand(3))-1 } @b;
+say "@c";
+# 15 2 14 12 40 23 36 39 13 42
+```
+
+---
+# Содержание
+
+* Структуры данных
+    - Массивы
+    - Хэши
+    - Ссылки
+* Функции для работы со списками
+* **Управление циклами**
+* Постфиксная запись
+* Интерполяция в строках
+* Функции
+    - Декларация
+    - Аргументы
+    - Использование
+
+---
+
+# next
+
+```perl
+for my $item ( @items ) {
+    my $success = prepare($item);
+
+    unless ($success) {
+*       next;
+    }
+
+    process($item);
+} continue {
+*   # next переходит сюда
+    postcheck($item);
+}
+```
+
+.footer[[perldoc -f next](http://perldoc.perl.org/functions/next.html)]
+
+???
+
+* `next` Начинает новую итерацию цикла, как `continue` в C.
+* Если присутствует блок `continue {}`, то он исполняется даже для пропущенных строк
+
+---
+
+# last
+
+```perl
+for my $item ( @items ) {
+    my $success = prepare($item);
+
+    unless ($success) {
+*       last;
+    }
+
+    process($item);
+} continue {
+    postcheck($item);
+}
+*# last переходит сюда
+```
+
+.footer[[perldoc -f last](http://perldoc.perl.org/functions/last.html)]
+
+???
+
+* `last` прерывает исполнение текущего цикла
+* `last` является эквивалентом `break` из языка C
+* Даже, если присутствует блок `continue {}`, то он не исполняется
+
+---
+
+# redo
+
+```perl
+for my $item ( @items ) {
+*   # redo переходит сюда
+    my $success = prepare($item);
+
+    unless ($success) {
+*       redo;
+    }
+
+    process($item);
+} continue {
+    postcheck($item);
+}
+```
+
+.footer[[perldoc -f redo](http://perldoc.perl.org/functions/redo.html)]
+
+???
+
+* `redo` начинает итерацию цикла с начала без исполнения блока условия
+* `redo` не имеет аналога в языке C
+* При наличии блока `continue {}`, он не исполняется
+
+---
+
+# Управление внешним циклом
+
+.left.w70[
+```perl
+my @outer_array = 1..3;
+my @inner_array = 1..3;
+
+`OUTER`:
+for my $x (@outer_array) {
+    for my $y (@inner_array) {
+        next `OUTER` if $y > $x;
+        say "$x $y";
+    }
+} continue {
+    # next OUTER jumps here
+    say "row ends";
+}
+```
+]
+.right.w30[
+```perl
+1 1
+row ends
+2 1
+2 2
+row ends
+3 1
+3 2
+3 3
+row ends
+```
+]
+
+.clear[]
+
+> `next`, `last`, `redo` могут выполнять прыжок по метке, как `goto`
+
+---
+
+# Постфиксная нотация
+
+```perl
+STMT if EXPR;
+```
+
+```perl
+STMT unless EXPR;
+```
+
+```perl
+STMT while EXPR;
+```
+
+```perl
+STMT until EXPR;
+```
+
+```perl
+STMT for LIST;
+```
+
+```perl
+STMT when EXPR;
+```
+
+---
+
+# Примеры
+
+```perl
+if ($_ !~ /^#/) { say $_ }
+unless (/^#/) { say }
+say unless /^#/;
+say if !/^#/
+
+do_something() if $most_likely;
+
+for (@loop) {
+    last if $enough++ > 10;
+}
+
+say for @items;
+
+# etc.
+```
+
+---
+
+# Постфиксные циклы
+
+```perl
+do {
+    ...;
+} while ( EXPR );
+```
+
+```perl
+do {
+    ...;
+} until ( EXPR );
+```
+
+```perl
+do {
+    ...;
+} for ( LIST );
+```
+
+---
+
+# Постфиксные циклы
+
+```perl
+do {
+    ...;
+} while ( EXPR );
+```
+
+.f-right[
+# ⚠
+]
+
+* Не работает `next`
+* Не работает `last`
+* Не работает `redo`
+* Нет места для `continue {...}`
+
+--
+
+> Нет обрамляющего блока
+
+--
+
+> Лучше не пользоваться
+
+---
+
+# Содержание
+
+* Структуры данных
+    - Массивы
+    - Хэши
+    - Ссылки
+* Функции для работы со списками
+* Управление циклами
+* Постфиксная запись
+* **Интерполяция в строках**
+* Функции
+    - Декларация
+    - Аргументы
+    - Использование
+
+---
+
+# Интерполяция
+
+> В "-строках интерполируются `$..` и `@..`
+
+```perl
+my $var = "one";
+my @ary = (3, "four", 5);
+my %hash = (k => "v", x => "y");
+say 'new $var';      # new $var
+say 'arr @ary';      # arr @ary
+
+say "new `$var`";      # new one
+
+say "arr = `@ary`";           # arr = 3` `four` `5
+$" = ';'; # $LIST_SEPARATOR, ' ' by default
+say "arr = `@ary`";           # arr = 3`;`four`;`5
+
+say "1st: `$ary[0]`";         # 1st: 3
+say "two:(`@ary[1,2]`)";      # two(four;5)
+say "hash el: `$hash{x}`";    # hash el: y
+```
+
+---
+
+# Escape-последовательности
+
+```perl
+say 'test\n'; # test\n
+say "test\n"; # test with newline char (0a)
+```
+
+```sh
+\t          tab
+\r          return
+\n          newline
+\e          escape
+\x{263a}    unicode character with code in hex
+\N{U+263A}  unicode character
+\N{name}    unicode character by name
+\033        octal code
+```
+
+## see: [perlop](http://perldoc.perl.org/perlop.html#Quote-and-Quote-like-Operators) for more
+
+---
+
+# Single quote
+
+> Экранируемые символы только `\` и `'`. Остальные не экранируются
+
+.left[
+```perl
+say '\"x';
+say '\0x';
+say '\x';
+```
+]
+.right[
+```sh
+\"x
+\0x
+\x
+```
+]
+
+.clear[]
+
+--
+
+.left[
+```perl
+say '\\x';
+say '`\\`\x';
+say '`\\\\`x';
+say '`\\\\`\x';
+say '`\\\\\\`x';
+```
+]
+.right[
+```sh
+\x
+\\x
+\\x
+\\\x
+\\\x
+```
+]
+
+
+---
+
+# Особые esc-последовательности
+
+```sh
+\Q = quotemeta
+\L = lc
+\U = uc
+\F = fc # foldcase
+\E = end sequence
+\l = lcfirst
+\u = ucfirst
+```
+
+--
+
+.left[
+```perl
+say "`\U`test string";
+say "`\Utest\E` string";
+say "`\ut`est string"; 
+
+say "\Q.+*/\E";
+say quotemeta('.+*/');
+```
+]
+.right[
+```sh
+TEST STRING
+TEST string
+Test string
+
+\.\+\*\/
+\.\+\*\/
+```
+]
+
+---
+
+# Содержание
+
+* Структуры данных
+    - Массивы
+    - Хэши
+    - Ссылки
+* Функции для работы со списками
+* Управление циклами
+* Постфиксная запись
+* Интерполяция в строках
+* **Функции**
+    - Декларация
+    - Аргументы
+    - Использование
+
+---
+
+# Функции: объявление
+
+.left[
+```perl
+sub NAME;
+sub NAME BLOCK
+$var = sub BLOCK;
+```
+]
+.right[
+```sh
+forward declaration
+declaration
+anonymous declaration
+```
+]
+
+```perl
+sub my_function;
+# ...
+sub my_function {
+    ...
+}
+
+my $anon = sub { ... };
+```
+
+.footer[[perlsub](http://perldoc.perl.org/perlsub.html)]
+
+---
+
+# Функции: аргументы
+
+```perl
+`@_` # специальный массив, содержащий все аргументы
+```
+
+```perl
+sub my_fun {
+    my $one_arg = shift; # shift @_
+}
+```
+
+```perl
+sub my_fun {
+    my ($one_arg) = @_;
+}
+```
+
+```perl
+sub my_fun {
+    my ($one,$two,$three) = @_;
+}
+```
+
+---
+
+# Функции: вызов
+
+```perl
+my_fun(); # no args
+my_fun($arg); # one arg
+my_fun($one,$two); # two args
+
+my_fun(@array); # pass array as a list of args
+my_fun(%hash); # pass hash as a list of args
+
+my $res = my_fun(); # take single result
+my @res = my_fun(); # take list result
+my ($x,$y) = my_fun(); # take list into vars
+
+$sub->();
+$sub->($arg);
+```
+
+---
+
+.left[
+```perl
+sub add {
+    my ($x,$y) = @_;
+    return $x + $y;
+}
+sub math {
+    my ($x,$y) = @_;
+    # last statement
+    # is returned
+    $x+$y, $x-$y;
+}
+sub div {
+    # access directly
+    $_[0] / $_[1];
+}
+sub inc {
+    ++$_[0];
+}
+```
+]
+.right[
+```perl
+my $q = 3;
+my $z = 7;
+my @av = (1,4);
+
+say add(1,2);   # 3
+say add($q,$z); # 10
+say add(@av);   # 5
+
+say math(@av);  # 5 -3
+
+say math @av;   # 5 -3
+say add 1,2;    # 3
+
+say div 4,8;    # 0.5
+
+say inc $q;     # 4;
+say inc $q;     # `5`;
+say inc 0;      # die
+```
+]
+
+---
+
+# Список документации
+
+* [perlsyn](http://perldoc.perl.org/perlsyn.html)
+* [perldata](http://perldoc.perl.org/perldata.html)
+* [perlref](http://perldoc.perl.org/perlref.html)
+* [perlsub](http://perldoc.perl.org/perlsub.html)
+* [perlfunc](http://perldoc.perl.org/perlfunc.html)
+* [perlglossary](http://perldoc.perl.org/perlglossary.html)
+
+---
+
+# Домашнее задание
+
+На вход функции подается список участников.
+Каждый аргумент - либо имя холостого участника, либо ссылка на массив из имён супружеской пары. Имена уникальны.
+
+Программа должна случайно выбрать пары дарящий → даритель для всех участников по следующим правилам:
+
+Никто не дарит подарок сам себе.
+Никто не дарит подарок своему супругу.
+Два участника не дарят подарок друг другу.
+
+Результатом функции должен быть список ссылок на массив из пар дарящий → даритель
+
+## Подсказки
+
+* При случайном подборе может получиться неразрешимое сочетание. В этом случае самый простой способ - повторить подбор
+* Не забывайте использовать хэши. Они позволяют работать с множествами за O(1) вместо O(n)
+* Проверяйте аргументы.
 
 ---
 class:center, middle
@@ -716,22 +1474,13 @@ class:center, middle
 # \_\_END\_\_
 
 ---
+class:lastpage title
 
-# grep
+# Спасибо за внимание!
 
-```perl
-my @with_dups = qw(a b c a e n f a d e s x a);
-{
-    %uniq = ();
-    @unique = grep { !$uniq{$_}++ } @with_dups;}    
-}
+## Оставьте отзыв
 
-@a = 1..55;
-@b = 45..100;
-%chk; @chk{@a} = ();
-@merge = grep { exists $chk{$_} } @b;
-```
-
+.teacher[![teacher]()]
 
 
 
