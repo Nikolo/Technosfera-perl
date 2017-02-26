@@ -23,9 +23,10 @@ sub encode {
     my ($str, $key) = @_;
     my $encoded_str = '';
 
-    # ...
-    # Алгоритм шифрования
-    # ...
+    my @arr = split //, $str;
+    for (my $i = 0; $i < @arr; $i++) {
+        $encoded_str = $encoded_str . chr((ord($arr[$i]) + $key) % 127); 
+    }
 
     print "$encoded_str\n";
 }
@@ -45,9 +46,10 @@ sub decode {
     my ($encoded_str, $key) = @_;
     my $str = '';
 
-    # ...
-    # Алгоритм дешифрования
-    # ...
+    my @arr = split //, $encoded_str;
+    for (my $i = 0; $i < @arr; $i++) {
+        $str = $str . chr((ord($arr[$i]) - $key + 127) % 127); 
+    }
 
     print "$str\n";
 }
