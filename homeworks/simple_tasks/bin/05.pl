@@ -6,7 +6,7 @@ use warnings;
 =encoding UTF8
 =head1 SYNOPSYS
 
-Поиск количества вхождений строки в подстроку.
+Поиск количества вхождений подстроки в строку.
 
 =head1 run ($str, $substr)
 
@@ -29,10 +29,13 @@ run("ab", "c") - печатает "0\n"
 sub run {
     my ($str, $substr) = @_;
     my $num = 0;
-
+    my @array;
+ 
     # ...
-    # Вычисление количества вохождений строки $substr в строку $str,
+    # Вычисление количества вхождений строки $substr в строку $str,
     # ...
+    @array = $str=~/($substr)/g; # g - global searh.
+    $num = scalar @array; # return the value of EXPR (perldoc).
 
     print "$num\n";
 }
