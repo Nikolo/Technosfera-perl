@@ -24,11 +24,8 @@ sub run {
     my $x1 = undef;
     my $x2 = undef;
 
-    #...
-    #Вычисление корней
-    #...
-    my $D = $b_value * $b_value - 4 * $a_value * $c_value;
     if ($a_value != 0) {
+        my $D = $b_value * $b_value - 4 * $a_value * $c_value;
         if ($D > 0) {
             $x1 = (-$b_value + sqrt($D)) / (2 * $a_value);
             $x2 = (-$b_value - sqrt($D)) / (2 * $a_value);

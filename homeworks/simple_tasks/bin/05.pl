@@ -27,13 +27,8 @@ run("ab", "c") - печатает "0\n"
 =cut
 
 sub run {
-    my ($str, $substr) = @_;
     my $num = 0;
-    
-    my @arr = split /($substr)/, $str;
-    for (my $i = 0; $i < @arr; $i++) {
-    	if ($arr[$i] eq $substr) { $num++ }
-    }
+    $num = () = $_[0] =~ /$_[1]/g;
     print "$num\n";
 }
 
