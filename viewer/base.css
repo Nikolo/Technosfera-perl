@@ -172,13 +172,13 @@ table td, table th {}
 .left {
     clear:both;
     float: left;
-    width: 54%;
+    width: 49%;
 }
 
 .right {
     float: right;
     text-align: left;
-    width: 45%;
+    width: 49%;
 }
 .right * { text-align: left;}
 .right ~ p { clear: both; }
@@ -188,10 +188,27 @@ table td, table th {}
     clear: both;
 }
 
+.f-right {
+    float: right;
+}
+
 .left:after {
     content: "";
     display: table;
     clear: both;
+}
+
+.w70 {
+    width: 69%;
+}
+.w30 {
+    width: 29%;
+}
+
+.clear {
+    content: "";
+    display: table;
+    clear:both;
 }
 
 .casecharts th, .casecharts td {
@@ -249,3 +266,17 @@ table .small16 {
     font-size: 16px !important;
 }
 
+@page {
+    size: 908px 681px;
+    margin: 0;
+}
+
+@media print {
+    .remark-slide-scaler {
+        width: 100% !important;
+        height: 100% !important;
+        transform: scale(1) !important;
+        top: 0 !important;
+        left: 0 !important;
+    }
+}

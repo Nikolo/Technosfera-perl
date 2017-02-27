@@ -6,8 +6,8 @@ use Test::More;
 do "$FindBin::Bin/../bin/06.pl" or die "Can't open $FindBin::Bin/../bin/06.pl: $!";
 
 my @TESTS = (
-    [ 'Hello world!',  257, 'Khoor#zruog$'],
-    [ 'Howto learn perl?', 127, 'Howto learn perl?'],
+    [ 'Hello world!',  259, 'Khoor#zruog$'],
+    [ 'Howto learn perl?', 128, 'Howto learn perl?'],
     [ 'Perl is simple', 2, 'Rgtn"ku"ukorng'],
 );
 
