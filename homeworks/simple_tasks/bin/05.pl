@@ -30,11 +30,17 @@ sub run {
     my ($str, $substr) = @_;
     my $num = 0;
 
-    # ...
-    # Вычисление количества вохождений строки $substr в строку $str,
-    # ...
-
+    for(my $i = $str.length; $i >= $substr.length;$i--){
+	if($str[i]==$substr[0]){
+		my $c = 0;
+		while($c<$substr.length){
+			if($str[$c+$i]==$substr[$c]){
+				if($c==(($substr.length) - 1)){$num++;}
+				$c++;
+			}else{$c=$substr.length;}	
+		}
+	}
     print "$num\n";
+    }
 }
-
 1;
