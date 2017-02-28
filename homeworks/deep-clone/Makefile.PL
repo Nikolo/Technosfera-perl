@@ -2,5 +2,5 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME            => 'DeepClone',
-    VERSION_FROM    => 'bin/deep-clone',
+    VERSION_FROM    => 'bin/clone',
 );
