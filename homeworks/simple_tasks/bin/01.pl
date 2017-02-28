@@ -35,6 +35,18 @@ sub run {
     #...
     #Вычисление корней
     #...
+    
+    my $discriminant = $b_value ** 2 - 4 * $a_value * $c_value;
+
+    if ($discriminant < 0 || $a_value == 0){
+    	print "No solution!\n";
+    	return;
+    }
+
+    my $discriminant_sqrt = $discriminant ** 0.5;
+
+    $x1 = (-$b_value + $discriminant_sqrt) / (2 * $a_value);
+    $x2 = (-$b_value - $discriminant_sqrt) / (2 * $a_value);
 
     print "$x1, $x2\n";
 }

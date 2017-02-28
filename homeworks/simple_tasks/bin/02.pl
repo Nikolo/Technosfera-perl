@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use POSIX;
 
 =encoding UTF8
 =head1 SYNOPSYS
@@ -30,7 +31,25 @@ sub run {
         # Проверка, что число простое
         # ...
 
-	print "$i\n";
+        if ($i < 2) {
+        	next;
+        }
+
+        my $i_sqrt = floor($i ** 0.5);
+      	my $is_prime = 1;
+
+        for (my $j = 2; $j <= $i_sqrt; $j++){
+        	if ($i % $j == 0){
+        		$is_prime = 0;
+        		last;
+        	}
+        }
+
+        unless ($is_prime) {
+        	next;
+        }
+
+	    print "$i\n";
     }
 }
 
