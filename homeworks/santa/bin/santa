@@ -47,9 +47,9 @@ for (1..@members/4) {
 	push @pairs, [ $one, $two ];
 }
 
-my @list = sort { int(rand 3)-1 } @pairs, keys %members;
+my @new_list = sort { int(rand 3)-1 } @pairs, keys %members;
 
-my @res = SecretSanta::calculate(@list);
+my @res = SecretSanta::calculate(@new_list);
 
 for (@res) {
 	say join "→", @$_;
