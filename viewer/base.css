@@ -256,6 +256,7 @@ table td, table th {}
 }
 .small14 .remark-code {
     font-size: 14px !important;
+    line-height: 1.2em;
 }
 
 table .small16 {
