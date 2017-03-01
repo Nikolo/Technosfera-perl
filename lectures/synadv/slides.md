@@ -1261,8 +1261,1265 @@ say 1 . 2;       # 12
 say "1"."2";     # 12
 say "a"."b";     # ab
 *say 1.2;         # 1.2, !decimal
+```
+
+---
+
+# Операторы сравнения и равенства
+
+> `<`, `>`, `<=`, `>=` - числовой контекст  
+> `lt`, `gt`, `le`, `ge` - строковый контекст  
+
+```perl
+say 2 > 1; # 1
+say 1 >= 1; # 1
+
+say "abc" lt "bcd"; # 1
+say "abc" lt "abc"; # ""
+say "abc" le "abc"; # 1
+
+say "bcd" gt "abc"; # 1
+say "abc" gt "abc"; # ""
+say "abc" ge "abc"; # 1
+
+say "a" > "b";    # "", 0 > 0
+say "a" < "b";    # "", 0 < 0
+say 100 gt 20;    # "", "100" gt "20"
+say "100" > "20"; # 1
+```
+
+---
+
+# Операторы сравнения и равенства
+
+> `==`, `!=`, `<=>` - числовой контекст  
+> `eq`, `ne`, `cmp` - строковый контекст  
+
+```perl
+say 10 == "10";   #  1
+say "20" != "10"; #  1
+say 1 <=> 2;      # -1
+say 1 <=> 1;      #  0
+say 2 <=> 1;      #  1
+say "a" <=> "b";  #  0
+say "a" == "b";   #  1
+
+say 1 eq "1";     #  1
+say "0" ne 0;     # ""
+say "a" cmp "b";  # -1
+say "b" cmp "a";  #  1
+
+say "No NaN" if "NaN" == "NaN";
+```
+
+---
+
+# C-style логические операторы
+
+> `&&`, `||`, `//`  
+> 
+
+* Выполняются последовательно
+* Форсируют левый операнд к `bool` контексту
+* Передают контекст (`void`,`scalar`,`list`) правому операнду
+
+```perl
+say 1 && "test";  # test
+say 0 || "test";  # test
+say 1 || die;     # 1   # say( 1 || die );
+say 0 && die;     # 0   # say( 0 && die );
+my $z = $x // $y; # my $z = defined $x ? $x : $y;
+
+my $true = 1; my $false = 0;
+sub wa { say "want" if wantarray; }
+my @a = $true && wa(); # want
+my @b = $false || wa(); # want
+my @c = @a || @b; # my @c = scalar(@a) || @b;
+```
+
+---
+
+# Низкоприоритетные операторы
+
+> `and`, `or`, `xor`, `not`  
+
+* операторы с нижайшим приоритетом
+* сохраняет контекст левого операнда
+
+```perl
+open   $file, "<",  "0"   || die "Can't: $!";
+open   $file, "<", `(`"0"   || die "Can't: $!" `)`;
+
+open   $file, "<",  "0"   or die "Can't: $!";
+open `(` $file, "<",  "0" `)` or die "Can't: $!";
+
+do_one() and do_two() or do_another();
+
+@info = stat($file) || say "error: $!";
+#        ^----------^-cast scalar context on stat
+@info = stat($file) or say "error: $!";
+#                    ^-keep list context
+```
+
+---
+
+# Тернарный оператор
+
+> condition `?` if-true `:` if-false
+> condition is casted to `bool`
+
+```perl
+my $x = $ok ? $y : $z;
+my @a = $ok ? @b : @c;
+my @a = @z ? @b : @c; # scalar(@z) ? @b : @c
+
+($a_or_b ? $a : $b) = $c;
+
+my $x = 2;
+say $x == 1 ? 'one' :     # two
+    $x == 2 ? 'two' :
+    $x == 3 ? 'three' :
+    'other';
+
+my %h = (
+    $ok ? ( k1 => "v1" )
+        : ( k2 => "v2" )
+);
+```
+
+---
+
+# Оператор присваивания
+
+> `=`  
+
+* `+=` `-=`
+* `*=` `/=` `%=` `**=`
+* `&=` `|=` `x=` `<<=` `>>=` `^=`
+* `&&=` `||=` `//=`
+
+---
+
+# Оператор запятая
+
+> `,` запятая, `=>` жирная запятая  
+
+```perl
+my $x = do { say "one"; 3 }, do { say "two"; 7};
+# one, two
+say $x; # 7
+
+my @list = (bareword => STMT);
+# forces "" on left
+my @list = ("bareword", STMT);
+
+use constant CONST => "some";
+
+my %hash = ( CONST   => "val"); # "CONST"
+my %hash = ( CONST() => "val"); # "some"
+my %hash = (&CONST   => "val"); # "some"
+```
+
+---
+layout:true
+# Оператор кавычки
+
+> `q` `qq` `qw` `qx` `qr` `s` `y` `tr`  
+
+---
+
+* `q` - строка без интерполяции
+
+.not[
+```perl
+say  'string';
+say q{string};
+say q/string/;
+say q;string;;
+say q{str{i}ng}; # balanced, str{i}ng
+say q"string";
+say q `q`string`q`;
+*say q{str{ing};  # not ok, unbalanced }
+```
+]
+
+---
+
+* `qq` - строка с интерполяцией
+
+```perl
+say   "perl $^V";
+say qq{perl $^V};
+say qq/perl $^V/;
+say qq`;`perl $^V`;`;
+say qq{perl $^V};
+```
+
+---
+
+* `qw` - генератор списка (без интерполяции)
+
+```perl
+$, = ', ';
+
+say qw(a b c);
+# say split / /, 'a b c';
+
+for (qw(/usr /var)) {
+#for ('/usr','/var') {
+    say stat $_;
+}
+```
+
+---
+
+* `qx` - внешняя команда
+    - с интерполяцией
+    - `qx'...'` - без интерполяции
+
+.apos[
+```perl
+say qx{uname -a};
+
+say qx'echo $HOME';
+
+say `date`;
 
 ```
+]
+
+---
+
+* Here-doc
+
+.small.left[
+```perl
+say <<EOD;
+Content of document
+for $ENV{USER}
+EOD
+```
+]
+.small.right[
+```zsh
+Content of document
+for mons
+```
+]
+
+.small.left[
+```perl
+say(<<'THIS', "but", <<THAT);
+No $interpolation
+THIS
+For $ENV{HOME}
+THAT
+```
+]
+
+.small.right[
+```shx
+No $interpolation
+but
+For /home/mons
+```
+]
+
+---
+
+* `qr` - сборка регкспа
+* `/.../`, `m` - сопоставление (match)
+* `s` - поиск/замена (replace)
+* `y`, `tr` - транслитерация
+
+```perl
+$re = qr/\d+/;
+
+if ( $a =~ m[test${re}] ) { ... }
+
+$b =~ s{search}[replace];
+
+y/A-Z/a-z/; # on $_
+```
+
+---
+layout:false
+
+# Регулярные выражения
+> (*regular expressions*)
+
+## формальный язык поиска и осуществления манипуляций с подстроками в тексте, основанный на использовании метасимволов
+
+---
+
+# Сопоставление (`m//`)
+
+```perl
+"hello" =~ m/hell/; # matches
+
+"hello all" =~ m/hell/; # matches
+
+"Hello" =~ m/hell/; # not matches
+
+"welcome to Hell" =~ m/hell/; # not matches
+```
+
+---
+
+# Поиск и замена (`s///`)
+
+```perl
+my $say = "Time to drink a beer";
+
+#           ⤺ pattern
+$say =~ s/`drink`/make/;
+
+$say =~ s/beer/`homework`/;
+#   replacement ⤻
+
+say $say; # Time to make a homework
+```
+
+---
+
+# Метасимволы
+
+## Символы, которые необходимо экранировать
+
+.center.huge[
+```
+{ } [ ] ( ) ^
+$ . | * + ? \
+```
+]
+
+## Для экранирования можно использовать `quotemeta`
+
+```perl
+my $str = '{}[]()^\$.|*+?';
+say quotemeta($str);
+# \{\}\[\]\(\)\^\\\$\.\|\*\+\?
+```
+
+## Остальное в паттерне можно использовать как есть
+
+---
+
+# Классы символов
+
+```perl
+[...]      # перечисление
+/[abc]/      # "a" или "b" или "c"
+/[a-c]/      # то-же самое
+/[a-zA-Z]/   # ASCII алфавит
+
+/[bcr]at/    # "bat" или "cat" или "rat"
+
+[^...]     # отрицательное перечисление
+/[^abc]/     # что угодно, кроме "a", "b", "c"
+/[^a-zA-Z]/  # что угодно, кроме букв ASCII
+```
+
+---
+
+# Классы символов
+
+```zzz
+`\d` - цифры
+`\s` - пробельные символы `[\ \t\r\n\f]` и др.
+`\w` - "буква". `[0-9a-zA-Z_]`
+
+`\D` - не цифра. `[^\d]`
+`\S` - не пробельный символ. `[^\s]`
+`\W` - не "буква". `[^\w]`
+
+`\N` - что угодно, кроме "\n"
+`.`  - что угодно, кроме "\n" ⃰
+`^`  - начало строки ⃰ ⃰
+`$`  - конец строки ⃰ ⃰
+```
+
+.small[
+>∗  поведение меняется в зависимости от модификатора `/s`  
+>∗∗ поведение меняется в зависимости от модификатора `/m`
+]
+
+---
+
+# Квантификаторы
+
+> `?` - 0 или 1 (`{0,1}`)<br/>
+> `*` - 0 или более (`{0,}`)<br/>
+> `+` - 1 или более (`{1,}`)<br/>
+> `{x}` - ровно x<br/>
+> `{x,y}` - от x до y включительно<br/>
+> `{,y}` - от 0 до y включительно<br/>
+> `{x,}` - от x до бесконечности*<br/>
+
+```perl
+/^1?$/  # "" or "1"
+/^a*$/  # "" or "a", "aa", "aaa", ...
+/^\d*$/ # "" or "123", "11111111", ...
+/^.+$/  # "1" or "abc", not ""
+
+/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+    # "2015-10-14 19:35:01"
+```
+
+\* бесконечность равна 32768
+
+---
+
+# Захваты
+
+> `$1`, `$2`, `$3`, ...
+
+```perl
+$_ = "foo bar baz";
+
+m/^(\w+)\s+(\w+)\s+(\w+)$/;
+# $1 = 'foo';
+# $2 = 'bar';
+# $3 = 'baz';
+
+m/^(\w(\w+))\s+((\w+))/;
+#  1  2        34
+# $1 = 'foo';
+# $2 = 'oo';
+# $3 = 'bar';
+# $4 = 'bar';
+```
+
+---
+
+# Выбор альтернатив `|`
+
+```perl
+"i love cats" =~ m/[`c`r]`ats`|dogs/; # matches
+
+"i love dogs" =~ m/[cr]ats|`dogs`/; # matches
+
+"i love rats" =~ m/[c`r`]`ats`|dogs/; # matches
+
+"i love bats" =~ m/[cr]ats|dogs/; # not matches
+```
+
+---
+
+# Выбор альтернатив `|`
+
+```perl
+    m/boys|girls love dogs|cats/;
+```
+--
+```perl
+"boys love pigs" =~ 
+    m/boys|girls love dogs|cats/;   # matches ???
+```
+--
+```perl
+"boys love pigs" =~ 
+    m/`boys`|girls love dogs|cats/;   # matches
+```
+--
+```perl
+"boys love pigs" =~ 
+    m/(boys|girls) love (dogs|cats)/; # not matches
+```
+--
+```perl
+"boys love dogs" =~ 
+    m/(`boys`|girls)` love `(`dogs`|cats)/; # matches
+```
+
+---
+
+# Модификаторы
+
+> `/i` (case insensitive)
+
+```perl
+my $s = "sample\nstring";
+
+$s =~ /SAMPLE/;    # no match
+$s =~ /SAMPLE/i;   # "sample"
+
+```
+
+---
+
+# Примеры
+
+```perl
+m/^[0-9]+$/                 # dec number
+m/^\d+$/                    # dec number, also
+m/^0x[a-fA-F0-9]+$/         # hex number
+m/^0x[a-f0-9]+$/i           # hex number, ci
+m/^0[0-7]+$/                # oct number
+
+m/^[_a-zA-Z][_a-zA-Z0-9]*$/ # bareword
+
+# ISO date
+m/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+
+# Dummy email
+/(\S+\@\S+)/
+
+# HTTP Date (Tue, 29 Nov 2016 09:00:32 GMT)
+/^[SMTWF][a-z][a-z], (\d\d)
+  ([JFMAJSOND][a-z][a-z]) (\d\d\d\d)
+  (\d\d):(\d\d):(\d\d) GMT$/x
+```
+
+---
+
+# Примеры
+
+.small[
+```perl
+# /Nirvana/1991 - Nevermind/2 - In Bloom.mp3
+# /Deep Purple/1972 - Machine Head/5 Smoke On The Water.mp3
+m!^/([^/]+)/(\d+) - ([^/])+/(\d+)\s*-?\s*(.+)\.mp3$!
+
+# $1 - Artist name
+# $2 - Album year
+# $3 - Album name
+# $4 - Track number
+# $5 - Track name
+```
+]
+.small[
+```perl
+if ($filename =~ /\.(pl|pm|t|html|js)$/ i) {
+    ...
+}
+```
+]
+
+---
+
+# Unicode
+
+Стандарт кодирования символов, позволяющий представить знаки практически всех письменных языков
+
+Даже Клингонского )
+
+А также разнообразных специальных символов
+
+---
+class:center,middle
+
+<img src="unicode.png" width="80%"/>
+
+---
+class:center,middle
+
+.huge[☺]
+
+WHITE SMILING FACE<br/>
+U+263A<br/>
+"\x{263A}"<br/>
+"\xE2\x98\xBA"<br/>
+"\342\230\272"
+
+---
+class:center,middle
+
+.huge[😈]
+
+SMILING FACE WITH HORNS<br/>
+U+1F608<br/>
+"\x{1F608}"<br/>
+"\xF0\x9F\x98\x88"<br/>
+"\360\237\230\210"
+
+---
+class:center,middle
+
+.huge[💩]
+
+PILE OF POO<br/>
+U+1F4A9<br/>
+"\x{1F4A9}"<br/>
+"\xF0\x9F\x92\xA9"<br/>
+"\360\237\222\251"
+
+---
+class:center,middle
+
+.huge[🐪]
+
+DROMEDARY CAMEL<br/>
+U+1F42A<br/>
+"\x{1F42A}"<br/>
+"\xF0\x9F\x90\xAA"<br/>
+"\360\237\220\252"
+
+---
+
+# UTF
+
+Unicode Transformation Format<br>
+Формат преобразования юникода<br/>
+Способ представления символов Unicode в виде последовательности целых положительных чисел
+
+* UTF-8 (8-битный) endianness safe
+* UTF-16 (16-битный) LE | BE
+* UTF-32 (32-битный) LE | BE
+
+---
+
+# Представление в байтах
+
+```
+ Code Points   Bytes: 1st    2nd    3rd    4th
+ 
+  U+0000..U+007F     00..7F
+  U+0080..U+07FF     C2..DF 80..BF
+  U+0800..U+0FFF     E0     A0..BF 80..BF
+  U+1000..U+CFFF     E1..EC 80..BF 80..BF
+  U+D000..U+D7FF     ED     80..9F 80..BF
+  U+D800..U+DFFF     utf16 surrogates, not utf8
+  U+E000..U+FFFF     EE..EF 80..BF 80..BF
+ U+10000..U+3FFFF    F0     90..BF 80..BF 80..BF
+ U+40000..U+FFFFF    F1..F3 80..BF 80..BF 80..BF
+U+100000..U+10FFFF   F4     80..8F 80..BF 80..BF
+```
+
+---
+
+# Значащие биты в UTF-8
+
+.small[
+```
+1    7  0`vvvvvvv` ≡ ASCII
+
+2   11  110`vvvvv` 10`vvvvvv`
+
+3   16  1110`vvvv` 10`vvvvvv` 10`vvvvvv`
+
+4   21  11110`vvv` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv`
+
+5   26  111110`vv` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv`
+
+6   31  1111110`v` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv` 10`vvvvvv`
+
+```
+]
+
+---
+
+# Строки и байты
+
+Символ (character)
+
+```perl
+"\x{1}" .. "\x{10FFFF}"
+chr(1)  .. chr(0x10FFFF)
+```
+
+Байт (символы 0..255)
+
+```perl
+"\x00" .. "\xff"
+"\000" .. "\377"
+chr(0) .. chr(255)
+```
+
+Октет - 8 бит данных
+
+---
+
+# Строки и байты
+
+Бинарные данные - строка из байт
+```perl
+my $bytes = "123";
+printf "%vX", $bytes; # 31.32.33
+my $bytes = "\001\002\377";
+printf "%vX", $bytes; # 1.2.ff
+my $bytes = "\xfe\xff";
+printf "%vX", $bytes; # fe.ff
+```
+Строка - строка из символов (codepoints)
+```perl
+use utf8;
+my $string = "Ёлка";#\x{401}\x{43b}\x{43a}\x{430}
+printf "%vX", $string; # 401.43B.43A.430
+my $string = "\x{263A}";
+printf "%vX", $string; # 263A
+```
+
+---
+
+# Преобразование
+
+## Энкодинг (*encode*)
+> преобразование **текста** (строк, символов) в **данные** (байты, октеты)
+
+## Декодинг (*decode*)
+> преобразование **данных** (байт, октетов) в **текст** (строки символов)
+
+
+---
+
+# Кодировка, набор символов
+
+> таблица соответствия символов одного алфавита, последовательности из одного или нескольких символов другого алфавита
+
+```
+Байт `F1` в кодировке `cp866` это буква "ё"
+
+Буква `ё` в Unicode - это codepoint `U+0451`
+               (CYRILLIC SMALL LETTER IO)
+
+Буква `ё` в windows (`cp1251`) - это байт `B8`
+```
+
+### decoding: charset → codepoint
+### encoding: codepoint → charset
+### recoding: charset → codepoint → charset
+
+---
+
+# Кодировка, набор символов
+
+```perl
+use Encode;
+
+say "\xf1";                          # �
+say decode('cp866', "\xf1");         # ё
+say ord(decode('cp866', "\xf1"));    # 1105 (0x451)
+
+use charnames;
+say charnames::viacode(0x451);
+                       # CYRILLIC SMALL LETTER IO
+
+say "\x{451}";                       # ё
+say encode('cp1251', "\x{451}");     # �
+say ord encode('cp1251', "\x{451}"); # 184 (0xB8)
+```
+
+---
+
+# Преобразование
+
+```perl
+use Encode qw(encode decode);
+
+my $bin = "\xE2\x98\xBA";
+printf "%vX", $bin; # E2.98.BA
+
+my $str = decode("utf-8", $bin); # "\x{263a}"
+printf "%vX",$str; # 263A
+my $bin = encode("utf-8", $str); # "\xE2\x98\xBA"
+printf "%vX", $bin; # E2.98.BA
+
+my $bytes_dos = "\xf1"; # cp866 ё
+printf "%vX", $bytes_dos; # F1
+my $chars = decode("cp866",$bytes_dos);
+my $bytes_win = encode("cp1251", $chars);
+printf "%vX", $bytes_win; # B8
+
+my $to = encode("cp1251",decode("cp866",$from));
+from_to($from,"cp866","cp1251"); # inplace
+```
+
+---
+
+# UTF8_FLAG
+
+```perl
+say utf8::is_utf8("\xE2\x98\xBA"); # ''
+my $string = decode("utf-8", "\xE2\x98\xBA");
+say utf8::is_utf8($string); # 1
+
+say utf8::is_utf8("\x{263a}"); # 1
+my $octets = encode("utf-8", "\x{263a}");
+say utf8::is_utf8($octets); # ''
+
+printf "U+%v04X\n", decode('utf8',"тест");
+# U+0442.0435.0441.0442
+
+*say utf8::is_utf8("☺"); # ''
+
+printf "U+%v04X\n", "☺";
+# U+00E2.0098.00BA
+```
+
+---
+
+# use utf8;
+
+> директива `use utf8` "выполняет"<br/> `decode('utf8',<исходник>)`
+
+```perl
+use utf8;
+
+say utf8::is_utf8("\xE2\x98\xBA"); # ''
+
+say utf8::is_utf8("\x{263a}"); # 1
+
+*say utf8::is_utf8("☺"); # 1
+```
+
+---
+
+# С флагом и без флага
+```
+$ perl -MDevel::Peek -E 'Dump "☺"'
+SV = PV(0x7f8041804ae8) at 0x7f804182d658
+  REFCNT = 1
+* FLAGS = (PADTMP,POK,READONLY,pPOK)
+  PV = 0x7f804140cf20 "\342\230\272"\0
+  CUR = 3
+  LEN = 16
+```
+
+```
+
+$ perl -MDevel::Peek `-Mutf8` -E 'Dump "☺"'
+SV = PV(0x7fbf7a804b48) at 0x7fbf7b801f00
+  REFCNT = 1
+  FLAGS = (PADTMP,POK,READONLY,pPOK,`UTF8`)
+  PV = 0x7fbf7a613920 "\342\230\272"\0 [`UTF8 "\x{263a}"`]
+  CUR = 3
+  LEN = 16
+```
+
+---
+
+# С флагом и без флага
+```
+$ perl -MDevel::Peek -E 'Dump "\x{ff}"'
+SV = PV(0x7fa153802948) at 0x7fa153005b00
+  REFCNT = 1
+* FLAGS = (PADTMP,POK,READONLY,pPOK)
+  PV = 0x7fa152d06a10 "\377"\0
+  CUR = 1
+  LEN = 16
+```
+
+```
+
+$ perl -MDevel::Peek -E 'Dump "\x{100}"'
+SV = PV(0x7fcdbc003548) at 0x7fcdbc02c100
+  REFCNT = 1
+  FLAGS = (PADTMP,POK,READONLY,pPOK,`UTF8`)
+  PV = 0x7fcdbb707110 "\304\200"\0 [`UTF8 "\x{100}"`]
+  CUR = 2
+  LEN = 16
+```
+
+
+---
+
+# Поведение функций
+
+.left[
+```perl
+my $t = "тест";
+say length $t;
+say uc $t;
+say utf8::is_utf8 $t;
+say ord(substr($t,0,1));
+printf "%vX", $t;
+```
+]
+.right[
+```perl
+#
+8
+тест
+''
+209
+D1.82.D0.B5.D1.81.D1.82
+```
+]
+.left[
+```perl
+use utf8;
+my $t = "тест";
+say length $t;
+say uc $t;
+say utf8::is_utf8 $t;
+say ord(substr($t,0,1));
+printf "%vX", $t;
+```
+]
+.right[
+```perl
+#
+#
+4
+ТЕСТ
+1
+1090 # 0x442
+442.435.441.442
+```
+]
+
+---
+
+# `@ARGV` в UTF-8
+
+```perl
+$ perl -CA ...
+# A for `A`RGV
+```
+или
+```perl
+$ export PERL_UNICODE=A
+```
+или
+```perl
+use Encode qw(decode_utf8);
+BEGIN {
+    @ARGV = map { decode_utf8($_, 1) } @ARGV;
+}
+```
+
+---
+
+# STDIN, STDOUT, STDERR в UTF-8
+
+> Wide character in print at...<br/>
+
+## IO Layer `:utf8`
+
+```perl
+$ perl -CS ...
+$ export PERL_UNICODE=S
+# S for `S`TD*
+```
+
+```perl
+binmode(STDIN,':utf8');
+binmode(STDOUT,':utf8');
+binmode(STDERR,':utf8');
+```
+
+---
+
+# Default open
+
+```perl
+$ perl -CD ...
+$ export PERL_UNICODE=D
+# D for `D`efault
+```
+
+```perl
+open my $f, '<:utf8', 'file.txt';
+```
+
+```perl
+use open qw(:utf8); # auto
+```
+
+```perl
+use open qw(:utf8 :std); # auto + STD*
+```
+
+---
+
+# Весь ввод/вывод в UTF-8
+
+```perl
+$ perl -CASD ... | perl -CS -CA -CD ...
+```
+
+```perl
+$ export PERL_UNICODE=ASD
+```
+
+```perl
+use open qw(:std :utf8);
+use Encode qw(decode_utf8);
+BEGIN{ @ARGV = map decode_utf8($_, 1),@ARGV; }
+```
+
+---
+
+# Ввод/вывод в октетах при UTF-8
+
+## IO Layer `:raw`
+
+```perl
+binmode($fh,':raw');
+
+binmode(STDOUT,':raw');
+
+open my $f, '<:raw', 'file.bin';
+```
+
+---
+
+# Полезности
+
+```perl
+use utf8;
+use Text::Unidecode;
+
+say unidecode "\x{5317}\x{4EB0}"; # 北亰
+# That prints: Bei Jing
+
+say unidecode "Это тест";
+# That prints: Eto tiest
+```
+
+---
+
+# Полезности
+
+```perl
+use utf8;
+use Text::Unaccent::PurePerl qw/unac_string/;
+say unac_string( "Ёжик" ); # Ежик
+```
+
+```
+Á → A    latin letter
+Æ → AE   single letter split in two
+ƒ → f    simpler variant of same letter
+Ĳ → IJ   ligature split in two
+¹ → 1    superscript
+½ → 1/2  fraction
+ώ → ω    Greek letter
+Й → И    Cyrillic letter
+™ → TM   various symbols
+```
+
+---
+
+# Полезности
+
+```perl
+use utf8;
+use Text::Levenshtein qw/distance/;
+
+say distance( "кот", "коты" ); # 1
+say distance( "компот", "кот" ); # 3
+```
+
+---
+
+# use charnames
+
+```perl
+use charnames qw(:full :short greek);
+say "\N{MATHEMATICAL ITALIC SMALL N}"; # 𝑛
+say "\N{GREEK CAPITAL LETTER SIGMA}"; # Σ
+say "\N{Greek:Sigma}"; # Σ
+say "\N{ae}"; # æ
+say "\N{epsilon}"; # ε
+
+say "\x{F8FF}"; # 
+
+use charnames ":alias" => {
+    "APPLE LOGO" => 0xF8FF,
+};
+say "\N{APPLE LOGO}"; # 
+```
+
+---
+
+# Casefolding
+
+```perl
+use feature "fc"; # perl v5.16+
+
+# sort case-insensitively
+my @sorted = sort {
+    fc($a) cmp fc($b)
+} @list;
+ 
+# both are true:
+fc("tschüß") eq fc("TSCHÜSS")
+fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
+```
+
+---
+
+# Unicode + RegExp
+## Классы символов
+
+```perl
+`\d` - цифры. не только `[0-9]` # ۰ ۱ ۲ ۳ ۴ ۵
+`\w` - "буква". `[0-9a-zA-Z_]` и юникод
+```
+
+## `/i` (case insensitive)
+
+```perl
+"tschüß" =~ /TSCHÜSS/i    # match. ß ↔ SS
+"Σίσυφος" =~ /ΣΊΣΥΦΟΣ/i   # match. Σ ↔ σ ↔ ς
+```
+
+
+---
+
+class: casecharts
+
+# [Case Charts](http://www.unicode.org/charts/case/)
+
+<table>
+<tr><td class="z">Code</td><td class="z">Lower</td><td class="z">Title</td><td class="z">Upper</td><td class="z">Fold</td></tr>
+<tr>
+<td class="z" title="LATIN CAPITAL LETTER I">I<br><tt>0049</tt></td>
+<td class="n" title="LATIN SMALL LETTER I">i<br><tt>0069</tt></td>
+<td class="g">I<br><tt>0049</tt></td>
+<td class="g">I<br><tt>0049</tt></td>
+<td class="g">i<br><tt>0069</tt></td>
+</tr>
+<tr>
+<td class="z" title="LATIN SMALL LETTER I">i<br><tt>0069</tt></td>
+<td class="g">i<br><tt>0069</tt></td>
+<td class="g">I<br><tt>0049</tt></td>
+<td class="n" title="LATIN CAPITAL LETTER I">I<br><tt>0049</tt></td>
+<td class="g">i<br><tt>0069</tt></td>
+</tr>
+<tr>
+<td class="z" title="LATIN SMALL LETTER DOTLESS I">ı<br><tt>0131</tt></td>
+<td class="g">ı<br><tt>0131</tt></td>
+<td class="g">I<br><tt>0049</tt></td>
+<td class="n" title="LATIN CAPITAL LETTER I">I<br><tt>0049</tt></td>
+<td class="g">ı<br><tt>0131</tt></td>
+</tr>
+
+<tr>
+<td class="z" title="GREEK CAPITAL LETTER SIGMA">Σ<br><tt>03A3</tt></td>
+<td class="n" title="GREEK SMALL LETTER SIGMA">σ<br><tt>03C3</tt></td>
+<td class="g">Σ<br><tt>03A3</tt></td>
+<td class="g">Σ<br><tt>03A3</tt></td>
+<td class="g">σ<br><tt>03C3</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK SMALL LETTER FINAL SIGMA">ς<br><tt>03C2</tt></td>
+<td class="g">ς<br><tt>03C2</tt></td>
+<td class="g">Σ<br><tt>03A3</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER SIGMA">Σ<br><tt>03A3</tt></td>
+<td class="n" title="GREEK SMALL LETTER SIGMA">σ<br><tt>03C3</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK SMALL LETTER SIGMA">σ<br><tt>03C3</tt></td>
+<td class="g">σ<br><tt>03C3</tt></td>
+<td class="g">Σ<br><tt>03A3</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER SIGMA">Σ<br><tt>03A3</tt></td>
+<td class="g">σ<br><tt>03C3</tt></td>
+</tr>
+
+</table>
+
+---
+class: casecharts
+
+# [Case Charts](http://www.unicode.org/charts/case/)
+
+<table>
+<tr><td class="z">Code</td><td class="z">Lower</td><td class="z">Title</td><td class="z">Upper</td><td class="z">Fold</td></tr>
+<tr>
+<td class="z" title="GREEK CAPITAL LETTER THETA">Θ<br><tt>0398</tt></td>
+<td class="n" title="GREEK SMALL LETTER THETA">θ<br><tt>03B8</tt></td>
+<td class="g">Θ<br><tt>0398</tt></td>
+<td class="g">Θ<br><tt>0398</tt></td>
+<td class="g">θ<br><tt>03B8</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK SMALL LETTER THETA">θ<br><tt>03B8</tt></td>
+<td class="g">θ<br><tt>03B8</tt></td>
+<td class="g">Θ<br><tt>0398</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER THETA">Θ<br><tt>0398</tt></td>
+<td class="g">θ<br><tt>03B8</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK THETA SYMBOL">ϑ<br><tt>03D1</tt></td>
+<td class="g">ϑ<br><tt>03D1</tt></td>
+<td class="g">Θ<br><tt>0398</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER THETA">Θ<br><tt>0398</tt></td>
+<td class="n" title="GREEK SMALL LETTER THETA">θ<br><tt>03B8</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK CAPITAL THETA SYMBOL">ϴ<br><tt>03F4</tt></td>
+<td class="n" title="GREEK SMALL LETTER THETA">θ<br><tt>03B8</tt></td>
+<td class="g">ϴ<br><tt>03F4</tt></td>
+<td class="g">ϴ<br><tt>03F4</tt></td>
+<td class="g">θ<br><tt>03B8</tt></td>
+</tr>
+
+<tr>
+<td class="z" title="GREEK CAPITAL LETTER PI">Π<br><tt>03A0</tt></td>
+<td class="n" title="GREEK SMALL LETTER PI">π<br><tt>03C0</tt></td>
+<td class="g">Π<br><tt>03A0</tt></td>
+<td class="g">Π<br><tt>03A0</tt></td>
+<td class="g">π<br><tt>03C0</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK SMALL LETTER PI">π<br><tt>03C0</tt></td>
+<td class="g">π<br><tt>03C0</tt></td>
+<td class="g">Π<br><tt>03A0</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER PI">Π<br><tt>03A0</tt></td>
+<td class="g">π<br><tt>03C0</tt></td>
+</tr>
+<tr>
+<td class="z" title="GREEK PI SYMBOL">ϖ<br><tt>03D6</tt></td>
+<td class="g">ϖ<br><tt>03D6</tt></td>
+<td class="g">Π<br><tt>03A0</tt></td>
+<td class="n" title="GREEK CAPITAL LETTER PI">Π<br><tt>03A0</tt></td>
+<td class="n" title="GREEK SMALL LETTER PI">π<br><tt>03C0</tt></td>
+</tr>
+
+</table>
+
+---
+
+# v-strings
+> that's not what you've thought
+
+```perl
+my $v1 = v1.999;
+printf "%vx", $v1; # 1.3e7
+say unpack "H*", encode_utf8 $v1; # 01cfa7
+
+my $v2 = v1.1000;
+printf "%vx", $v2; # 1.3e8
+say unpack "H*", encode_utf8 $v2; # 01cfa8
+
+*$v1 cmp $v2
+```
+Compare:
+.small[
+```
+1111110v > 111110vv > 11110vvv > 1110vvvv > 110vvvvv > 0vvvvvvv
+```
+]
+
+---
+
+layout: false
+
+# Documentation
+
+## perldoc
+- [perluniintro](http://metacpan.org/pod/perluniintro), [perlunitut](http://metacpan.org/pod/perlunitut), [perlunicook](http://metacpan.org/pod/perlunicook), [perlunifaq](http://metacpan.org/pod/perlunifaq),  [perlunicode](http://metacpan.org/pod/perlunicode), [perluniprops](http://perldoc.perl.org/perluniprops.html)
+
+## Modules
+
+- [Encode](http://metacpan.org/pod/Encode), [Encode::Locale](http://metacpan.org/pod/Encode::Locale)
+- [Unicode::UCD](http://metacpan.org/pod/Unicode::UCD)
+- [Unicode::Normalize](http://metacpan.org/pod/Unicode::Normalize), [Unicode::CaseFold](http://metacpan.org/pod/Unicode::CaseFold)
+- [Unicode::GCString](http://metacpan.org/pod/Unicode::GCString)
+- [Unicode::LineBreak](http://metacpan.org/pod/Unicode::LineBreak)
+- [Unicode::Collate](http://metacpan.org/pod/Unicode::Collate), [Unicode::Collate::Locale](http://metacpan.org/pod/Unicode::Collate::Locale)
+
+## Other
+
+- [Tom Christiansen on StackOverflow](http://stackoverflow.com/questions/6162484/why-does-modern-perl-avoid-utf-8-by-default/6163129)
+- [Кодировка или набор символов](https://ru.wikipedia.org/wiki/%D0%9D%D0%B0%D0%B1%D0%BE%D1%80_%D1%81%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D0%BE%D0%B2)
+- [Статья Joel Spolsky про кодировки](http://local.joelonsoftware.com/wiki/%D0%90%D0%B1%D1%81%D0%BE%D0%BB%D1%8E%D1%82%D0%BD%D1%8B%D0%B9_%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D1%83%D0%BC,_%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%8B%D0%B9_%D0%9A%D0%B0%D0%B6%D0%B4%D1%8B%D0%B9_%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA_%D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE_%D0%9E%D0%B1%D0%B5%D1%81%D0%BF%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D1%8F_%D0%9E%D0%B1%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE_%D0%94%D0%BE%D0%BB%D0%B6%D0%B5%D0%BD_%D0%97%D0%BD%D0%B0%D1%82%D1%8C_%D0%BE_Unicode_%D0%B8_%D0%9D%D0%B0%D0%B1%D0%BE%D1%80%D0%B0%D1%85_%D0%A1%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D0%BE%D0%B2)
+
+---
+layout:false
 
 
 ---
