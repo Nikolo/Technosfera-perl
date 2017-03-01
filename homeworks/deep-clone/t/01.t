@@ -16,78 +16,49 @@ use lib "$FindBin::Bin/../lib";
 
 use DeepClone;
 use Test::More;
+use Test::Deep;
 use Data::Dumper;
 use Scalar::Util qw/looks_like_number/;
 
-our %seen_refs = ();
-sub deep_compare {
-    my ($orig, $cloned) = @_;
-
-    local %seen_refs = %seen_refs;
-    if(ref $orig && ref $cloned) {
-        if($orig eq $cloned) {
-            return (0, 'has same refs');
-        } else {
-            return 1 if $seen_refs{$orig};
-            $seen_refs{$orig} = 1;
-
-            if(ref $orig eq 'ARRAY' && ref $cloned eq 'ARRAY') {
-                if(@$orig != @$cloned) {
-                    return (0, 'arrays length diff');
-                } else {
-                    for(0..$#$orig) {
-                        my ($r, $msg) = deep_compare($orig->[$_], $cloned->[$_]);
-                        return $r, $msg unless $r;
-                    }
-                }
-                return 1;
-            }
-            if(ref $orig eq 'HASH' && ref $cloned eq 'HASH') {
-                if(keys %$orig != keys %$cloned) {
-                    return (0, 'hashes keys count diff');
-                } else {
-                    for(sort keys %$orig) {
-                        unless(exists $cloned->{$_}) {
-                            return (0, 'hash key not exists');
-                        } else {
-                            my ($r, $msg) = deep_compare($orig->{$_}, $cloned->{$_});
-                            return $r, $msg unless $r;
-                        }
-                    }
-                }
-                return 1;
-            }
-            return (0, 'different or illegal refs');
-        }
-    } elsif (!ref $orig && !ref $cloned) {
-        if(!defined $orig) {
-            return defined $cloned ? (0, 'not undef') : 1;
-        } elsif(looks_like_number($orig)) { 
-            return looks_like_number($cloned) && $orig == $cloned ? 1 : (0, 'nums not eq');
-        } else {
-            return $orig eq $cloned ? 1 : (0, 'strings not eq');
-        }
-    } else {
-        return (0, 'different types');
-    }
-}
+our $TESTS_CNT = 0;
 
 sub test_deep {
-    my ($orig, $cloned, $test_name, $want_undef) = @_;
-    if($want_undef) {
+    my ($t) = @_;
+
+    my $orig = $t->{orig};
+    my $cloned = DeepClone::clone($orig);
+    my $test_name = $t->{name};
+
+    if($t->{want_undef}) {
+        $TESTS_CNT++;
+        
         if(!defined $cloned) {
-            pass($test_name);
+            pass($test_name.' - data schemas eq');
         } else {
             diag('undef result expected');
-            fail($test_name);
+            fail($test_name.' - data schemas eq');
         }
     } else {
-        my ($r,$msg) = deep_compare($orig, $cloned);
-        if($r) {
-            pass($test_name);
+        $TESTS_CNT++;
+
+        my $ok = eq_deeply($cloned, $orig);
+        if($ok) {
+            pass($test_name.' - data schemas eq');
+
+            $TESTS_CNT++;
+            if($t->{modifier}) {
+                $t->{modifier}->($orig);
+                my $ok = eq_deeply($cloned, $orig);
+                unless($ok) {
+                    pass($test_name.' - data stuctures independ');
+                } else {
+                    fail($test_name.' - data stuctures independ');
+                }
+            } else {
+                pass($test_name.' - data stuctures independ');
+            }
         } else {
-            diag('deep compare fail: '.$msg);
-            fail($test_name);
+            fail($test_name.' - data schemas eq');
         }
     }
 }
@@ -116,26 +87,32 @@ my $TESTS = [
     {
         name => 'nums array',
         orig => [ 1, 2, 3, 4 ],
+        modifier => sub { $_[0]->[0] = 'a' },
     },
     {
         name => 'strings array',
         orig => [ qw/a b c d e f/ ],
+        modifier => sub { $_[0]->[0] = 1 },
     },
     {
         name => 'combined array',
         orig => [ 1, 2, qw/a b c d e f/, 3, 4 ],
+        modifier => sub { $_[0]->[0] = undef },
     },
     {
         name => 'simple hash',
         orig => { a => 1, b => 2, c => 'x', d => 'y', 1 => 1, 2 => 2, 3 => 'v1', 4 => 'v2' },
+        modifier => sub { $_[0]->{a} = 10 },
     },
     {
         name => 'array of hashes',
         orig => [ { a => 1, b => 2}, { c => 3, d => 4 } ],
+        modifier => sub { $_[0]->[1]{c} = 10 },
     },
     {
         name => 'hash of arrays',
         orig => { a => [ 1, 2, 3 ], b => [ 4, 5, 6 ] },
+        modifier => sub { $_[0]->{b}[1] = 10 },
     },
     {
         name => 'complex struct',
@@ -157,20 +134,23 @@ my $TESTS = [
                 k1 => 'v1',
                 k2 => [ qw/a b c/ ],
                 k3 => undef,
-                k4 => { kk1 => 'x', kk2 => 'y', kk3 => [ qw/a b c/], kk4 => { a => 1, b => 2 } },
+                k4 => { kk1 => 'x', kk2 => 'y', kk3 => [ qw/a b c/ ], kk4 => { a => 1, b => 2 } },
             },
             g => 1,
             h => 'string',
             i => undef,
         },
+        modifier => sub { $_[0]->{f}{k4}{kk3}[1] = 10 },
     },
     {
         name => 'cycle array',
         orig => $CYCLE_ARRAY,
+        modifier => sub { $_[0]->[20] = 10 },
     },
     {
         name => 'cycle hash',
         orig => $CYCLE_HASH,
+        modifier => sub { $_[0]->{new_key} = 10 },
     },
     {
         name => 'sub ref',
@@ -184,10 +164,6 @@ my $TESTS = [
     },
 ];
 
-my $TESTS_CNT = @$TESTS;
-
-for my $t (@$TESTS) {
-    test_deep($t->{orig}, DeepClone::clone($t->{orig}), $t->{name}, $t->{want_undef});
-}
+test_deep($_) for @$TESTS;
 
 done_testing($TESTS_CNT);
