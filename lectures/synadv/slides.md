@@ -495,7 +495,26 @@ sub dumper; sub dumper {
 
 ---
 
+layout:false
 # Содержание
+
+* Сложные структуры данных
+    - Вложенные структуры
+    - Символические ссылки
+    - Массивы массивов
+    - Рекурсия
+* **Функции**
+    - Контекст
+    - Прототипы
+    - Стек
+    - Lvalue
+* Операторы
+    - true и false
+    - Строки и числа
+    - Логические операторы
+* Регулярные выражения
+    - введение
+* Юникод
 
 ---
 
@@ -1543,6 +1562,29 @@ y/A-Z/a-z/; # on $_
 ```
 
 ---
+
+layout:false
+# Содержание
+
+* Сложные структуры данных
+    - Вложенные структуры
+    - Символические ссылки
+    - Массивы массивов
+    - Рекурсия
+* Функции
+    - Контекст
+    - Прототипы
+    - Стек
+    - Lvalue
+* Операторы
+    - true и false
+    - Строки и числа
+    - Логические операторы
+* **Регулярные выражения**
+    - введение
+* Юникод
+
+---
 layout:false
 
 # Регулярные выражения
@@ -1795,6 +1837,29 @@ if ($filename =~ /\.(pl|pm|t|html|js)$/ i) {
 }
 ```
 ]
+
+---
+
+layout:false
+# Содержание
+
+* Сложные структуры данных
+    - Вложенные структуры
+    - Символические ссылки
+    - Массивы массивов
+    - Рекурсия
+* Функции
+    - Контекст
+    - Прототипы
+    - Стек
+    - Lvalue
+* Операторы
+    - true и false
+    - Строки и числа
+    - Логические операторы
+* Регулярные выражения
+    - введение
+* **Юникод**
 
 ---
 
@@ -2496,9 +2561,31 @@ Compare:
 
 ---
 
-layout: false
+# Документация
 
-# Documentation
+## Структуры данных
+
+* [perllol](http://perldoc.perl.org/perllol.html)
+* [perldata](http://perldoc.perl.org/perldata.html)
+* [perlref](http://perldoc.perl.org/perlref.html)
+* [perldsc](http://perldoc.perl.org/perldsc.html)
+* [perlreftut](http://perldoc.perl.org/perlreftut.html)
+
+## Операторы и функции
+
+* [perlop](http://perldoc.perl.org/perlop.html)
+* [perlfunc](http://perldoc.perl.org/perlfunc.html)
+* [perlsub](http://perldoc.perl.org/perlsub.html)
+
+## Regexp
+
+* [perlrequick](http://perldoc.perl.org/perlrequick.html)
+* [perlretut](http://perldoc.perl.org/perlretut.html)
+* [perlre](http://perldoc.perl.org/perlre.html)
+
+---
+
+# Документация по unicode
 
 ## perldoc
 - [perluniintro](http://metacpan.org/pod/perluniintro), [perlunitut](http://metacpan.org/pod/perlunitut), [perlunicook](http://metacpan.org/pod/perlunicook), [perlunifaq](http://metacpan.org/pod/perlunifaq),  [perlunicode](http://metacpan.org/pod/perlunicode), [perluniprops](http://perldoc.perl.org/perluniprops.html)
@@ -2519,8 +2606,44 @@ layout: false
 - [Статья Joel Spolsky про кодировки](http://local.joelonsoftware.com/wiki/%D0%90%D0%B1%D1%81%D0%BE%D0%BB%D1%8E%D1%82%D0%BD%D1%8B%D0%B9_%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D1%83%D0%BC,_%D0%BA%D0%BE%D1%82%D0%BE%D1%80%D1%8B%D0%B9_%D0%9A%D0%B0%D0%B6%D0%B4%D1%8B%D0%B9_%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D1%87%D0%B8%D0%BA_%D0%9F%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE_%D0%9E%D0%B1%D0%B5%D1%81%D0%BF%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D1%8F_%D0%9E%D0%B1%D1%8F%D0%B7%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D0%BE_%D0%94%D0%BE%D0%BB%D0%B6%D0%B5%D0%BD_%D0%97%D0%BD%D0%B0%D1%82%D1%8C_%D0%BE_Unicode_%D0%B8_%D0%9D%D0%B0%D0%B1%D0%BE%D1%80%D0%B0%D1%85_%D0%A1%D0%B8%D0%BC%D0%B2%D0%BE%D0%BB%D0%BE%D0%B2)
 
 ---
-layout:false
 
+# Домашнее задание
+
+## 1. Клонирование сложных структур данных
+
+Требуется написать функцию принимающюю на вход ссылку на какую либо структуру данных и отдающюю, в качестве результата, ее точную независимую копию.
+Это значит, что ни один элемент результирующей структуры, не может ссылаться на элементы исходной, но при этом она должна в точности повторять ее схему.
+
+Входные данные:
+* undef
+* строка
+* число
+* ссылка на массив
+* ссылка на хеш
+Элементами ссылок на массив и хеш, могут быть любые из указанных выше конструкций.
+Любые отличные от указанных типы данных -- недопустимы. В этом случае результатом клонирования должен быть undef.
+
+---
+
+# Домашнее задание
+
+## 2. Поиск анаграмм по словарю
+
+Напишите функцию поиска всех множеств анаграмм по словарю.
+Например:
+* 'пятак', 'пятка' и 'тяпка' - принадлежат одному множеству,
+* 'листок', 'слиток' и 'столик' - другому.
+
+Входные данные для функции:
+ссылка на массив - каждый элемент которого - слово на русском языке в кодировке utf8
+
+Выходные данные:
+Ссылка на хеш множеств анаграмм.
+* Ключ - первое встретившееся в словаре слово из множества
+* Значение - ссылка на массив, каждый элемент которого, слово из множества. Массив должен быть отсортирован по возрастанию.
+* Множества из одного элемента не должны попасть в результат.
+* Все слова должны быть приведены к нижнему регистру.
+* В результате каждое слово должно встречаться только один раз.
 
 ---
 class:center, middle
@@ -2537,13 +2660,88 @@ class:lastpage title
 .teacher[![teacher]()]
 
 
+---
+layout:true
+# Секретные операторы
+---
 
+```perl
+*0+           Venus              Приведение к числу
+say 0+"234asd"; # 234
+```
 
+```perl
+*!!           Bang bang          Приведение к bool
+say !! $string; # 1
+say !! undef; # ''
+```
 
+```perl
+*}{           Butterfly          END для one-liners
 
+perl -lne '}{ print$.'
+perl -le 'while (<>) { `}{` print$. }'
+```
 
+```perl
+*~~           Inchworm           Scalar context
 
+say ~~localtime();
+#say scalar localtime();
+```
 
+---
+
+## Отвёртки
+
+```perl
+*-=! -=!!   Плоские             Условный декремент
+$x -=!! $y     # $x-- if $y;
+$x -=!  $y     # $x-- if not $y;
+
+*+=! +=!!   Крестовые           Условный инкремент
+$x +=!! $y     # $x++ if $y;
+$x +=!  $y     # $x++ if not $y;
+
+*x=! x=!!   Крестовые           Условный сброс в ''
+$x x=!! $y     # $x='' if not $y;
+$x x=!  $y     # $x='' if $y;
+
+**=! *=!!   Torx                Условный сброс в 0
+$x *=!! $y     # $x=0 if not $y;
+$x *=!  $y     # $x=0 if $y;
+```
+
+---
+
+# Интерполяция
+
+> Инлайновое исполнение:<code><br/></code>
+> dereference + reference constructor
+
+```perl
+
+$var = 100;
+say "1+2 = @{[ 1+2 ]}"; # 1+2 = 3
+say "\$var/=10 = @{[do{ $var/=10; $var }]}";
+    # $var/=10 = 10
+
+say "1+2 = ${\( 1+2 )}";
+say "1+2 = ${\do{ 1+2 }}";
+
+say "1+2 = ${{key=> 1+2 }}{key}";
+say "\$var = ${{key=> do{ $var } }}{key}";
+
+say "Now: ${\scalar localtime}";
+   # Now: Wed Mar  1 16:58:36 2017
+```
+
+???
+
+use 5.010;
+use Time::Local;
+my $time = timelocal(30,25,19,3,2,16);
+say "Now: ${\scalar localtime}";
 
 
 
