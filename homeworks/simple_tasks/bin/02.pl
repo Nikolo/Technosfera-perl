@@ -32,24 +32,24 @@ sub run {
         # ...
 
         if ($i < 2) {
-        	next;
+            next;
         }
 
         my $i_sqrt = floor($i ** 0.5);
-      	my $is_prime = 1;
+        my $is_prime = 1;
 
         for (my $j = 2; $j <= $i_sqrt; $j++){
-        	if ($i % $j == 0){
-        		$is_prime = 0;
-        		last;
-        	}
+            if ($i % $j == 0){
+                $is_prime = 0;
+                last;
+            }
         }
 
         unless ($is_prime) {
-        	next;
+            next;
         }
 
-	    print "$i\n";
+        print "$i\n";
     }
 }
 

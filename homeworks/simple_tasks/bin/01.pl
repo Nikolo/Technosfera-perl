@@ -39,8 +39,8 @@ sub run {
     my $discriminant = $b_value ** 2 - 4 * $a_value * $c_value;
 
     if ($discriminant < 0 || $a_value == 0){
-    	print "No solution!\n";
-    	return;
+        print "No solution!\n";
+        return;
     }
 
     my $discriminant_sqrt = $discriminant ** 0.5;
