@@ -27,7 +27,7 @@ sub encode {
     # Алгоритм шифрования
     # ...
 
-    $encoded_str = join "", map {chr((ord($_) + $key) % 128)} split(//, $str);
+    $encoded_str = join "", map {chr((ord($_) + $key) % 127)} split(//, $str);
 
     print "$encoded_str\n";
 }
@@ -51,7 +51,7 @@ sub decode {
     # Алгоритм дешифрования
     # ...
     
-    $str = join "", map {chr((ord($_) - $key) % 128)} split(//, $encoded_str);
+    $str = join "", map {chr((ord($_) - $key) % 127)} split(//, $encoded_str);
     
     print "$str\n";
 }
