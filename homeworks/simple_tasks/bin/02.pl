@@ -26,7 +26,7 @@ sub simpleTest{
 my $x =@_;
 unless($x < 2){
 for (my $i = 2; $i<$x ;++$i){
-if(($x % $i) != 0){next;}
+if(($x % $i) == 0){return;}
 }
 print  $x;
 }
