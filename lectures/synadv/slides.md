@@ -2685,17 +2685,16 @@ say !! undef; # ''
 ```
 
 ```perl
-*}{           Butterfly          END для one-liners
-
-perl -lne '}{ print$.'
-perl -le 'while (<>) { `}{` print$. }'
-```
-
-```perl
 *~~           Inchworm           Scalar context
 
 say ~~localtime();
 #say scalar localtime();
+```
+
+```perl
+*@{[ ]}        Babycart          Интерполяция
+
+say "1 + 2 = @{[ 1 + 2 ]}" # 1 + 2 = 3
 ```
 
 ---
