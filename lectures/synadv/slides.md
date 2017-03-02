@@ -2399,6 +2399,7 @@ say "\N{APPLE LOGO}"; # 
 # Casefolding
 
 ```perl
+use utf8;
 use feature "fc"; # perl v5.16+
 
 # sort case-insensitively
@@ -2407,8 +2408,8 @@ my @sorted = sort {
 } @list;
  
 # both are true:
-fc("tschüß") eq fc("TSCHÜSS")
-fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
+fc("tschüß") eq fc("TSCHÜSS") or die "Not equal";
+fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ") or die "Not equal";
 ```
 
 ---
@@ -2424,8 +2425,9 @@ fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
 ## `/i` (case insensitive)
 
 ```perl
-"tschüß" =~ /TSCHÜSS/i    # match. ß ↔ SS
-"Σίσυφος" =~ /ΣΊΣΥΦΟΣ/i   # match. Σ ↔ σ ↔ ς
+use utf8;
+"tschüß" =~ /TSCHÜSS/i or die;  # match. ß ↔ SS
+"Σίσυφος" =~ /ΣΊΣΥΦΟΣ/i or die; # match. Σ ↔ σ ↔ ς
 ```
 
 
