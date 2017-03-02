@@ -29,11 +29,10 @@ run("ab", "c") - печатает "0\n"
 sub run {
     my ($str, $substr) = @_;
     my $num = 0;
-
-    # ...
-    # Вычисление количества вохождений строки $substr в строку $str,
-    # ...
-
+    while ((my $i = index($str, $substr)) != -1) {
+        $str = substr($str, $i + length($substr));
+        $num++;
+    }
     print "$num\n";
 }
 
