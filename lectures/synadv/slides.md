@@ -105,7 +105,6 @@ say $href`->`{h}` `{"key\0"}` `[2];     # 7
 $href->{f}->(3);                # ok:3
 ```
 
-
 ---
 # HASH != HASHREF
 
@@ -562,6 +561,7 @@ if (test) {...} # scalar
 test();         # void
 ```
 
+
 ---
 
 # Prototype: empty & scalar
@@ -603,6 +603,7 @@ my %h = (k => 1,x => 2);
 test(@a); # ok, 1 2 3
 test(%h); # ok k 1 x 2
 ```
+
 ---
 
 # Prototype: optional
@@ -848,6 +849,12 @@ mytest(1,3,5,7); # 1 3 5 7
 test(); # Not enough arguments for main::test
 `&`test(); # ok
 ```
+
+---
+
+.center[
+![center-aligned image]( vzhuh.jpg )
+]
 
 ---
 
@@ -1821,7 +1828,7 @@ m/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
 ```perl
 # /Nirvana/1991 - Nevermind/2 - In Bloom.mp3
 # /Deep Purple/1972 - Machine Head/5 Smoke On The Water.mp3
-m!^/([^/]+)/(\d+) - ([^/])+/(\d+)\s*-?\s*(.+)\.mp3$!
+m!^/([^/]+)/(\d+) - ([^/]+)/(\d+)\s*-?\s*(.+)\.mp3$!
 
 # $1 - Artist name
 # $2 - Album year
