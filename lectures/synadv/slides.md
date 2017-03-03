@@ -942,7 +942,7 @@ my $x = rand();
 my $y = rand();
 
 for my $op (qw(+ - * /)) {
-    say "$x $op $y = " . $op->( $x,$y );
+    say "$x $op $y = " . $op{$op}->( $x,$y );
 }
 ```
 
@@ -1832,7 +1832,7 @@ m/^https?|ftp$/;              # ???
 --
 ```perl
 # match 'http', 'https' or 'ftp'
-m/^(https|ftp)$/;             # ok
+m/^(https?|ftp)$/;             # ok
 ```
 
 ---
@@ -2809,7 +2809,7 @@ say "Now: ${\scalar localtime}";
 ---
 
 layout:false
-# Уникод: конкатенация
+# Юникод: конкатенация
 
 .small[
 ```perl
