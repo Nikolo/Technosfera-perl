@@ -23,7 +23,7 @@ sub encode {
     my ($str, $key) = @_;
     my $encoded_str = '';
     foreach my $char (split //, $str) {
-        $encoded_str .= chr((ord($char) + $key) % 127);
+        $encoded_str .= chr((ord($char) + $key) % 128);
     }
     print "$encoded_str\n";
 }
@@ -43,7 +43,7 @@ sub decode {
     my ($encoded_str, $key) = @_;
     my $str = '';
     foreach my $char (split //, $encoded_str) {
-        $str .= chr((ord($char) - $key) % 127);
+        $str .= chr((ord($char) - $key) % 128);
     }
     print "$str\n";
 }
