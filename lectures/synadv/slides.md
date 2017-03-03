@@ -1806,6 +1806,35 @@ m/^(\w(\w+))\s+((\w+))/;
 
 ---
 
+# Выбор альтернатив `|`
+
+```perl
+# match 'http' or 'https'
+m/^https?$/;                  # ok
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+m/^https?|ftp$/;              # ???
+```
+--
+```perl
+"httpaa" =~ m/^https?|ftp$/;  # true
+"aaaftp" =~ m/^https?|ftp$/;  # true
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+`m/(^https?|ftp$)/;            # !!!`
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+m/^(https|ftp)$/;             # ok
+```
+
+---
+
 # Модификаторы
 
 > `/i` (case insensitive)
@@ -2746,7 +2775,7 @@ $x *=!  $y     # $x=0 if $y;
 
 ---
 
-# Интерполяция
+## Интерполяция
 
 > Инлайновое исполнение:<code><br/></code>
 > dereference + reference constructor
@@ -2774,3 +2803,38 @@ use 5.010;
 use Time::Local;
 my $time = timelocal(30,25,19,3,2,16);
 say "Now: ${\scalar localtime}";
+
+---
+
+layout:false
+# Уникод: конкатенация
+
+.small[
+```perl
+sub debug {
+    my $str = shift;
+    printf "%d\t%s\t%vX\n", utf8::is_utf8($str), $str, $str;
+}
+
+$bytes_string = "Ф";
+debug($bytes_string);
+
+$utf_string = Encode::decode("UTF-8", $bytes_string);
+debug($utf_string);
+
+$result = $bytes_string.$utf_string;
+debug($result);
+
+$result2 = Encode::encode("UTF-8", $result);
+debug($result2);
+```
+]
+--
+.small[
+```perl
+0       Ф       D0.A4
+1       Ф       424
+1       Ð¤Ф     D0.A4.424
+0       Ð¤Ф     C3.90.C2.A4.D0.A4
+```
+]
