@@ -23,7 +23,7 @@
             "exec": "perl",
             "name": "Perl-Debug",
             "root": "$C:/Users/Tan-DS/Desktop/univer/TP/Perl/Technosfera-perl/homeworks/simple_tasks/",
-            "program": "C:/Users/Tan-DS/Desktop/univer/TP/Perl/Technosfera-perl/homeworks/simple_tasks/bin/02.pl",
+            "program": "C:/Users/Tan-DS/Desktop/univer/TP/Perl/Technosfera-perl/homeworks/simple_tasks/bin/03.pl",
             "inc": [],
             "args": [],
             "stopOnEntry": true
