@@ -26,6 +26,19 @@ sub encode {
     # ...
     # Алгоритм шифрования
     # ...
+    # великий гугл помог мне скомпоновать кучу всякого. ура
+
+    while ($str){
+
+    my $pis = unpack("C*", $str);
+
+    substr($str,0,1)="";
+    $pis += $key;
+    if ($pis > 127){
+        $pis = $pis % 128;
+    }
+    $encoded_str = $encoded_str.chr($pis);
+    }
 
     print "$encoded_str\n";
 }
@@ -48,6 +61,18 @@ sub decode {
     # ...
     # Алгоритм дешифрования
     # ...
+
+    while ($encoded_str){
+
+    my $pis = unpack("C*", $encoded_str);
+
+    substr($encoded_str,0,1)="";
+    $pis -= $key;
+    while ($pis < 0){
+        $pis = 128 + $pis;
+    }
+    $str = $str.chr($pis);
+    }
 
     print "$str\n";
 }
