@@ -29,8 +29,27 @@ sub run {
         # ...
         # Проверка, что число простое
         # ...
+        if ($i == 2){
+            print "$i\n";
+        }
 
-	print "$i\n";
+
+        if ($i > 2) # proverka na 1+
+        {   
+            my $las = 0;
+            for (my $pis = 2; $pis < $i; $pis++){
+                if ($i % $pis == 0){
+                   $las = 1;
+                } elsif ($pis == ($i-1) and $las == 0){                    
+	                print "$i\n";
+                }
+                else{
+
+                }
+            }
+        }
+
+
     }
 }
 
