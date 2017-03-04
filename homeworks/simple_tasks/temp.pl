@@ -4,11 +4,14 @@ use warnings;
 
 
 
-my $pisos = 0xffff0508;
+my $pisos = "pisospis";
 
 my $num = 0;
-while ($pisos % 0b10 == 0){
-    $pisos = $pisos / 0b10 ;
+while ( $pisos =~ "pis"){
+
+    $pisos =~s/pis/sos/;
+
+
     $num++;
 }
 
