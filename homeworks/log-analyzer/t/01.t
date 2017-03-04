@@ -32,7 +32,7 @@ close FF;
 }
 
 test_bin 'basic', <<OUTPUT;
-IP	count	avg	transferred	transferred_200	transferred_301	transferred_302	transferred_400	transferred_403	transferred_404	transferred_408	transferred_414	transferred_499	transferred_500'
+IP	count	avg	data	data_200	data_301	data_302	data_400	data_403	data_404	data_408	data_414	data_499	data_500
 total	22344	544.98	6667754	1784676	1108	705	85	15469	11269	0	1	0	514
 195.178.213.236	1575	38.41	0	390036	146	248	0	0	1942	0	0	0	0
 68.51.312.236	1519	37.05	541106	79715	15	31	0	0	1060	0	0	0	0
