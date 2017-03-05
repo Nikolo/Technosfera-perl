@@ -1,13 +1,13 @@
-class:firstpage
+class:firstpage,title
 
 # Программирование на perl
 
-## Регулярные выражения
+## Регулярные выражения и однострочники
 
 ---
 
 # Содержание
-* Регулярные выражения
+* **Регулярные выражения**
     - Сопоставление
     - Поиск и замена
     - Транслитерация
@@ -20,10 +20,7 @@ class:firstpage
     - Работа с юникодом
     - Отладка
 * Однострочники
-    - Параметры запуска
-    - Perl Golf
 * Отладчик
-* Работа с регулярными выражениями 
 
 ---
 
@@ -274,22 +271,73 @@ m/^(\w(\w+))\s+((\w+))/;
 
 ---
 
+# Захваты
+
+.small[
+```perl
+$time = "2017-03-06 18:30:21";
+```
+]
+--
+.small[
+```perl
+$time =~ /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
+```
+]
+--
+.small[
+```perl
+$time =~ /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/;
+say "Year     = $1"; # 2017
+say "Month    = $2"; # 03
+say "Day      = $3"; # 06
+say "Hours    = $4"; # 18
+say "Minutes  = $5"; # 30
+say "Seconds  = $6"; # 21
+```
+]
+--
+.small[
+```perl
+($year, $month, $day, $hours, $minutes, $seconds) = 
+    $time =~ /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/;
+```
+]
+
+---
+
+# Выбор альтернатив `|`
+
+```perl
+"i love cats" =~ m/[`c`r]`ats`|dogs/; # matches
+
+"i love dogs" =~ m/[cr]ats|`dogs`/; # matches
+
+"i love rats" =~ m/[c`r`]`ats`|dogs/; # matches
+
+"i love bats" =~ m/[cr]ats|dogs/; # not matches
+```
+
+---
+
 # Группы
 
 > `(...)` - захватывающая группа<br/>
 > `(?:...)` - незахватывающая группа<br/>
 
 ```perl
-"a" =~ /^(?:a|b|cd)$/;   # match
-"b" =~ /^(?:a|b|cd)$/;   # match
-say $1; # undef
-"ax" =~ /^(?:a|b|cd)$/;  # no match
-
 "a" =~ /^(a|b|cd)$/;   # match
 say $1; # a
+
 "b" =~ /^(a|b|cd)$/;   # match
 say $1; # b
-"ax" =~ /^(a|b|cd)$/;  # no match
+```
+--
+```perl
+"a" =~ /^(?:a|b|cd)$/;   # match
+say $1; # undef
+
+"b" =~ /^(?:a|b|cd)$/;   # match
 say $1; # undef
 ```
 
@@ -307,8 +355,16 @@ say "first: $1; second: $2";
 "abc" =~ /^(?<first>.)(?<second>.)/;
 say "first: $+{first}; second: $+{second}";
 # first: a; second: b
-say "first: $1; second: $2";
-# first: a; second: b
+```
+--
+```perl
+$date = "2017-03-06";
+$date =~ 
+    /^(?<year>\d{4})-(?<mon>\d{2})-(?<day>\d{2})$/;
+
+say $+{year}; # 2017
+say $+{mon};  # 03
+say $+{day};  # 06
 ```
 
 ---
@@ -606,6 +662,33 @@ say $str =~ /K/aai; # no match
 say ord "\N{KELVIN SIGN}"; # 8490 (K)
 say ord fc "\N{KELVIN SIGN}"; # 107 (k)
 ```
+---
+
+# Оглядывания
+
+```perl
+$_ = "foo bar baz"; # -> foo, bar, baz
+```
+--
+```perl
+say s/`\w+`/,/gr; # , , ,
+```
+--
+```perl
+say s/`(`\w+`)`/`$1`,/gr; # foo, bar, baz,
+```
+--
+```perl
+say s/(\w+)`\s+`/$1,/gr; # foo,bar,baz
+```
+--
+```perl
+say s/(\w+)`(`\s+`)`/$1,`$2`/gr; # foo, bar, baz
+```
+--
+```perl
+say s/(\w+)(`?=`\s+)/$1,/gr; # foo, bar, baz
+```
 
 ---
 # Оглядывания
@@ -618,16 +701,16 @@ say ord fc "\N{KELVIN SIGN}"; # 107 (k)
 ```perl
 $_ = "foo bar baz";
 
-say s{(\w)(?=\s+)}{$1,}rg; # foo, bar, baz
-say s{(?<= )(\w)}{:$1}rg; # foo :bar :baz
+say s{(\w)(`?=`\s+)}{$1,}rg; # foo, bar, baz
+say s{(`?<=` )(\w)}{:$1}rg; # foo :bar :baz
 
-say s{(\s)(?!bar)}{_}rg; # foo bar_baz
+say s{(\s)(`?!`bar)}{_}rg; # foo bar_baz
 
-say s{(?<! )(\w+)}{[$1]}rg; # [foo] b[ar] b[az]
+say s{(`?<!` )(\w+)}{[$1]}rg; # [foo] b[ar] b[az]
 
 $_ = "foo bar.baz quux";
 
-say s{(?<![ \w])(\w)}{\u$1}rg; # Foo bar.Baz quux
+say s{(`?<!`[ \w])(\w)}{`\u`$1}rg; # Foo bar.Baz quux
 ```
 
 ---
@@ -637,15 +720,21 @@ say s{(?<![ \w])(\w)}{\u$1}rg; # Foo bar.Baz quux
 ```perl
 $_ = "if-modified-since";
     # If-Modified-Since
-
+```
+--
+```perl
 say join "-", map ucfirst, split /-/, $_;
-
+```
+--
+```perl
 say s{ (`?<=` `-` ) (.) }{\u$1}rgx
     =~ s{^(.)}{\u$1}rg;
-
+```
+--
+```perl
 say s{
     (`?:`
-        ( `?<=` -) `(.)` # $1
+        (`?<=` -) `(.)` # $1
         `|`
         ^ `(.)` # $2
     )
@@ -694,15 +783,19 @@ say "bc"    =~ /^(a*)b/;   # match, ""
 say "abc"   =~ /^(a*)b/;   # match, "a"
 say "aabc"  =~ /^(a*)b/;   # match, "aa"
 say "aaabc" =~ /^(a*)b/;   # match, "aaa"
-
-say "aaabc" =~ /^(a*)/;    # match, "aaa"
-say "aaabc" =~ /^(a*?)/;   # match, ""
-say "aaabc" =~ /^(a*?)a/;  # match, ""
-say "aaabc" =~ /^(a*?)ab/; # match, "aa"
-
-say "aaabc" =~ /^(a*+)/;   # match, "aaa"
-say "aaabc" =~ /^(a*+)b/;  # match, "aaa"
-say "aaabc" =~ /^(a*+)ab/; # no match
+```
+--
+```perl
+say "aaabc" =~ /^(a*)/;      # match, "aaa"
+say "aaabc" =~ /^(a*`?`)/;   # match, ""
+say "aaabc" =~ /^(a*`?`)a/;  # match, ""
+say "aaabc" =~ /^(a*`?`)ab/; # match, "aa"
+```
+--
+```perl
+say "aaabc" =~ /^(a*`+`)/;   # match, "aaa"
+say "aaabc" =~ /^(a*`+`)b/;  # match, "aaa"
+say "aaabc" =~ /^(a*`+`)ab/; # no match
 ```
 
 ---
@@ -714,15 +807,19 @@ say "bc"    =~ /^(a+)b/;   # no match
 say "abc"   =~ /^(a+)b/;   # match, "a"
 say "aabc"  =~ /^(a+)b/;   # match, "aa"
 say "aaabc" =~ /^(a+)b/;   # match, "aaa"
-
-say "aaabc" =~ /^(a+)/;    # match, "aaa"
-say "aaabc" =~ /^(a+?)/;   # match, "a"
-say "aaabc" =~ /^(a+?)a/;  # match, "a"
-say "aaabc" =~ /^(a+?)ab/; # match, "aa"
-
-say "aaabc" =~ /^(a++)/;   # match, "aaa"
-say "aaabc" =~ /^(a++)b/;  # match, "aaa"
-say "aaabc" =~ /^(a++)ab/; # no match
+```
+--
+```perl
+say "aaabc" =~ /^(a+)/;      # match, "aaa"
+say "aaabc" =~ /^(a+`?`)/;   # match, "a"
+say "aaabc" =~ /^(a+`?`)a/;  # match, "a"
+say "aaabc" =~ /^(a+`?`)ab/; # match, "aa"
+```
+--
+```perl
+say "aaabc" =~ /^(a+`+`)/;   # match, "aaa"
+say "aaabc" =~ /^(a+`+`)b/;  # match, "aaa"
+say "aaabc" =~ /^(a+`+`)ab/; # no match
 ```
 
 ---
@@ -734,10 +831,12 @@ say "bc"    =~ /^(a{1,2})b/; # no match
 say "abc"   =~ /^(a{1,2})b/; # match, "a"
 say "aabc"  =~ /^(a{1,2})b/; # match, "aa"
 say "aaabc" =~ /^(a{1,2})b/; # no match
-
+```
+--
+```perl
 say "aaabc"  =~ /^(a{1,2})a/;  # match "aa"
-say "aaabc"  =~ /^(a{1,2}?)a/; # match "a"
-say "aabc"   =~ /^(a{1,2}?)b/; # match "aa"
+say "aaabc"  =~ /^(a{1,2}`?`)a/; # match "a"
+say "aabc"   =~ /^(a{1,2}`?`)b/; # match "aa"
 ```
 
 ---
@@ -751,13 +850,13 @@ for (
     q{some with "quoted value" string},
     q{some with 'quoted " value' string},
 ) {
-    say $2 if m{(["'])([^\g1]*)\g1};
+    say $2 if m{(["'])(.*?)`\g1`};
 }
 # quoted value
 # quoted " value
 
 for ('e66e', 'f99f', 'z87z' ) {
-    say $1 if m{(([a-z])(\d)\g{-1}\g{-2})}x;
+    say $1 if m{(([a-z])(\d)`\g{-1}``\g{-2}`)}x;
 }
 #e66e
 #f99f
@@ -771,8 +870,8 @@ for ('e66e', 'f99f', 'z87z' ) {
 
 ```perl
 $_ = "abcd";
-while (/(.)/g) {
-    say $1, " ", pos($_);
+while (/(.)/`g`) {
+    say $1, " ", `pos($_)`;
     # a 1
     # b 2
     # c 3
@@ -790,7 +889,7 @@ say $1, " ", pos($_);
 
 ```perl
 $_ = "abcd";
-while (/(.)/gc) {
+while (/(.)/g`c`) {
     say $1, " ", pos($_);
     # a 1
     # b 2
@@ -809,10 +908,10 @@ say $1, " ", pos($_);
 
 ```perl
 $_ = "abcdxcdcd";
-while (/\G(.)/gc) {
+while (/`\G`(.)/gc) {
     my $key = $1;
     my $pos = pos($_);
-    if (/\Gcd/gc) {
+    if (/`\G`cd/gc) {
         say "the key before cd is $key at $pos";
     } else {
         say "no cd next after $key";
@@ -824,6 +923,26 @@ while (/\G(.)/gc) {
 # no cd next after c
 # no cd next after d
 
+```
+---
+
+# Однопроходный парсинг
+
+```perl
+my $str = ...
+for ($str) {
+  while (pos < length) {
+    if (/\G(\d+)/) {
+      say "got digits $1";
+    }
+    elsif (/\G(\D+)/) {
+      say "got non-digits $1";
+    }
+    else {
+      die "Bad sequence";
+    }
+  }
+}
 ```
 
 ---
@@ -906,7 +1025,30 @@ class:center
 
 ---
 
+# Содержание
+* Регулярные выражения
+    - Сопоставление
+    - Поиск и замена
+    - Транслитерация
+    - Классы символов
+    - Модификаторы
+    - Группы
+    - Оглядывания
+    - Захваты
+    - Квантификаторы
+    - Работа с юникодом
+    - Отладка
+* **Однострочники**
+* Отладчик
+
+---
+
+layout: true
 # Однострочники
+.footer[[perlrun](http://perldoc.perl.org/perlrun.html)]
+
+---
+## Запуск скриптов (`-e`, `-E`)
 
 ```sh
 > perl -e 'print "Hello world\n"'
@@ -919,6 +1061,13 @@ Hello world
 ```
 
 ```sh
+> perl -E '
+say "Hello world"
+'
+Hello world
+```
+
+```sh
 > perl
 print "Hello world\n"
 # Ctrl+D
@@ -927,20 +1076,7 @@ Hello world
 
 ---
 
-# Подключение модулей
-
-```sh
-perl -MDDP -E '%test = 1..10; p %test';
-```
-
-```sh
-perl -MData::Dumper -E \
-'%test = 1..10; say Dumper \%test';
-```
-
----
-
-# Кавычки
+## Кавычки
 
 ```sh
 perl -E 'say $USER'; # ""
@@ -957,7 +1093,33 @@ perl -E 'say q{$USER}'; # $USER
 
 ---
 
-# Обработка стандартного ввода
+## Вывод предупреждений (`-w`)
+
+.small[
+```bash
+perl -wE '$x = 100; $z = $x + $y; say $z'
+Name "main::y" used only once: possible typo at -e line 1.
+Use of uninitialized value $y in addition (+) at -e line 1.
+100
+```
+]
+
+---
+
+## Подключение модулей (`-M`)
+
+```sh
+perl -MDDP -E '%test = 1..10; p %test';
+```
+
+```sh
+perl -MData::Dumper -E \
+'%test = 1..10; say Dumper \%test';
+```
+
+---
+
+## Обработка стандартного ввода
 
 .left.w70.small[
 ```sh
@@ -992,6 +1154,8 @@ perl -E 'while (<>) { chomp; say $_ }'
 
 ---
 
+layout:false
+
 # Специальные переменные
 
 .footer[[perlvar](http://perldoc.perl.org/perlvar.html)]
@@ -1018,47 +1182,93 @@ say 'ok';
 
 ---
 
-# -l
+layout: true
+# Однострочники
+.footer[[perlrun](http://perldoc.perl.org/perlrun.html)]
+
+---
+## Автоматическая обработка концов строк (`-l`)
 
 ```sh
-perl -MO=Deparse -l -E 'say "ok"'
+> perl -e 'print "ok"'
+ok>
 ```
-
+--
+```sh
+> perl -l -e 'print "ok"'
+ok
+>
+```
+--
+```sh
+perl -MO=Deparse -l -e 'print "ok"'
+```
 ```perl
 *BEGIN { $/ = "\n"; $\ = "\n"; }
-use feature ...
-say 'ok';
+print 'ok';
 -e syntax OK
 ```
 
 ---
 
-# -n
+## Обарачичвание в цикл (`-n`)
 
+.left.w70[
 ```sh
-perl -MO=Deparse -n -E 'say "ok"'
+echo -ne "1\n2\n3\n" |
+perl -n -e 'print $_'
+```
+]
+.right.w30[
+```sh
+1
+2
+3
+```
+]
+
+--
+
+<br>
+```sh
+perl -MO=Deparse -n -e 'print $_'
 ```
 
 ```perl
-use feature ...
 LINE: while (defined($_ = <ARGV>)) {
-    say 'ok';
+    print $_;
 }
 -e syntax OK
 ```
 
 ---
 
-# -p
+## Автоматическая печать (`-p`)
 
+.left.w70[
 ```sh
-perl -MO=Deparse -p -E 'say;'
+echo -ne "1\n2\n3\n" |
+perl -p -e 'print "line $.: "'
+```
+]
+.right.w30[
+```sh
+line 1: 1
+line 2: 2
+line 3: 3
+```
+]
+
+--
+
+<br>
+```sh
+perl -MO=Deparse -p -e 'print "line $.: "'
 ```
 
 ```perl
-use feature ...
 LINE: while (defined($_ = <ARGV>)) {
-    say $_;
+    print "line $.: ";
 }
 continue {
     die "-p destination: $!\n" unless print $_;
@@ -1066,71 +1276,111 @@ continue {
 -e syntax OK
 ```
 
-
 ---
 
-# -l -n
+## Совместное использование `-l` `-n`
 
+.left.w70[
 ```sh
-perl -MO=Deparse -lnE 'say'
+echo -ne "a\nb\nc\n" | 
+perl -lne 'print $_." ".$.'
+```
+]
+.right.w30[
+```sh
+a 1
+b 2
+c 3
+```
+]
+
+--
+
+<br>
+```sh
+perl -MO=Deparse -lne 'print $_." ".$.'
 ```
 
 ```perl
 BEGIN { $/ = "\n"; $\ = "\n"; }
-use feature ...
 LINE: while (defined($_ = <ARGV>)) {
     chomp $_;
-    say $_;
+    print $_ . ' ' . $.;
 }
 -e syntax OK
 ```
 
+---
+
+## Разбиение строк (`-n`, `-a`)
+
+.left.w70[
+```sh
+echo -ne "a aa\nb bb\nc cc\n" | 
+perl -naE 'say "$F[1] - $F[0]"'
+```
+]
+.right.w30[
+```sh
+aa - a
+bb - b
+cc - c
+```
+]
+
 --
+
+<br>
+
+```sh
+perl -MO=Deparse -naE 'say "$F[1] - $F[0]"'
+```
+
+```perl
+use feature ...;
+LINE: while (defined($_ = <ARGV>)) {
+    our @F = split(' ', $_, 0);
+    say "$F[1] - $F[0]";
+}
+-e syntax OK
+```
+---
+
+## Разбиение строк (`-n`, `-a`, `-F`)
 
 .left.w70.small[
 ```sh
-echo -ne "1\n2\n3\n" | perl -lnE 'say'
+echo -ne "a:aa\nb:bb\nc:cc\n" | 
+perl -na `-F:` -E 'say "$F[1] - $F[0]"'
 ```
 ]
-.right.w30.small[
-```xxx
-1
-2
-3
-```
-]
-
----
-
-# -n -a -F
-
+.right.w30[
 ```sh
-perl -MO=Deparse -na -E 'say $F[0]'
+aa - a
+bb - b
+cc - c
 ```
-
-```perl
-LINE: while (defined($_ = <ARGV>)) {
-    our(@F) = split(' ', $_, 0);
-    say $F[0];
-}
-```
+]
 
 --
 
+<br>
+
 ```sh
-perl -MO=Deparse -na `-F:` -E 'say $F[0]'
+perl -MO=Deparse -na `-F:` -E 'say "$F[1] - $F[0]"'
 ```
 
 ```perl
+use feature ...;
 LINE: while (defined($_ = <ARGV>)) {
     our(@F) = split(`/:/`, $_, 0);
-    say $F[0];
+    say "$F[1] - $F[0]";
 }
 ```
 
 ---
 
-# Example
+## Example
 
 .small[
 ```sh
@@ -1157,6 +1407,24 @@ continue {
 perl -i -lpE 's{^(( {8})*)}{ "\t"x(length($1)/8) }e'
 ```
 ]
+
+---
+
+# Содержание
+* Регулярные выражения
+    - Сопоставление
+    - Поиск и замена
+    - Транслитерация
+    - Классы символов
+    - Модификаторы
+    - Группы
+    - Оглядывания
+    - Захваты
+    - Квантификаторы
+    - Работа с юникодом
+    - Отладка
+* Однострочники
+* **Отладчик**
 
 ---
 
