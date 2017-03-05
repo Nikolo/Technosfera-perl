@@ -43,9 +43,6 @@ sub run {
                 } elsif ($pis == ($i-1) and $las == 0){                    
 	                print "$i\n";
                 }
-                else{
-
-                }
             }
         }
 
