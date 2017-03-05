@@ -78,7 +78,7 @@ content: "`";
     font-family: "HelveticaNeueCyrBold";
 }
 
-.not .perl .remark-code-line-highlighted {
+.not .remark-code-line-highlighted, .not .remark-code-span-highlighted {
     background-color: rgba(255, 0, 0, 0.5)
 }
 
