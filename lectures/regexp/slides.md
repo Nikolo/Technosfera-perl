@@ -1617,6 +1617,8 @@ layout: false
 * user agent (метка браузера или робота, выполнившего запрос)
 * коэффициент сжатия данных перед передачей по сети
 
+https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/log-analyzer
+
 ---
 
 # Домашнее задание
