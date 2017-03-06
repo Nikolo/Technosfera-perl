@@ -105,7 +105,6 @@ say $href`->`{h}` `{"key\0"}` `[2];     # 7
 $href->{f}->(3);                # ok:3
 ```
 
-
 ---
 # HASH != HASHREF
 
@@ -122,7 +121,7 @@ say @array; # ARRAY(0x7fcd02821d38)
 say %hash; # key, value
 
 *%hash  = {key => "value"};
-say %hash; # HASH(0x7fbbd90052f0), 
+say %hash; # HASH(0x7fbbd90052f0)
 
 *%hash = ( key1 => (1,2), key2 => (3,4) );
 say $hash{key1}; # 1
@@ -148,6 +147,29 @@ $href->{ary}[7] = "seven";
 say $href->{ary};       # ARRAY(0x7f9...)
 say $href->{ary}[7];    # seven
 say $#{ $href->{ary} }; # 7
+```
+
+---
+# Автооживление (autovivification)
+
+```perl
+$track = {
+    name => "Dogs",
+    band => "Pink Floyd",
+    album => { name => "The Wall", year => 1979 }
+};
+
+$track = {
+    name => "Arnold Lane",
+    band => "Pink Floyd"
+};
+
+say "Track from single" unless $track->{album};
+
+say "'The Wall' album"
+    if $track->{album}{name} eq 'The Wall';
+
+say "Track from album" if $track->{album};
 ```
 
 ---
@@ -562,6 +584,7 @@ if (test) {...} # scalar
 test();         # void
 ```
 
+
 ---
 
 # Prototype: empty & scalar
@@ -603,6 +626,7 @@ my %h = (k => 1,x => 2);
 test(@a); # ok, 1 2 3
 test(%h); # ok k 1 x 2
 ```
+
 ---
 
 # Prototype: optional
@@ -851,6 +875,12 @@ test(); # Not enough arguments for main::test
 
 ---
 
+.center[
+![center-aligned image]( vzhuh.jpg )
+]
+
+---
+
 # Вызов с чужими параметрами
 
 ```perl
@@ -912,7 +942,7 @@ my $x = rand();
 my $y = rand();
 
 for my $op (qw(+ - * /)) {
-    say "$x $op $y = " . $op->( $x,$y );
+    say "$x $op $y = " . $op{$op}->( $x,$y );
 }
 ```
 
@@ -1592,6 +1622,8 @@ layout:false
 
 ## формальный язык поиска и осуществления манипуляций с подстроками в тексте, основанный на использовании метасимволов
 
+.normal-width[![left-aligned image]( owl.jpg )]
+
 ---
 
 # Сопоставление (`m//`)
@@ -1776,6 +1808,35 @@ m/^(\w(\w+))\s+((\w+))/;
 
 ---
 
+# Выбор альтернатив `|`
+
+```perl
+# match 'http' or 'https'
+m/^https?$/;                  # ok
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+m/^https?|ftp$/;              # ???
+```
+--
+```perl
+"httpaa" =~ m/^https?|ftp$/;  # true
+"aaaftp" =~ m/^https?|ftp$/;  # true
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+`m/(^https?|ftp$)/;            # !!!`
+```
+--
+```perl
+# match 'http', 'https' or 'ftp'
+m/^(https?|ftp)$/;             # ok
+```
+
+---
+
 # Модификаторы
 
 > `/i` (case insensitive)
@@ -1821,7 +1882,7 @@ m/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
 ```perl
 # /Nirvana/1991 - Nevermind/2 - In Bloom.mp3
 # /Deep Purple/1972 - Machine Head/5 Smoke On The Water.mp3
-m!^/([^/]+)/(\d+) - ([^/])+/(\d+)\s*-?\s*(.+)\.mp3$!
+m!^/([^/]+)/(\d+) - ([^/]+)/(\d+)\s*-?\s*(.+)\.mp3$!
 
 # $1 - Artist name
 # $2 - Album year
@@ -2392,6 +2453,7 @@ say "\N{APPLE LOGO}"; # 
 # Casefolding
 
 ```perl
+use utf8;
 use feature "fc"; # perl v5.16+
 
 # sort case-insensitively
@@ -2400,8 +2462,8 @@ my @sorted = sort {
 } @list;
  
 # both are true:
-fc("tschüß") eq fc("TSCHÜSS")
-fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
+fc("tschüß") eq fc("TSCHÜSS") or die "Not equal";
+fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ") or die "Not equal";
 ```
 
 ---
@@ -2417,8 +2479,9 @@ fc("Σίσυφος") eq fc("ΣΊΣΥΦΟΣ")
 ## `/i` (case insensitive)
 
 ```perl
-"tschüß" =~ /TSCHÜSS/i    # match. ß ↔ SS
-"Σίσυφος" =~ /ΣΊΣΥΦΟΣ/i   # match. Σ ↔ σ ↔ ς
+use utf8;
+"tschüß" =~ /TSCHÜSS/i or die;  # match. ß ↔ SS
+"Σίσυφος" =~ /ΣΊΣΥΦΟΣ/i or die; # match. Σ ↔ σ ↔ ς
 ```
 
 
@@ -2611,8 +2674,8 @@ Compare:
 
 ## 1. Клонирование сложных структур данных
 
-Требуется написать функцию принимающюю на вход ссылку на какую либо структуру данных и отдающюю, в качестве результата, ее точную независимую копию.
-Это значит, что ни один элемент результирующей структуры, не может ссылаться на элементы исходной, но при этом она должна в точности повторять ее схему.
+Требуется написать функцию, принимающую на вход ссылку на какую либо структуру данных и отдающую, в качестве результата, ее точную независимую копию.
+Это значит, что ни один элемент результирующей структуры не может ссылаться на элементы исходной, но при этом она должна в точности повторять ее схему.
 
 Входные данные:
 * undef
@@ -2621,8 +2684,12 @@ Compare:
 * ссылка на массив
 * ссылка на хеш
 
-Элементами ссылок на массив и хеш, могут быть любые из указанных выше конструкций.
-Любые отличные от указанных типы данных - недопустимы. В этом случае результатом клонирования должен быть undef.
+Элементами ссылок на массив и хеш могут быть любые из указанных выше конструкций.
+Любые, отличные от указанных типы данных - недопустимы. В этом случае результатом клонирования должен быть undef.
+
+.small16[
+https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/deep-clone
+]
 
 ---
 
@@ -2636,15 +2703,19 @@ Compare:
 * 'листок', 'слиток' и 'столик' - другому.
 
 Входные данные для функции:
-ссылка на массив - каждый элемент которого - слово на русском языке в кодировке utf8
+ссылка на массив, каждый элемент которого - слово на русском языке в кодировке UTF-8
 
 Выходные данные:
 Ссылка на хеш множеств анаграмм.
 * Ключ - первое встретившееся в словаре слово из множества
-* Значение - ссылка на массив, каждый элемент которого, слово из множества. Массив должен быть отсортирован по возрастанию.
+* Значение - ссылка на массив, каждый элемент которого - слово из множества. Массив должен быть отсортирован по возрастанию.
 * Множества из одного элемента не должны попасть в результат.
 * Все слова должны быть приведены к нижнему регистру.
-* В результате каждое слово должно встречаться только один раз.
+* Каждое слово должно встречаться только один раз.
+
+.small16[
+https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/anagrams
+]
 
 ---
 class:center, middle
@@ -2678,17 +2749,16 @@ say !! undef; # ''
 ```
 
 ```perl
-*}{           Butterfly          END для one-liners
-
-perl -lne '}{ print$.'
-perl -le 'while (<>) { `}{` print$. }'
-```
-
-```perl
 *~~           Inchworm           Scalar context
 
 say ~~localtime();
 #say scalar localtime();
+```
+
+```perl
+*@{[ ]}        Babycart          Интерполяция
+
+say "1 + 2 = @{[ 1 + 2 ]}" # 1 + 2 = 3
 ```
 
 ---
@@ -2715,7 +2785,7 @@ $x *=!  $y     # $x=0 if $y;
 
 ---
 
-# Интерполяция
+## Интерполяция
 
 > Инлайновое исполнение:<code><br/></code>
 > dereference + reference constructor
@@ -2744,9 +2814,37 @@ use Time::Local;
 my $time = timelocal(30,25,19,3,2,16);
 say "Now: ${\scalar localtime}";
 
+---
 
+layout:false
+# Юникод: конкатенация
 
+.small[
+```perl
+sub debug {
+    my $str = shift;
+    printf "%d\t%s\t%vX\n", utf8::is_utf8($str), $str, $str;
+}
 
+$bytes_string = "Ф";
+debug($bytes_string);
 
+$utf_string = Encode::decode("UTF-8", $bytes_string);
+debug($utf_string);
 
+$result = $bytes_string.$utf_string;
+debug($result);
 
+$result2 = Encode::encode("UTF-8", $result);
+debug($result2);
+```
+]
+--
+.small[
+```perl
+0       Ф       D0.A4
+1       Ф       424
+1       Ð¤Ф     D0.A4.424
+0       Ð¤Ф     C3.90.C2.A4.D0.A4
+```
+]
