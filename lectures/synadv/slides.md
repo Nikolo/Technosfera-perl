@@ -154,7 +154,7 @@ say $#{ $href->{ary} }; # 7
 
 ```perl
 $track = {
-    name => "Dogs",
+    name => "Nobody home",
     band => "Pink Floyd",
     album => { name => "The Wall", year => 1979 }
 };
