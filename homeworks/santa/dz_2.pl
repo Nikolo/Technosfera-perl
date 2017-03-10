@@ -19,7 +19,11 @@ my @res;
 #say foreach @all;
 
 
-
+my $count = 0;
+STAR:
+ if ($count==10000 || $count==12000 || $count==14000 || $count==16000 || $count==18000){
+     $#res=-1;
+ }
 my $dlina = scalar @members;                    # пилим подсчёт кол-ва элементов в массива
 my @to_mas;
 my @to;
@@ -29,7 +33,7 @@ my $to_name;
 my $randomik;
 my $sub_randomik;
 my $flag_1 = 0;
-my $count = 0;
+
 
 
 
@@ -47,8 +51,10 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 
             while($flag_1 == 0){                # там генерируется рандом
                 $count++;
-
-                if ($count>1000){
+                 if ($count==10000 || $count==12000 || $count==14000 || $count==16000 || $count==18000){
+                    goto STAR;
+                }
+                if ($count>20000){
                         last;
                     }
 
@@ -81,7 +87,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 
             }
             $flag_1 = 0;
-            if ($count>1000){last;}
+            if ($count>20000){last;}
         }
         
     } else{
@@ -91,8 +97,10 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 
             while($flag_1 == 0){                # там генерируется рандом
              $count++;
-            if ($count==1000){
-                        say "Nope";
+              if ($count==10000 || $count==12000 || $count==14000 || $count==16000 || $count==18000){
+                 goto STAR;
+             }
+            if ($count>20000){
                         last;
                     }
 
@@ -123,7 +131,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
                 } 
             }
             $flag_1 = 0;
-            if ($count>1000){last;}
+            if ($count>20000){last;}
     }
    
     
@@ -139,5 +147,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 #my $link = \@to_mas;
 #push (@ to , $link);
 #say @to;
-if ($count>1000){push @res, 'not all'}
+
+
+    if($count>20000){$#res=-1;}
 print Dumper @res;

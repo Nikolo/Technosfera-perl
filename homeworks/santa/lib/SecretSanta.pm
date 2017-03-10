@@ -45,6 +45,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
                     goto STAR;
                 }
                 if ($count>20000){
+                        $#res=-1;
                         last;
                     }
 
@@ -121,7 +122,10 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
                 } 
             }
             $flag_1 = 0;
-            if ($count>20000){last;}
+            if ($count>20000){                
+                $#res=-1;
+                last;
+                }
     }
    
     
@@ -139,7 +143,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 #say @to;
 
 
-
+ 
 
 	return @res;
 }
