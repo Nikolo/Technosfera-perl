@@ -24,10 +24,17 @@ run(1, 4) - печатает "2\n" и "3\n"
 
 sub run {
     my ($x, $y) = @_;
+    OUTER:
     for (my $i = $x; $i <= $y; $i++) {
 
         # ...
         # Проверка, что число простое
+        next if ($i % 2==0 && $i!=2 || $i < 2);
+        for (my $del=3; $del <= sqrt($i); $del+=2) {
+        	if ($i % $del==0) {
+        		next OUTER;
+        	}
+        }
         # ...
 
 	print "$i\n";
