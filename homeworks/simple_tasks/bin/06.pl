@@ -26,7 +26,7 @@ sub encode {
     my $n = 128;
     for (my $i = 0; $i < length($str); $i++) {
 	my $index =ord(substr($str, $i, 1));
-	substr($encoded_str, $i, 1) = chr((($index + $key + 1) % $n)-1) 	
+	substr($encoded_str, $i, 1) = chr(($index + $key) % $n) 	
     }
     print "$encoded_str\n";
 }
