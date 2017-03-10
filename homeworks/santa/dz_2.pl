@@ -4,7 +4,7 @@ use 5.18.0;
 use Data::Dumper;
 use PadWalker;
 
-my @members = (['A','B'],['C','D'],'E','F');
+my @members = ('K',['A','B']);
 my @res;
 #my @all = ("Ivan", "Alex", "Anna",);
 #my @fam = ("pis","sas");
@@ -24,26 +24,34 @@ my $dlina = scalar @members;                    # пилим подсчёт ко
 my @to_mas;
 my @to;
 
-say $dlina;
 my $from_name; 
 my $to_name;
 my $randomik;
 my $sub_randomik;
 my $flag_1 = 0;
+my $count = 0;
+
+
 
 for(my $i = 0; $i < $dlina; $i++){              # цикл для расчёта реального кол-ва элементов
 
+if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
+    last;
+}
     $dlina = scalar @members;
 
     if (ref($members[$i]) eq "ARRAY"){          # проверка на массивность каждого элемента 
-        print "Element $i is Array\n";
-        
-
+     
         for (my $j = 0; $j < 2; $j++){          # прохождение для каждого из двух элементов в списке
             $from_name = $members[$i][$j];        # от кого подарок
 
             while($flag_1 == 0){                # там генерируется рандом
-            
+                $count++;
+
+                if ($count>1000){
+                        last;
+                    }
+
                 $randomik = int(rand($dlina));
                
                 if($randomik != $i){            # проверка на неравенство нынешнему номеру I 
@@ -68,19 +76,26 @@ for(my $i = 0; $i < $dlina; $i++){              # цикл для расчёта
                     if($flag_1==1){             # если всё ок, засунь элемент в рес
                         push @res,[$from_name,$to_name];
                     }
+                    
                 } 
+
             }
             $flag_1 = 0;
+            if ($count>1000){last;}
         }
         
     } else{
-        print "Element $i is not Array\n";
         
-
+       
          $from_name = $members[$i];             # от кого подарок
 
             while($flag_1 == 0){                # там генерируется рандом
-            
+             $count++;
+            if ($count==1000){
+                        say "Nope";
+                        last;
+                    }
+
                 $randomik = int(rand($dlina));
                
                 if($randomik != $i){            # проверка на неравенство нынешнему номеру I 
@@ -108,14 +123,14 @@ for(my $i = 0; $i < $dlina; $i++){              # цикл для расчёта
                 } 
             }
             $flag_1 = 0;
-
+            if ($count>1000){last;}
     }
    
     
 }
 #say $dlina;
-my $pis = $members[0];      # ясделаль!! 
-my $sas = @$pis;            # подсчёт кол-ва элементов вложенного массива!!
+#my $pis = $members[0];      # ясделаль!! 
+#my $sas = @$pis;            # подсчёт кол-ва элементов вложенного массива!!
 #say $sas;
 #say $members[0][0];
 
@@ -124,5 +139,5 @@ my $sas = @$pis;            # подсчёт кол-ва элементов вл
 #my $link = \@to_mas;
 #push (@ to , $link);
 #say @to;
-
+if ($count>1000){push @res, 'not all'}
 print Dumper @res;
