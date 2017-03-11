@@ -76,6 +76,7 @@ my `$code` = <<'CODE';
     sub pow { $_[0] ** $_[1]; }
     $E = 2.71828183;
     my $PI = 3.14159265;
+    sub pi { $PI }
 CODE
 
 say "eval=", `eval $code`; # eval=3.14159265
@@ -83,6 +84,7 @@ say "eval=", `eval $code`; # eval=3.14159265
 say "pow(2,8)=",pow(2,8);  # pow(2,8)=256
 say "E=$E";                # E=2.71828183
 say "PI=$PI";              # PI=undef
+say "PI=",pi();            # PI=3.14159265
 ```
 ]
 
@@ -1535,13 +1537,13 @@ $obj = \%data;
 bless $obj, $class;
 # the same as $obj = bless \%data, $class
 ```
-
+--
 ```perl
 bless \%data, $class;
 bless \@data, $class;
 bless \$data, $class;
 ```
-
+--
 ```perl
 bless \%data;
 # same as bless \%data, __PACKAGE__;
@@ -1560,7 +1562,7 @@ print ref $obj;               # HASH
 bless $obj, "Local::User";
 print ref $obj;               # Local::User
 ```
-
+--
 ```perl
 use Scalar::Util 'blessed';
 
