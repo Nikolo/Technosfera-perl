@@ -34,6 +34,11 @@
     position: initial;
 }
 
+.remark-code {
+    line-height: 1.2em;
+/*    font-size: 20px;*/
+}
+
 h1, h2, h3 {
     font-family: 'HelveticaNeueCyrBold';
     color: #4BA6C1;
