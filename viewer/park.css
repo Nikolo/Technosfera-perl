@@ -53,6 +53,11 @@
 //    padding-top: 70px;
 }
 
+.remark-code {
+    line-height: 1.2em;
+/*    font-size: 20px;*/
+}
+
 h1, h2, h3 {
     font-family: 'HelveticaNeueCyrBold';
 }
