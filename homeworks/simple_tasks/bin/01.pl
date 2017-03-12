@@ -31,12 +31,22 @@ sub run {
 
     my $x1 = undef;
     my $x2 = undef;
+    my $d=$b_value*$b_value-4*$a_value*$c_value;
+print "$d\n";
+if ($d>0) {
+	$x1=(-$b_value+sqrt($d))/(2*$a_value);
+	$x2=(-$b_value-sqrt($d))/(2*$a_value);
+};
+if ($d==0) {$x1=(-$b_value/(2*$a_value));
+			$x2=$x1;
+			print "or\n";
+}
+if ($d<0) {print "No Solution\n";
+};
+if ($d>=0){
 
-    #...
-    #Вычисление корней
-    #...
-
-    print "$x1, $x2\n";
+    print "$x1, $x2\n"};
+    1;
 }
 
 1;
