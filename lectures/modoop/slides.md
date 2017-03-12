@@ -361,127 +361,6 @@ BEGIN { print Local::Math::pow(2, 8) }
 
 ---
 
-# Области видимости
-## Пакетные переменные `our`
-
-.small[
-```perl
-#Local/Math.pm
-package Local::Math;
-`our $PI` = 3.14159265;
-
-package Local::Math::Float;
-
-say $PI;                      # 3.14159265
-say $Local::Math::Float::PI;  # undef
-say $Local::Math::PI;         # 3.14159265
-
-1;
-```
-]
---
-.small[
-```perl
-#script.pl 
-use Local::Math;
-
-say $PI;                      # undef
-say $Local::Math::PI;         # 3.14159265
-```
-]
-
----
-
-# Области видимости
-## Локальные переменные `my`
-
-```perl
-#Local/Module.pm
-package Local::Module;
-
-`my $x` = 4;
-if($x == 4) {
-    `my $x` = 5;
-    say $x;     # 5
-}
-say $x;         # 4
-
-1;
-```
---
-```perl
-#script.pl
-use Local::Module;
-
-say $Local::Module::x;  # undef
-
-```
-
----
-
-# Области видимости
-## Статические локальные переменные `state`
-
-```perl
-`use feature 'state'`;
-
-sub test {
-    `state $x` = 42;
-    return $x++;
-}
-
-printf(                            # 42 43 44 45 46
-    '%d %d %d %d %d',
-    test(),test(),test(),test(),test()
-);
-
-say $x;                            # undef
-```
-
----
-
-# Области видимости
-## Локализация значения пакетных переменных `local`
-
-```perl
-our $x = 10;
-our %y = (x => 20, y => 30);
-{
-    `local $x` = -10;
-    `local $y{x}` = -20;
-    say $x;                # -10
-    say $y{x};             # -20
-}
-say $x;                    #  10
-say $y{x};                 #  20
-```
-
----
-
-# Области видимости
-## Локализация значения специальных переменных `local`
-
-```perl
-# 1,2,3\n
-my @lines = ();
-{
-    `local $/` = ",";
-    while(<>) {
-        push @lines, $_;         # "1," "2," "3\n"
-    }
-    chomp $lines[1];             # "2"
-}
-chomp $lines[0];                 # "1,"
-chomp $lines[2];                 # "3"
-
-{
-    `local $/`;
-    my $all = <>;                   # "1,2,3\n"
-}
-```
-
----
-
 # Функция `use`
 ## Функция `import`
 
@@ -636,6 +515,128 @@ use `5.020_000`;
 # Perl v5.20.0 required--this
 # is only v5.16.3, stopped
 ```
+
+---
+
+# Области видимости
+## Пакетные переменные `our`
+
+.small[
+```perl
+#Local/Math.pm
+package Local::Math;
+`our $PI` = 3.14159265;
+
+package Local::Math::Float;
+
+say $PI;                      # 3.14159265
+say $Local::Math::Float::PI;  # undef
+say $Local::Math::PI;         # 3.14159265
+
+1;
+```
+]
+--
+.small[
+```perl
+#script.pl 
+use Local::Math;
+
+say $PI;                      # undef
+say $Local::Math::PI;         # 3.14159265
+```
+]
+
+---
+
+# Области видимости
+## Локальные переменные `my`
+
+```perl
+#Local/Module.pm
+package Local::Module;
+
+`my $x` = 4;
+if($x == 4) {
+    `my $x` = 5;
+    say $x;     # 5
+}
+say $x;         # 4
+
+1;
+```
+--
+```perl
+#script.pl
+use Local::Module;
+
+say $Local::Module::x;  # undef
+
+```
+
+---
+
+# Области видимости
+## Статические локальные переменные `state`
+
+```perl
+`use feature 'state'`;
+
+sub test {
+    `state $x` = 42;
+    return $x++;
+}
+
+printf(                            # 42 43 44 45 46
+    '%d %d %d %d %d',
+    test(),test(),test(),test(),test()
+);
+
+say $x;                            # undef
+```
+
+---
+
+# Области видимости
+## Локализация значения пакетных переменных `local`
+
+```perl
+our $x = 10;
+our %y = (x => 20, y => 30);
+{
+    `local $x` = -10;
+    `local $y{x}` = -20;
+    say $x;                # -10
+    say $y{x};             # -20
+}
+say $x;                    #  10
+say $y{x};                 #  20
+```
+
+---
+
+# Области видимости
+## Локализация значения специальных переменных `local`
+
+```perl
+# 1,2,3\n
+my @lines = ();
+{
+    `local $/` = ",";
+    while(<>) {
+        push @lines, $_;         # "1," "2," "3\n"
+    }
+    chomp $lines[1];             # "2"
+}
+chomp $lines[0];                 # "1,"
+chomp $lines[2];                 # "3"
+
+{
+    `local $/`;
+    my $all = <>;                   # "1,2,3\n"
+}
+```
+
 
 ---
 
@@ -1975,6 +1976,12 @@ while ($iterator->has_next) {
 ---
 
 # Домашнее задание
+
+https://github.com/Nikolo/Technosfera-perl/
+
+`/homeworks/oop_reducer`
+
+Требуется написать классы для проведения над логами операции [схлопывания](https://en.wikipedia.org/wiki/Fold_(higher-order_function)) (reduce).
 
 ---
 
