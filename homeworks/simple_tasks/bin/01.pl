@@ -32,11 +32,26 @@ sub run {
     my $x1 = undef;
     my $x2 = undef;
 
-    #...
-    #Вычисление корней
-    #...
 
-    print "$x1, $x2\n";
+
+my $A=$a_value;
+my $B=$b_value;
+my $C=$c_value;
+
+
+if ($A == 0){
+	#$x1=$x2=-$C/$B;
+	#print "$x1, $x2\n";
+	print "No solution!\n";
+}elsif (-$B+($B**2-4*$A*$C)**0.5 eq 'NaN'){
+	print "No solution!\n";
+}else{
+	
+	$x1= ((-$B+($B**2-4*$A*$C)**0.5)/(2*$A));
+	
+	$x2= ((-$B-($B**2-4*$A*$C)**0.5)/(2*$A));
+	print "$x1, $x2\n";
+}
 }
 
 1;

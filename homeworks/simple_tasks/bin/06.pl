@@ -22,12 +22,10 @@ encode('#abc', 1) - печатает '$bcd'
 sub encode {
     my ($str, $key) = @_;
     my $encoded_str = '';
+	
+  decode($str, 0x7F+1-$key%128);
 
-    # ...
-    # Алгоритм шифрования
-    # ...
-
-    print "$encoded_str\n";
+    
 }
 
 =head1 decode ($encoded_str, $key)
@@ -44,12 +42,49 @@ decode('$bcd', 1) - печатает '#abc'
 sub decode {
     my ($encoded_str, $key) = @_;
     my $str = '';
+	
 
-    # ...
-    # Алгоритм дешифрования
-    # ...
 
-    print "$str\n";
+my @strList = split ('',$encoded_str);
+
+if ($key<0){
+	return;
+}
+ 
+my $i=0;
+while ($i++<$key){
+	if(shiftOneTime(@strList)==0){
+		$i=-1;
+		last;
+	}
+
 }
 
+if ($i!=-1){
+	$str=join('',@strList);
+	print "$str\n";
+	
+}
+
+ 
+
+    
+}
+sub shiftOneTime{
+for(@_){
+
+	if (ord($_) > 0x7F || ord($_)<0){
+		return 0; # недопустимые символы в строке
+		last;
+	}
+
+	if (ord($_) == 0){
+		$_ = chr(0x7F);
+		next;
+	}
+	
+	$_=chr(ord($_)-1);	
+}
+return 1;
+}
 1;

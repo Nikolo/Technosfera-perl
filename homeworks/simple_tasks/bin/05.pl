@@ -30,11 +30,21 @@ sub run {
     my ($str, $substr) = @_;
     my $num = 0;
 
-    # ...
-    # Вычисление количества вохождений строки $substr в строку $str,
-    # ...
+ my $inputString = $str;
+chomp $inputString;
+my $subString = $substr;
+chomp $subString;
+if (length($subString) > length($inputString)){
+	return 0; #ошибка, строка мешьне чем подстрока
+}
+my $count=0;
+my $index=0;
+while ( ($index=index($inputString,$subString, $index)) != -1 ){
+	$index++;
+	$count++;
+}
 
-    print "$num\n";
+    print "$count\n";
 }
 
 1;
