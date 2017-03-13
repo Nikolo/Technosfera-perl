@@ -28,7 +28,7 @@ print ZERO;             # 0
 print PI;               # 3.14
 ```
 
-perl```
+```perl
 package Foo::Bar;
 
 use Foo qw/:math ZERO/;
@@ -37,7 +37,7 @@ print ZERO;             # 0
 print PI;               # 3.14
 ```
 
-perl```
+```perl
 package Foo::Bar::Baz;
 
 use Foo qw/:all/;
