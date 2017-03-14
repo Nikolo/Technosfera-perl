@@ -12,41 +12,53 @@ use DDP;
 
 
 sub calculate {
-#	my @members = @_;
-	my $ref1 = ['Рита', 'Игорь'];
-	my $ref2 = ['Вадим', 'Катя'];
-	my @members = ('Али', 'Ира', $ref1, $ref2); 
+	my @members = @_;
+	#my $ref1 = ['Рита', 'Игорь'];
+	#my $ref2 = ['Вадим', 'Катя'];
+	#my @members = ('Али', 'Ира', $ref1, $ref2); 
 	my @res;
 	my %presented;
-	my $n = scalar @members + scalar grep { ref($_) } @members;
+	#my $n = scalar @members + scalar grep { ref($_) } @members;
 	my %hash = map {@$_} grep{ ref($_) } @members;
         %hash =  (%hash, reverse map {@$_} grep{ ref($_) } @members );
-	for (my $i=0; $i < $n; $i++) {
+	my @all = map {if (ref($_)) {@$_} else {$_}} @members;
+	my %uniq;
+	my @all_members = grep { !$uniq{$_}++ } @all;
+
+	
+	my $n = scalar @all_members;
+
+#	print "@members\n";
+#	p @members;
+#	print '@all_members:'."\n";	
+#	p @all_members;
+	#print '%hash:'."\n";
+	#p %hash;	
+	for (my $i = 0; $i < $n; $i++) {
 		print "$i\n";
-		$presented {$i} = rand($n);
-		if ($presented{$i} == $i i or %hash) {
+		my $rand = int(rand($n));
+		print "$rand\n";
+		$presented { $all_members[$i] } = $all_members [ $rand ];
+		if ( $presented{$all_members[$i]} eq  $all_members[$i] ){
 			redo;
 		} 
+		if ( exists $hash{$all_members[$i]} and ($presented{$all_members[$i]} eq  $hash{$all_members[$i]})) {
+			redo;
+		}
+#		if ( exists $presented { $all_members[$rand] } and   $presented { $all_members[$rand] }  eq  $all_members[$i] ) {
+#                        redo;
+#		}
 #		p %presented;  
+	
+	
+		push @res,[ "$all_members[$i]", "$presented{$all_members[$i]}" ];
 	}
-	# ...
-	#	push @res,[ "fromname", "toname" ];
-	# ...
-	#return @res;
-	print "@members\n";
-	my %hash = map {@$_} grep{ ref($_) } @members;
-	%hash =  (%hash, reverse map {@$_} grep{ ref($_) } @members );
-	my @arr = %hash;
-	p %hash;
-	print "@arr\n";
-	my @a = 1 .. 2;
-	my @b = 45 ..100;
+	#print '%presented:'."\n";
+	#p %presented;
+#	p @res;
+	return @res;
 
-	my %chk;
-	@chk{@a} = (1, 2);
-	p %chk;
-	p %presented;
 }
-calculate;
+#calculate;
 
 1;
