@@ -17,8 +17,17 @@ sub calculate {
 	my $ref2 = ['Вадим', 'Катя'];
 	my @members = ('Али', 'Ира', $ref1, $ref2); 
 	my @res;
-	for my $var (0..$#members + scalar grep { ref($_) } @members) {
-		print "$var\n";  
+	my %presented;
+	my $n = scalar @members + scalar grep { ref($_) } @members;
+	my %hash = map {@$_} grep{ ref($_) } @members;
+        %hash =  (%hash, reverse map {@$_} grep{ ref($_) } @members );
+	for (my $i=0; $i < $n; $i++) {
+		print "$i\n";
+		$presented {$i} = rand($n);
+		if ($presented{$i} == $i i or %hash) {
+			redo;
+		} 
+#		p %presented;  
 	}
 	# ...
 	#	push @res,[ "fromname", "toname" ];
@@ -26,8 +35,17 @@ sub calculate {
 	#return @res;
 	print "@members\n";
 	my %hash = map {@$_} grep{ ref($_) } @members;
-	print values %hash;
+	%hash =  (%hash, reverse map {@$_} grep{ ref($_) } @members );
+	my @arr = %hash;
+	p %hash;
+	print "@arr\n";
+	my @a = 1 .. 2;
+	my @b = 45 ..100;
 
+	my %chk;
+	@chk{@a} = (1, 2);
+	p %chk;
+	p %presented;
 }
 calculate;
 
