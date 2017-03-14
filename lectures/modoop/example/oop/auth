@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+use strict;
+use Local::User 1.3;
+
+my ($email, $passwd) = @ARGV;
+die "USAGE: $0 <email> <password>\n"
+    unless length $email && length $passwd;
+
+my $user = Local::User->get_by_email($email);
+die "Пользователь с адресом '$email' не найден\n"
+    unless $user;
+die $user->welcome_string(), "\n", "Введен неправильный пароль\n"
+    unless $user->is_password_valid($passwd);
+
+print $user->welcome_string(), "\n";
+print "Добро пожаловать\n";
