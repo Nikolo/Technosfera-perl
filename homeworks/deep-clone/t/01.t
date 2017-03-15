@@ -67,11 +67,13 @@ my $CYCLE_ARRAY = [ 1, 2, 3 ];
 $CYCLE_ARRAY->[4] = $CYCLE_ARRAY;
 $CYCLE_ARRAY->[5] = $CYCLE_ARRAY;
 $CYCLE_ARRAY->[6] = [ 1, 2, 3, [ { 1 => $CYCLE_ARRAY } ] ];
+$CYCLE_ARRAY->[7] = $CYCLE_ARRAY->[6][3];
 
 my $CYCLE_HASH = { a => 1, b => 2 };
 $CYCLE_HASH->{c} = $CYCLE_HASH;
 $CYCLE_HASH->{d} = $CYCLE_HASH;
-$CYCLE_HASH->{e} = { a => 1, b => 2, [ { 1 => $CYCLE_HASH } ] };
+$CYCLE_HASH->{e} = { a => 1, b => 2, c => [ { 1 => $CYCLE_HASH } ] };
+$CYCLE_HASH->{f} = $CYCLE_HASH->{e}{c};
 
 my $TESTS = [
     {
@@ -85,6 +87,14 @@ my $TESTS = [
     {
         name => 'simple string',
         orig => 'string',
+    },
+    {
+        name => 'simple zero',
+        orig => 0,
+    },
+    {
+        name => 'simple empty string',
+        orig => '',
     },
     {
         name => 'nums array',
