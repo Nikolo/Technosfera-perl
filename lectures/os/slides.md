@@ -1145,6 +1145,8 @@ layout: false
 
 - Реализовать параллельное умножение квадратных матриц. Подробности и тесты:  [matrix_multiplier](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/matrix_multiplier)
 
+---
+
 class:lastpage title
 
 # Спасибо за внимание!
