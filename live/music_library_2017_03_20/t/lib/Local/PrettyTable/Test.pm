@@ -45,7 +45,7 @@ sub test__header {
 
     is(
         $self->{table}->_header,
-        '/' . ('-' x 29) .  '\\'
+        '/' . ('-' x 29) .  '\\' . "\n"
     );
 
     return;
@@ -56,7 +56,7 @@ sub test__footer {
 
     is(
         $self->{table}->_footer,
-        '\\' . ('-' x 29) .  '/'
+        '\\' . ('-' x 29) .  '/' . "\n"
     );
 
     return;
@@ -67,7 +67,18 @@ sub test__separator {
 
     is(
         $self->{table}->_separator,
-        '|------------+-----+----------|',
+        "|------------+-----+----------|\n",
+    );
+
+    return;
+}
+
+sub test__row {
+    my ($self) = @_;
+
+    is(
+        $self->{table}->_row(1),
+        "|      sonic |   2 | hedgehog |\n",
     );
 
     return;

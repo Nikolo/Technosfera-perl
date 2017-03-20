@@ -68,19 +68,36 @@ sub _build__separator {
     return '|' . (
         join '+',
         map { '-' x ($_ + 2) } @{$self->_cols_width}
-    ) . '|';
+    ) . '|' . "\n";
 }
 
 sub _header {
     my ($self) = @_;
 
-    return '/' . ('-' x ($self->_width - 2)) . '\\';
+    return '/' . ('-' x ($self->_width - 2)) . '\\' . "\n";
 }
 
 sub _footer {
     my ($self) = @_;
 
-    return '\\' . ('-' x ($self->_width - 2)) . '/';
+    return '\\' . ('-' x ($self->_width - 2)) . '/' . "\n";
+}
+
+sub _row {
+    my ($self, $row_n) = @_;
+
+    my $row = $self->data->[$row_n];
+
+    my @cells;
+    foreach my $col_n (0 .. @{$row} - 1) {
+        my $width = $self->_cols_width->[$col_n];
+        my $cell = sprintf(" %${width}s ", $row->[$col_n]);
+        push(@cells, $cell);
+    }
+
+    return '|' . (
+        join '|', @cells
+    ) . '|' . "\n";
 }
 
 sub to_string {
