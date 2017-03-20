@@ -54,4 +54,19 @@ sub test__width {
     return;
 }
 
+sub test__header {
+    my ($self) = @_;
+
+    my $table = Local::PrettyTable->new(
+        data => $self->_sample(),
+    );
+
+    is(
+        $table->_header,
+        '/' . ('-' x 29) .  '\\'
+    );
+
+    return;
+}
+
 1;
