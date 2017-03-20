@@ -4,22 +4,16 @@ use Test::Class::Moose;
 
 use Local::PrettyTable;
 
-sub _sample {
-    return [
-        ['bamby', 4, 'moose'],
-        ['sonic', 2, 'hedgehog'],
-        ['dumbledore', 100, 'human'],
-    ],
-}
-
-sub test_new {
+sub test_setup {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
+    $self->{table} = Local::PrettyTable->new(
+        data => [
+            ['bamby', 4, 'moose'],
+            ['sonic', 2, 'hedgehog'],
+            ['dumbledore', 100, 'human'],
+        ],
     );
-
-    ok($table);
 
     return;
 }
@@ -27,12 +21,8 @@ sub test_new {
 sub test__cols_width {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
-    );
-
     cmp_deeply(
-        $table->_cols_width,
+        $self->{table}->_cols_width,
         [10, 3, 8],
     );
 
@@ -42,12 +32,8 @@ sub test__cols_width {
 sub test__width {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
-    );
-
     is(
-        $table->_width,
+        $self->{table}->_width,
         31,
     );
 
@@ -57,12 +43,8 @@ sub test__width {
 sub test__header {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
-    );
-
     is(
-        $table->_header,
+        $self->{table}->_header,
         '/' . ('-' x 29) .  '\\'
     );
 
@@ -72,12 +54,8 @@ sub test__header {
 sub test__footer {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
-    );
-
     is(
-        $table->_footer,
+        $self->{table}->_footer,
         '\\' . ('-' x 29) .  '/'
     );
 
@@ -87,12 +65,8 @@ sub test__footer {
 sub test__separator {
     my ($self) = @_;
 
-    my $table = Local::PrettyTable->new(
-        data => $self->_sample(),
-    );
-
     is(
-        $table->_separator,
+        $self->{table}->_separator,
         '|------------+-----+----------|',
     );
 
