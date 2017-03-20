@@ -60,6 +60,12 @@ sub _header {
     return '/' . ('-' x ($self->_width - 2)) . '\\';
 }
 
+sub _footer {
+    my ($self) = @_;
+
+    return '\\' . ('-' x ($self->_width - 2)) . '/';
+}
+
 sub to_string {
 }
 

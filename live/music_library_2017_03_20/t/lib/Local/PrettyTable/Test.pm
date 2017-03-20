@@ -69,4 +69,19 @@ sub test__header {
     return;
 }
 
+sub test__footer {
+    my ($self) = @_;
+
+    my $table = Local::PrettyTable->new(
+        data => $self->_sample(),
+    );
+
+    is(
+        $table->_footer,
+        '\\' . ('-' x 29) .  '/'
+    );
+
+    return;
+}
+
 1;
