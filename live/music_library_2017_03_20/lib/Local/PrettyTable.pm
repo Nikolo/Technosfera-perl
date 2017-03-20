@@ -29,6 +29,14 @@ has _width => (
     builder => '_build__width',
 );
 
+has _separator => (
+    is => 'ro',
+    isa => 'Str',
+    required => 1,
+    lazy => 1,
+    builder => '_build__separator',
+);
+
 sub _build__cols_width {
     my ($self) = @_;
 
@@ -52,6 +60,15 @@ sub _build__width {
     my $borders = @cols_width + 1;
 
     return $margins + $borders + sum(@cols_width);
+}
+
+sub _build__separator {
+    my ($self) = @_;
+
+    return '|' . (
+        join '+',
+        map { '-' x ($_ + 2) } @{$self->_cols_width}
+    ) . '|';
 }
 
 sub _header {

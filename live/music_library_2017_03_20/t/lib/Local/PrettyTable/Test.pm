@@ -84,4 +84,19 @@ sub test__footer {
     return;
 }
 
+sub test__separator {
+    my ($self) = @_;
+
+    my $table = Local::PrettyTable->new(
+        data => $self->_sample(),
+    );
+
+    is(
+        $table->_separator,
+        '|------------+-----+----------|',
+    );
+
+    return;
+}
+
 1;
