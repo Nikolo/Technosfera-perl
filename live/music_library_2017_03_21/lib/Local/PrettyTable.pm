@@ -65,6 +65,14 @@ sub _footer {
     return '\\' . ('-' x ($self->_width - 2)) . '/';
 }
 
+sub _separator {
+    my ($self) = @_;
+
+    my @cols = map {'-' x ($_ + 2)} @{$self->_cols_width};
+
+    return '|' . join('+', @cols) . '|';
+}
+
 sub to_string {
     my ($self) = @_;
 

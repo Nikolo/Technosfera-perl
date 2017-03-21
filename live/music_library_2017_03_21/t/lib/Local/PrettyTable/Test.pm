@@ -54,4 +54,23 @@ sub test__footer {
     return;
 }
 
+sub test__separator {
+    my ($self) = @_;
+
+    is(
+        $self->_table->_separator,
+        join('', (
+            '|',
+                ('-' x 9),
+                '+',
+                ('-' x 13),
+                '+',
+                ('-' x 8),
+            '|'
+        )),
+    );
+
+    return;
+}
+
 1;
