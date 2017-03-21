@@ -5,6 +5,8 @@ use warnings;
 
 use Mouse;
 
+use List::Util qw(sum);
+
 has matrix => (
     is => 'ro',
     isa => 'ArrayRef[ArrayRef[Str]]',
@@ -28,11 +30,10 @@ sub cols_width {
 sub width {
     my ($self) = @_;
 
-    foreach my $row (@{$self->matrix}) {
-        
-    }
+    my $margins = 2 * @{$self->cols_width}; 
+    my $borders = @{$self->cols_width} + 1;
 
-    return;
+    return sum($margins, $borders, @{$self->cols_width});
 }
 
 sub header {
