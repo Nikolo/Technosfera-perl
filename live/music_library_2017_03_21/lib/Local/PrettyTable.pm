@@ -53,10 +53,10 @@ sub _build__width {
     return sum($margins, $borders, @{$self->_cols_width});
 }
 
-sub header {
+sub _header {
     my ($self) = @_;
 
-    return;
+    return '/' . ('-' x ($self->_width - 2)) . '\\';
 }
 
 sub to_string {
