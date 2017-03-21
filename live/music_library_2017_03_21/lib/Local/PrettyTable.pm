@@ -13,8 +13,16 @@ has matrix => (
 
 sub cols_width {
     my ($self) = @_;
+    
+    my @result;
+    foreach my $row (@{$self->matrix}) {
+        foreach my $col_n (0 .. $#{$row}) {
+            my $length = length($row->[$col_n]);
+            $result[$col_n] = $length if $length > ($result[$col_n] // 0);
+        }
+    }
 
-    return;
+    return \@result;
 }
 
 sub width {
