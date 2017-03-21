@@ -13,6 +13,31 @@ has matrix => (
     required => 1,
 );
 
+has _left_margin => (
+    is => 'ro',
+    isa => 'Int',
+    required => 1,
+    default => 1,
+);
+
+has _right_margin => (
+    is => 'ro',
+    isa => 'Int',
+    required => 1,
+    default => 1,
+);
+
+has _total_margin => (
+    is => 'ro',
+    isa => 'Int',
+    required => 1,
+    lazy => 1,
+    default => sub {
+        my ($self) = @_;
+        return $self->_left_margin + $self->_right_margin;
+    },
+);
+
 has _cols_width => (
     is => 'ro',
     isa => 'ArrayRef[Int]',
@@ -28,7 +53,6 @@ has _width => (
     lazy => 1,
     builder => '_build__width',
 );
-
 
 sub _build__cols_width {
     my ($self) = @_;
@@ -47,7 +71,7 @@ sub _build__cols_width {
 sub _build__width {
     my ($self) = @_;
 
-    my $margins = 2 * @{$self->_cols_width}; 
+    my $margins = $self->_total_margin * @{$self->_cols_width}; 
     my $borders = @{$self->_cols_width} + 1;
 
     return sum($margins, $borders, @{$self->_cols_width});
@@ -56,19 +80,19 @@ sub _build__width {
 sub _header {
     my ($self) = @_;
 
-    return '/' . ('-' x ($self->_width - 2)) . '\\';
+    return '/' . ('-' x ($self->_width - $self->_total_margin)) . '\\';
 }
 
 sub _footer {
     my ($self) = @_;
 
-    return '\\' . ('-' x ($self->_width - 2)) . '/';
+    return '\\' . ('-' x ($self->_width - $self->_total_margin)) . '/';
 }
 
 sub _separator {
     my ($self) = @_;
 
-    my @cols = map {'-' x ($_ + 2)} @{$self->_cols_width};
+    my @cols = map {'-' x ($_ + $self->_total_margin)} @{$self->_cols_width};
 
     return '|' . join('+', @cols) . '|';
 }
