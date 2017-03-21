@@ -80,13 +80,17 @@ sub _build__width {
 sub _header {
     my ($self) = @_;
 
-    return '/' . ('-' x ($self->_width - $self->_total_margin)) . '\\';
+    my $borders = 2;
+
+    return '/' . ('-' x ($self->_width - $borders)) . '\\';
 }
 
 sub _footer {
     my ($self) = @_;
 
-    return '\\' . ('-' x ($self->_width - $self->_total_margin)) . '/';
+    my $borders = 2;
+
+    return '\\' . ('-' x ($self->_width - $borders)) . '/';
 }
 
 sub _separator {
@@ -95,6 +99,24 @@ sub _separator {
     my @cols = map {'-' x ($_ + $self->_total_margin)} @{$self->_cols_width};
 
     return '|' . join('+', @cols) . '|';
+}
+
+sub _row {
+    my ($self, $row_n) = @_;
+
+    my $row = $self->matrix->[$row_n];
+    my @cells;
+    foreach my $col_n (0 .. $#{$row}) {
+        my $width = $self->_cols_width->[$col_n];
+        my $cell = (
+            (' ' x $self->_left_margin) .
+            sprintf("%${width}s", $row->[$col_n]) .
+            (' ' x $self->_right_margin)
+        );
+        push(@cells, $cell);
+    }
+
+    return '|' . join('|', @cells) . '|';
 }
 
 sub to_string {

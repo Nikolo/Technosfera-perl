@@ -87,4 +87,15 @@ sub test__separator {
     return;
 }
 
+sub test__row {
+    my ($self) = @_;
+
+    is(
+        $self->_table->_row(1),
+        '| uronili |      mishku | na pol |',
+    );
+
+    return;
+}
+
 1;
