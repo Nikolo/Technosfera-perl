@@ -13,9 +13,26 @@ has matrix => (
     required => 1,
 );
 
-sub cols_width {
+has _cols_width => (
+    is => 'ro',
+    isa => 'ArrayRef[Int]',
+    required => 1,
+    lazy => 1,
+    builder => '_build__cols_width',
+);
+
+has _width => (
+    is => 'ro',
+    isa => 'Int',
+    required => 1,
+    lazy => 1,
+    builder => '_build__width',
+);
+
+
+sub _build__cols_width {
     my ($self) = @_;
-    
+
     my @result;
     foreach my $row (@{$self->matrix}) {
         foreach my $col_n (0 .. $#{$row}) {
@@ -27,13 +44,13 @@ sub cols_width {
     return \@result;
 }
 
-sub width {
+sub _build__width {
     my ($self) = @_;
 
-    my $margins = 2 * @{$self->cols_width}; 
-    my $borders = @{$self->cols_width} + 1;
+    my $margins = 2 * @{$self->_cols_width}; 
+    my $borders = @{$self->_cols_width} + 1;
 
-    return sum($margins, $borders, @{$self->cols_width});
+    return sum($margins, $borders, @{$self->_cols_width});
 }
 
 sub header {

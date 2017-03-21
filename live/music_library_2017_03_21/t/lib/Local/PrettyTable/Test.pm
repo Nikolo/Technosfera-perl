@@ -16,7 +16,7 @@ sub test_new {
     return;
 }
 
-sub test_cols_width {
+sub test__cols_width {
     my ($self) = @_;
 
     my $matrix = [
@@ -27,12 +27,12 @@ sub test_cols_width {
 
     my $table = Local::PrettyTable->new(matrix => $matrix);
     
-    cmp_deeply($table->cols_width, [7, 11, 6]);
+    cmp_deeply($table->_cols_width, [7, 11, 6]);
 
     return;
 }
 
-sub test_width {
+sub test__width {
     my ($self) = @_;
 
     my $matrix = [
@@ -43,7 +43,7 @@ sub test_width {
 
     my $table = Local::PrettyTable->new(matrix => $matrix);
     
-    is($table->width, 34);
+    is($table->_width, 34);
 
     return;
 }
