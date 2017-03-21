@@ -122,7 +122,14 @@ sub _row {
 sub to_string {
     my ($self) = @_;
 
-    return;
+    return join('', (
+        $self->_header,
+        join(
+            $self->_separator,
+            map {$self->_row($_)} (0 .. $#{$self->matrix})
+        ),
+        $self->_footer,
+    ));
 }
 
 1;

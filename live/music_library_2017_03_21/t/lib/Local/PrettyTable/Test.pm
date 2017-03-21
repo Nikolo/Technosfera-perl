@@ -99,4 +99,21 @@ sub test__row {
     return;
 }
 
+sub test_to_string {
+    my ($self) = @_;
+
+    is(
+        $self->_table->to_string(),
+        "/--------------------------------\\\n" .
+        "|    mama |        myla |   ramu |\n" .
+        "|---------+-------------+--------|\n" .
+        "| uronili |      mishku | na pol |\n" .
+        "|---------+-------------+--------|\n" .
+        "|     foo | integration |    bar |\n" .
+        "\\--------------------------------/\n"
+    );
+
+    return;
+}
+
 1;
