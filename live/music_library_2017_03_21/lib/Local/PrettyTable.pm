@@ -82,7 +82,7 @@ sub _header {
 
     my $borders = 2;
 
-    return '/' . ('-' x ($self->_width - $borders)) . '\\';
+    return '/' . ('-' x ($self->_width - $borders)) . '\\' . "\n";
 }
 
 sub _footer {
@@ -90,7 +90,7 @@ sub _footer {
 
     my $borders = 2;
 
-    return '\\' . ('-' x ($self->_width - $borders)) . '/';
+    return '\\' . ('-' x ($self->_width - $borders)) . '/' . "\n";
 }
 
 sub _separator {
@@ -98,7 +98,7 @@ sub _separator {
 
     my @cols = map {'-' x ($_ + $self->_total_margin)} @{$self->_cols_width};
 
-    return '|' . join('+', @cols) . '|';
+    return '|' . join('+', @cols) . '|' . "\n";
 }
 
 sub _row {
@@ -116,7 +116,7 @@ sub _row {
         push(@cells, $cell);
     }
 
-    return '|' . join('|', @cells) . '|';
+    return '|' . join('|', @cells) . '|' . "\n";
 }
 
 sub to_string {

@@ -51,7 +51,7 @@ sub test__header {
 
     is(
         $self->_table->_header,
-        '/' . ('-' x 32) . '\\'
+        '/' . ('-' x 32) . '\\' . "\n"
     );
 
     return;
@@ -62,7 +62,7 @@ sub test__footer {
 
     is(
         $self->_table->_footer,
-        '\\' . ('-' x 32) . '/'
+        '\\' . ('-' x 32) . '/' . "\n"
     );
 
     return;
@@ -80,7 +80,8 @@ sub test__separator {
                 ('-' x 13),
                 '+',
                 ('-' x 8),
-            '|'
+            '|',
+            "\n"
         )),
     );
 
@@ -92,7 +93,7 @@ sub test__row {
 
     is(
         $self->_table->_row(1),
-        '| uronili |      mishku | na pol |',
+        "| uronili |      mishku | na pol |\n",
     );
 
     return;
