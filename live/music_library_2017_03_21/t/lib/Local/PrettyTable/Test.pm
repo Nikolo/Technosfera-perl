@@ -43,4 +43,15 @@ sub test__header {
     return;
 }
 
+sub test__footer {
+    my ($self) = @_;
+
+    is(
+        $self->_table->_footer,
+        '\\' . ('-' x 32) . '/'
+    );
+
+    return;
+}
+
 1;
