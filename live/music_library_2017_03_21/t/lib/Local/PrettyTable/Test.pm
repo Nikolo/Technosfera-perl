@@ -16,6 +16,20 @@ sub _table {
     return Local::PrettyTable->new(matrix => $matrix);
 }
 
+sub test__total_margin {
+    my ($self) = @_;
+
+    my $table = Local::PrettyTable->new(
+        matrix => [],
+        _left_margin => 3,
+        _right_margin => 4,
+    );
+
+    is($table->_total_margin, 7);
+
+    return;
+}
+
 sub test__cols_width {
     my ($self) = @_;
 
