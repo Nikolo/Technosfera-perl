@@ -1912,11 +1912,10 @@ say $uri;
 
 
 ---
-class:lastpage
+class:lastpage title
 
-# Оставьте отзыв на портале
+# Спасибо за внимание!
 
-Спасибо за внимание!
+## Оставьте отзыв
 
-Mons Anderson &lt;<mons@cpan.org>&gt;
-
+.teacher[![teacher]()]
