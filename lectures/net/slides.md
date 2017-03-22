@@ -186,6 +186,7 @@ socket my $s, AF_INET, SOCK_STREAM, IPPROTO_TCP;
 my $host = 'search.cpan.org'; my $port = 80;
 my $addr = gethostbyname $host;
 my $sa = sockaddr_in($port, $addr);
+connect($s, $sa);
 ```
 
 ```perl
@@ -233,6 +234,7 @@ socket my $s, AF_INET, SOCK_STREAM, IPPROTO_TCP;
 my $host = 'search.cpan.org'; my $port = 80;
 my $addr = gethostbyname $host;
 my $sa = sockaddr_in($port, $addr);
+connect($s, $sa);
 ```
 
 ```perl
@@ -258,6 +260,7 @@ socket my $s, AF_INET, SOCK_STREAM, IPPROTO_TCP;
 my $host = 'search.cpan.org'; my $port = 80;
 my $addr = gethostbyname $host;
 my $sa = sockaddr_in($port, $addr);
+connect($s, $sa);
 ```
 
 ```perl
@@ -477,6 +480,7 @@ while (`accept` my $cln, $srv) {
         while (<$cln>) {
             print {$cln} $_;
         }
+        exit;
     }
 }
 ```
@@ -1624,6 +1628,89 @@ http_request
         keep-alive       "timeout=5, max=100",
         last-modified    "Wed, 22 Mar 2017 01:05:27 GMT",
         server           "Plack/Starman (Perl)",
+```
+
+---
+
+# AnyEvent::Socket: client
+
+```perl
+use AnyEvent::Socket;
+
+tcp_connect "search.cpan.org", 80, sub {
+    if (my $fh = shift) {
+        syswrite $fh, "GET / HTTP/1.0\n\n";
+        ...
+    }
+    else {
+        warn "Connect failed: $!";
+    }
+};
+
+AE::cv->recv;
+```
+
+---
+
+# AnyEvent::Socket: server
+
+```perl
+use AnyEvent::Socket;
+
+tcp_server "0.0.0.0", 1234, sub {
+    my $fh = shift;
+    # Client connected ...
+    ...
+};
+
+AE::cv->recv;
+```
+
+---
+
+# AnyEvent::Socket + Handle
+
+```perl
+use AnyEvent::Socket;
+
+tcp_server "0.0.0.0", 1234, sub {
+    my $fh = shift;
+    my $h = AnyEvent::Handle->new(
+        fh => $fh,
+    );
+    $h->on_error(sub {
+        $h->destroy;
+    });
+    $h->push_read(line => sub {
+        $h->push_write($_[1]);
+    });
+};
+
+AE::cv->recv;
+```
+
+---
+
+# AnyEvent::Socket + Handle
+
+```perl
+use AnyEvent::Socket;
+
+tcp_server "0.0.0.0", 1234, sub {
+    my $fh = shift;
+    my $h = AnyEvent::Handle->new(
+        fh => $fh,
+    );
+*   $h->timeout(10);
+    $h->on_error(sub {
+        $h->destroy;
+    });
+    $h->push_read(line => sub {
+        $h->push_write($_[1]);
+    });
+};
+
+AE::cv->recv;
 ```
 
 ---
