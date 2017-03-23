@@ -32,10 +32,7 @@ $parallel_factor - Значение фактора паралельности
 
 $total_size - суммарный размер собранных ссылок в байтах
 
-$top10_list - top-10 страниц отсортированный по размеру + размер страницы.
-Структура - ссылка на массив массивов, в пером элементе ссылка на страницу, во втором - размер страницы в байтах
-
-Например: $top10_list = [['link1', 1000], ['link2', 900]];
+@top10_list - top-10 страниц отсортированный по размеру.
 
 =cut
 
@@ -45,13 +42,13 @@ sub run {
     $parallel_factor or die "You must setup parallel factor > 0";
 
     my $total_size = 0;
-    my $top10_list = [];
+    my @top10_list;
 
     #............
     #Код crawler-а
     #............
 
-    return $total_size, $top10_list;
+    return $total_size, @top10_list;
 }
 
 1;
