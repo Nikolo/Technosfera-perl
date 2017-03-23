@@ -23,7 +23,7 @@ sub test_file {
         exit 255;
     }
     
-    ok length($err),"Script has warnings";
+    ok !length($err),"Script has warnings";
     diag $err if length $err;
     
     my @template = split /\n/,$output;
