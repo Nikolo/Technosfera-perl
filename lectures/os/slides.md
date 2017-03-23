@@ -1139,9 +1139,9 @@ layout: false
 
 # Домашнее задание
 
-- VFS (virtual file system) — уровень абстракции поверх конкретной реализации файловой системы. В этой задаче необходимо написать преобразователь из бинарного формата (unpack) представления дерева файлов и каталогов в JSON. Так же важно следить за тем, что бы скрипт был запущен одновременно только 1 раз.
+- VFS (virtual file system) — уровень абстракции поверх конкретной реализации файловой системы. В этой задаче необходимо написать преобразователь из бинарного формата (unpack) представления дерева файлов и каталогов в JSON. Подробности и тесты: [vfs_dumper](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/vfs_dumper)
 
-- Написать программы сохраняющую STDIN в файл, с защитой от случайного нажатия Ctrl+C. Подробности и тесты:  [save_stdin](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/save_stdin- Реализовать параллельное умножение квадратных матриц. Подробности и тесты:  [save_stdin](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/matrix_multiplier)
+- Написать программы сохраняющую STDIN в файл, с защитой от случайного нажатия Ctrl+C. Подробности и тесты:  [save_stdin](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/save_stdin)
 
 - Реализовать параллельное умножение квадратных матриц. Подробности и тесты:  [matrix_multiplier](https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/matrix_multiplier)
 
