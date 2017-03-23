@@ -1942,6 +1942,8 @@ for(1..10) {
 
 Необходимо написать краулер с использованием `AnyEvent` или `Coro`
 
+https://github.com/Nikolo/Technosfera-perl/tree/master/homeworks/crawler
+
 * На вход подаётся URL и фактор паралльности.
 
 Требования к роботу:
