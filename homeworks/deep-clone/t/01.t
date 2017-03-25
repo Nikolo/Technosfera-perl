@@ -89,6 +89,9 @@ $CYCLE_HASH2->{f} = $CYCLE_HASH2->{e}{c};
 
 $CYCLE_ARRAY2->[6][3][0]{2} = $CYCLE_HASH2;
 
+my $cycle3 = [0];
+$cycle3->[1][0][0] = $cycle3;
+
 my $TESTS = [
     {
         name => 'simple undef',
@@ -193,6 +196,11 @@ my $TESTS = [
         orig => $CYCLE_HASH2,
         modifier => sub { $_[0]->{new_key} = 10 },
     },
+    {
+        name => 'deepcycle',
+        orig => $cycle3,
+        modifier => sub { $_[0]->[0] = 42 },
+    }
 ];
 
 test_deep($_) for @$TESTS;
