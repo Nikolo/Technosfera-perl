@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 13;
 use FindBin;
 use Symbol 'gensym';
 use IPC::Open3;
