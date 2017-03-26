@@ -1,7 +1,9 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
-
-use Test::More tests => 4;
+use FindBin; use lib "$FindBin::Bin/../lib";
+use Test::More;
 
 use Local::Reducer::Sum;
 use Local::Source::Array;
@@ -31,3 +33,5 @@ is($sum_reducer->reduced, 1, 'sum reducer saved');
 $sum_result = $sum_reducer->reduce_all();
 is($sum_result, 6, 'sum reduced all');
 is($sum_reducer->reduced, 6, 'sum reducer saved at the end');
+
+done_testing();
