@@ -716,7 +716,7 @@ $flags = fcntl($fd, F_SETFL, $flags | O_NONBLOCK)
 ```perl
 use Errno qw(EAGAIN EINTR EWOULDBLOCK);
 my $read = sysread($fd, my $buf, SOMELENGTH);
-if ($read) { # read >= 0
+if ($read) { # read > 0
     # work with data in buf
 }
 elsif (defined $read) { # read == 0
