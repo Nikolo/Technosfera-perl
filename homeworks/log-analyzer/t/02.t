@@ -22,13 +22,13 @@ sub test_file {
         diag $err;
         exit 255;
     }
-    
+
     ok !length($err),"Script has warnings";
     diag $err if length $err;
-    
+
     my @template = split /\n/,$output;
     my @result = split /\n/, $out;
-    
+
     for (0..$#template) {
         is $result[$_], $template[$_], "row $_";
     }
