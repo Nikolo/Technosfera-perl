@@ -67,11 +67,30 @@ my $CYCLE_ARRAY = [ 1, 2, 3 ];
 $CYCLE_ARRAY->[4] = $CYCLE_ARRAY;
 $CYCLE_ARRAY->[5] = $CYCLE_ARRAY;
 $CYCLE_ARRAY->[6] = [ 1, 2, 3, [ { 1 => $CYCLE_ARRAY } ] ];
+$CYCLE_ARRAY->[7] = $CYCLE_ARRAY->[6][3];
 
 my $CYCLE_HASH = { a => 1, b => 2 };
 $CYCLE_HASH->{c} = $CYCLE_HASH;
 $CYCLE_HASH->{d} = $CYCLE_HASH;
-$CYCLE_HASH->{e} = { a => 1, b => 2, [ { 1 => $CYCLE_HASH } ] };
+$CYCLE_HASH->{e} = { a => 1, b => 2, c => [ { 1 => $CYCLE_HASH } ] };
+$CYCLE_HASH->{f} = $CYCLE_HASH->{e}{c};
+
+my $CYCLE_ARRAY2 = [ 1, 2, 3 ];
+$CYCLE_ARRAY2->[4] = $CYCLE_ARRAY2;
+$CYCLE_ARRAY2->[5] = $CYCLE_ARRAY2;
+$CYCLE_ARRAY2->[6] = [ 1, 2, 3, [ { 1 => $CYCLE_ARRAY2 } ] ];
+$CYCLE_ARRAY2->[7] = $CYCLE_ARRAY2->[6][3];
+
+my $CYCLE_HASH2 = { a => 1, b => 2 };
+$CYCLE_HASH2->{c} = $CYCLE_HASH2;
+$CYCLE_HASH2->{d} = $CYCLE_HASH2;
+$CYCLE_HASH2->{e} = { a => 1, b => 2, c => [ { 1 => $CYCLE_HASH2 }, $CYCLE_ARRAY2 ] };
+$CYCLE_HASH2->{f} = $CYCLE_HASH2->{e}{c};
+
+$CYCLE_ARRAY2->[6][3][0]{2} = $CYCLE_HASH2;
+
+my $cycle3 = [0];
+$cycle3->[1][0][0] = $cycle3;
 
 my $TESTS = [
     {
@@ -85,6 +104,14 @@ my $TESTS = [
     {
         name => 'simple string',
         orig => 'string',
+    },
+    {
+        name => 'simple zero',
+        orig => 0,
+    },
+    {
+        name => 'simple empty string',
+        orig => '',
     },
     {
         name => 'nums array',
@@ -145,6 +172,16 @@ my $TESTS = [
         modifier => sub { $_[0]->{f}{k4}{kk3}[1] = 10 },
     },
     {
+        name => 'sub ref',
+        orig => sub {},
+        want_undef => 1,
+    },
+    {
+        name => 'complex with sub ref',
+        orig => [ 1, 2, 3, { a => 1, b => 2, c => [ qw/x y z/, sub {} ] } ],
+        want_undef => 1,
+    },
+    {
         name => 'cycle array',
         orig => $CYCLE_ARRAY,
         modifier => sub { $_[0]->[20] = 10 },
@@ -155,15 +192,15 @@ my $TESTS = [
         modifier => sub { $_[0]->{new_key} = 10 },
     },
     {
-        name => 'sub ref',
-        orig => sub {},
-        want_undef => 1,
+        name => 'cycle hash2',
+        orig => $CYCLE_HASH2,
+        modifier => sub { $_[0]->{new_key} = 10 },
     },
     {
-        name => 'complex with sub ref',
-        orig => [ 1, 2, 3, { a => 1, b => 2, c => [ qw/x y z/, sub {} ] } ],
-        want_undef => 1,
-    },
+        name => 'deepcycle',
+        orig => $cycle3,
+        modifier => sub { $_[0]->[0] = 42 },
+    }
 ];
 
 test_deep($_) for @$TESTS;

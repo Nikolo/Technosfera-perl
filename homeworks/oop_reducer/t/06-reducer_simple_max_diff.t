@@ -1,7 +1,9 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
-
-use Test::More tests => 6;
+use FindBin; use lib "$FindBin::Bin/../lib";
+use Test::More;
 
 use Local::Reducer::MaxDiff;
 use Local::Source::Text;
@@ -28,3 +30,5 @@ is($diff_reducer->reduced, $diff_result, 'diff reducer saved');
 $diff_result = $diff_reducer->reduce_all();
 is($diff_result, 8192, 'diff reduced all');
 is($diff_reducer->reduced, $diff_result, 'diff reducer saved at the end');
+
+done_testing();

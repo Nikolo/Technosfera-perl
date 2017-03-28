@@ -2,7 +2,7 @@ class:firstpage,title
 
 # Программирование на perl
 
-## Регулярные выражения и однострочники
+## Регулярки и однострочники
 
 ---
 
@@ -931,11 +931,11 @@ while (/`\G`(.)/gc) {
 ```perl
 my $str = ...
 for ($str) {
-  while (pos < length) {
-    if (/\G(\d+)/) {
+  while (pos() < length()) {
+    if (/\G(\d+)/gc) {
       say "got digits $1";
     }
-    elsif (/\G(\D+)/) {
+    elsif (/\G(\D+)/gc) {
       say "got non-digits $1";
     }
     else {

@@ -1,8 +1,24 @@
 <html>
   <head>
     <title>Perl</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script type="text/javascript">
+    timeend= new Date();
+    timeend= new Date(2017,2,29);
+    function time() {
+        today = new Date();
+        today = Math.floor((timeend-today)/1000);
+        tsec=today%60; today=Math.floor(today/60); if(tsec<10)tsec='0'+tsec;
+        tmin=today%60; today=Math.floor(today/60); if(tmin<10)tmin='0'+tmin;
+        thour=today%24; today=Math.floor(today/24);
+        timestr=today +" дней "+ thour+" часов "+tmin+" минут "+tsec+" секунд";
+        document.getElementById('t').innerHTML=timestr;
+        window.setTimeout("time()",1000);
+    }
+    </script>
   </head>
-  <body>
+  <body onload="time()">
+    <h2 style="float: right; margin-right: 10%;">До хакатона осталось: <span id="t" style="font-size:20px"></span></h2>
     <p>
       <form method="GET" action="viewer">
         <select name="lect">
@@ -10,6 +26,7 @@
           <option value="syn">syn</option>
           <option value="synadv">synadv</option>
           <option value="regexp">regexp</option>
+          <option value="os">OS</option>
           <option value="re">re</option>
           <option value="modoop">modoop</option>
           <option value="mod">mod</option>
