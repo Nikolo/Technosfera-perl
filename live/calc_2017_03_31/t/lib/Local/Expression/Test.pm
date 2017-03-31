@@ -16,6 +16,31 @@ sub test_new {
     return;
 }
 
+sub calculate {
+    my ($self) = @_;
+
+
+
+    return;
+}
+
+sub test__operators_regex {
+    my $expression = Local::Expression->new(
+        string => '',
+        _operators => {
+            'a(' => {},
+            'b]' => {},
+        }
+    );
+
+    is(
+        $expression->_operators_regex,
+        'a\\(|b\\]'
+    );
+
+    return;
+}
+
 sub test__get_tokens {
     my ($self) = @_;
 

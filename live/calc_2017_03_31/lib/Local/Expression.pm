@@ -12,16 +12,75 @@ has string => (
     required => 1,
 );
 
+has _operators => (
+    is => 'ro',
+    isa => 'HashRef[HashRef]',
+    required => 1,
+    builder => '_build__operators',
+);
+
+sub calculate {
+    my ($self) = @_;
+
+    return;
+}
+
+sub _build__operators {
+    my ($self) = @_;
+
+    return {
+        '+' => {
+            priority => 0,
+            func => sub {
+                my ($left, $right) = @_;
+                return $left + $right;
+            },
+        },
+        '-' => {
+            priority => 0,
+            func => sub {
+                my ($left, $right) = @_;
+                return $left - $right;
+            },
+        },
+        '*' => {
+            priority => 1,
+            func => sub {
+                my ($left, $right) = @_;
+                return $left * $right;
+            },
+        },
+        '/' => {
+            priority => 1,
+            func => sub {
+                my ($left, $right) = @_;
+                return $left / $right;
+            },
+        },
+    };
+}
+
+sub _operators_regex {
+    my ($self) = @_;
+
+    return
+        join '|',
+        map { "\Q$_\E" }
+        sort
+        keys %{$self->_operators};
+}
+
 sub _get_tokens {
     my ($self) = @_;
 
     my @result;
+    my $operators_regex = $self->_operators_regex();
 
     while ($self->string =~ m{
-        \G ( \d+    )|
-        \G ( [+*/-] )|
-        \G ( \s+    )|
-        \G ( .+     )
+        \G ( \d+              )|
+        \G ( $operators_regex )|
+        \G ( \s+              )|
+        \G ( .+               )
     }xg) {
         if (length($1)) {
             push(@result, $self->_create_value($1));
