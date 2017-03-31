@@ -12,20 +12,36 @@ has string => (
     required => 1,
 );
 
-has _operators => (
+has _operators_info => (
     is => 'ro',
     isa => 'HashRef[HashRef]',
     required => 1,
-    builder => '_build__operators',
+    builder => '_build__operators_info',
 );
 
 sub calculate {
     my ($self) = @_;
 
-    return;
+    my @operators_stack;
+    my @values_stack;
+
+    foreach my $token (@{$self->_get_tokens}) {
+        if ($token->{type} eq 'value') {
+            push(@values_stack, $token);
+        }
+        elsif ($token->{type} eq 'operator') {
+            push(@operators_stack, $token);
+        }
+    }
+
+    while (@operators_stack) {
+        $self->_make_operation(\@operators_stack, \@values_stack);
+    }
+
+    return $values_stack[0]->{value};
 }
 
-sub _build__operators {
+sub _build__operators_info {
     my ($self) = @_;
 
     return {
@@ -67,7 +83,7 @@ sub _operators_regex {
         join '|',
         map { "\Q$_\E" }
         sort
-        keys %{$self->_operators};
+        keys %{$self->_operators_info};
 }
 
 sub _get_tokens {
@@ -100,6 +116,29 @@ sub _get_tokens {
     }
 
     return \@result;
+}
+
+sub _make_operation {
+    my ($self, $operators_stack, $values_stack) = @_;
+
+    my $operator = pop(@{$operators_stack});
+    my $right = pop(@{$values_stack});
+    my $left = pop(@{$values_stack});
+
+    my $operator_info = $self->_operators_info->{
+        $operator->{operator}
+    };
+
+    push(
+        \@{$values_stack},
+        $self->_create_value(
+            $operator_info->{func}->(
+                $left->{value}, $right->{value}
+            )
+        )
+    );
+
+    return;
 }
 
 sub _create_value {

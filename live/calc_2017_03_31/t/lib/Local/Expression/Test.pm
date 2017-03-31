@@ -16,10 +16,14 @@ sub test_new {
     return;
 }
 
-sub calculate {
+sub test_calculate {
     my ($self) = @_;
 
+    my $expression = Local::Expression->new(
+        string => '3 + 4*5',
+    );
 
+    is($expression->calculate(), 23);
 
     return;
 }
@@ -27,7 +31,7 @@ sub calculate {
 sub test__operators_regex {
     my $expression = Local::Expression->new(
         string => '',
-        _operators => {
+        _operators_info => {
             'a(' => {},
             'b]' => {},
         }
@@ -80,6 +84,41 @@ sub test__get_tokens__bad {
     };
 
     fail('Should die');
+}
+
+sub test__make_operation {
+    my ($self) = @_;
+
+    my $operators_stack = [
+        1, 2, 3,
+        {type => 'operator', operator => '+'},
+    ];
+    my $values_stack = [
+        1, 2, 3,
+        {type => 'value', value => '24'},
+        {type => 'value', value => '42'},
+    ];
+
+    my $expression = Local::Expression->new(
+        string => '',
+    );
+
+    $expression->_make_operation($operators_stack, $values_stack);
+
+    cmp_deeply(
+        $operators_stack,
+        [1, 2, 3],
+    );
+
+    cmp_deeply(
+        $values_stack,
+        [
+            1, 2, 3,
+            {type => 'value', value => 66}
+        ],
+    );
+
+    return;
 }
 
 sub test__create_value {
