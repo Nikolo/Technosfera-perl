@@ -19,11 +19,23 @@ sub test_new {
 sub test_calculate {
     my ($self) = @_;
 
-    my $expression = Local::Expression->new(
-        string => '3 + 4*5',
+    my @cases = (
+        ['3 + 4*5',   23],
+        ['4*5 + 3',   23],
+        ['3*4 - 2*6', 0],
     );
 
-    is($expression->calculate(), 23);
+    foreach my $case (@cases) {
+        my ($string, $expected) = @{$case};
+        my $expression = Local::Expression->new(
+            string => $string,
+        );
+        is(
+            $expression->calculate(),
+            $expected,
+            "case `$string`"
+        );
+    }
 
     return;
 }

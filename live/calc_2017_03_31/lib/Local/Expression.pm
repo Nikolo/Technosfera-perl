@@ -24,12 +24,22 @@ sub calculate {
 
     my @operators_stack;
     my @values_stack;
+    my $op_info = $self->_operators_info();
 
     foreach my $token (@{$self->_get_tokens}) {
         if ($token->{type} eq 'value') {
             push(@values_stack, $token);
         }
         elsif ($token->{type} eq 'operator') {
+            while (
+                @operators_stack &&
+                $op_info->{$token->{operator}}->{priority} <
+                $op_info->{$operators_stack[-1]->{operator}}->{priority}
+            ) {
+                $self->_make_operation(
+                    \@operators_stack, \@values_stack
+                );
+            }
             push(@operators_stack, $token);
         }
     }
