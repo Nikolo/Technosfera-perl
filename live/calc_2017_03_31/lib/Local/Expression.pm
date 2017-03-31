@@ -113,30 +113,30 @@ sub _get_tokens {
     my $operators_regex = $self->_operators_regex();
 
     while ($self->string =~ m{
-        \G ( \d+              )|
-        \G ( $operators_regex )|
-        \G ( \(               )|
-        \G ( \)               )|
-        \G ( \s+              )|
-        \G ( .+               )
+        \G (?<number>  \d+              )|
+        \G (?<op>      $operators_regex )|
+        \G (?<openbr>  \(               )|
+        \G (?<closebr> \)               )|
+        \G (?<spaces>  \s+              )|
+        \G (?<garbage> .+               )
     }xg) {
-        if (length($1)) {
-            push(@result, $self->_create_value($1));
+        if (length($+{number})) {
+            push(@result, $self->_create_value($+{number}));
         }
-        elsif (length($2)) {
-            push(@result, $self->_create_operator($2));
+        elsif (length($+{op})) {
+            push(@result, $self->_create_operator($+{op}));
         }
-        elsif (length($3)) {
+        elsif (length($+{openbr})) {
             push(@result, $self->_create_open_bracket());
         }
-        elsif (length($4)) {
+        elsif (length($+{closebr})) {
             push(@result, $self->_create_close_bracket());
         }
-        elsif (length($5)) {
+        elsif (length($+{spaces})) {
             # spaces
         }
-        elsif (length($6)) {
-            die "Don't know how to parse $6";
+        elsif (length($+{garbage})) {
+            die "Don't know how to parse $+{garbage}";
         }
         else {
             die q{Shouldn't be here};
