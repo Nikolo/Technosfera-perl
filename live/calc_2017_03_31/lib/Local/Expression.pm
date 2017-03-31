@@ -24,10 +24,10 @@ sub _get_tokens {
         \G ( .+     )
     }xg) {
         if (length($1)) {
-            push(@result, $1);
+            push(@result, $self->_create_value($1));
         }
         elsif (length($2)) {
-            push(@result, $2);
+            push(@result, $self->_create_operator($2));
         }
         elsif (length($3)) {
             # spaces
@@ -41,6 +41,24 @@ sub _get_tokens {
     }
 
     return \@result;
+}
+
+sub _create_value {
+    my ($class, $value) = @_;
+
+    return {
+        type => 'value',
+        value => $value,
+    };
+}
+
+sub _create_operator {
+    my ($class, $operator) = @_;
+
+    return {
+        type => 'operator',
+        operator => $operator,
+    };
 }
 
 1;

@@ -25,15 +25,15 @@ sub test__get_tokens {
 
     cmp_deeply(
         $expression->_get_tokens(),
-        [qw(
-            22
-            +
-            2
-            *
-            42
-            -
-            1
-        )]
+        [
+            {type => 'value',    value => '22'},
+            {type => 'operator', operator => '+'},
+            {type => 'value',    value => '2'},
+            {type => 'operator', operator => '*'},
+            {type => 'value',    value => '42'},
+            {type => 'operator', operator => '-'},
+            {type => 'value',    value => '1'},
+        ]
     );
 
     return;
@@ -55,6 +55,34 @@ sub test__get_tokens__bad {
     };
 
     fail('Should die');
+}
+
+sub test__create_value {
+    my ($self) = @_;
+
+    cmp_deeply(
+        Local::Expression->_create_value(42),
+        {
+            value => 42,
+            type => 'value',
+        }
+    );
+
+    return;
+}
+
+sub test__create_operator {
+    my ($self) = @_;
+
+    cmp_deeply(
+        Local::Expression->_create_operator('+'),
+        {
+            operator => '+',
+            type => 'operator',
+        }
+    );
+
+    return;
 }
 
 1;
