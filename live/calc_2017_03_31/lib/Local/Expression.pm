@@ -33,6 +33,7 @@ sub calculate {
         elsif ($token->{type} eq 'operator') {
             while (
                 @operators_stack &&
+                $operators_stack[-1]->{type} ne 'open_bracket' &&
                 $op_info->{$token->{operator}}->{priority} <
                 $op_info->{$operators_stack[-1]->{operator}}->{priority}
             ) {
@@ -41,6 +42,15 @@ sub calculate {
                 );
             }
             push(@operators_stack, $token);
+        }
+        elsif ($token->{type} eq 'open_bracket') {
+            push(@operators_stack, $token);
+        }
+        elsif ($token->{type} eq 'close_bracket') {
+            while ($operators_stack[-1]->{type} ne 'open_bracket') {
+                $self->_make_operation(\@operators_stack, \@values_stack);
+            }
+            pop(@operators_stack);
         }
     }
 
@@ -105,6 +115,8 @@ sub _get_tokens {
     while ($self->string =~ m{
         \G ( \d+              )|
         \G ( $operators_regex )|
+        \G ( \(               )|
+        \G ( \)               )|
         \G ( \s+              )|
         \G ( .+               )
     }xg) {
@@ -115,10 +127,16 @@ sub _get_tokens {
             push(@result, $self->_create_operator($2));
         }
         elsif (length($3)) {
-            # spaces
+            push(@result, $self->_create_open_bracket());
         }
         elsif (length($4)) {
-            die "Don't know how to parse $4";
+            push(@result, $self->_create_close_bracket());
+        }
+        elsif (length($5)) {
+            # spaces
+        }
+        elsif (length($6)) {
+            die "Don't know how to parse $6";
         }
         else {
             die q{Shouldn't be here};
@@ -167,6 +185,18 @@ sub _create_operator {
         type => 'operator',
         operator => $operator,
     };
+}
+
+sub _create_open_bracket {
+    my ($self) = @_;
+
+    return {type => 'open_bracket'};
+}
+
+sub _create_close_bracket {
+    my ($self) = @_;
+
+    return {type => 'close_bracket'};
 }
 
 1;

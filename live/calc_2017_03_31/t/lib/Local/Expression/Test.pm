@@ -20,9 +20,12 @@ sub test_calculate {
     my ($self) = @_;
 
     my @cases = (
-        ['3 + 4*5',   23],
-        ['4*5 + 3',   23],
-        ['3*4 - 2*6', 0],
+        ['0',             0],
+        ['0 * 100',       0],
+        ['3 + 4*5',       23],
+        ['4*5 + 3',       23],
+        ['(3*4 - 2*6)',   0],
+        ['(2+6) / (4+4)', 1],
     );
 
     foreach my $case (@cases) {
@@ -33,7 +36,7 @@ sub test_calculate {
         is(
             $expression->calculate(),
             $expected,
-            "case `$string`"
+            "$string = $expected"
         );
     }
 
@@ -61,7 +64,7 @@ sub test__get_tokens {
     my ($self) = @_;
 
     my $expression = Local::Expression->new(
-        string => '22 + 2 * 42-1',
+        string => '22 + 2 * (42-1)',
     );
 
     cmp_deeply(
@@ -71,9 +74,11 @@ sub test__get_tokens {
             {type => 'operator', operator => '+'},
             {type => 'value',    value => '2'},
             {type => 'operator', operator => '*'},
+            {type => 'open_bracket'},
             {type => 'value',    value => '42'},
             {type => 'operator', operator => '-'},
             {type => 'value',    value => '1'},
+            {type => 'close_bracket'},
         ]
     );
 
@@ -155,6 +160,32 @@ sub test__create_operator {
         {
             operator => '+',
             type => 'operator',
+        }
+    );
+
+    return;
+}
+
+sub test__create_open_bracket {
+    my ($self) = @_;
+
+    cmp_deeply(
+        Local::Expression->_create_open_bracket(),
+        {
+            type => 'open_bracket',
+        }
+    );
+
+    return;
+}
+
+sub test__create_close_bracket {
+    my ($self) = @_;
+
+    cmp_deeply(
+        Local::Expression->_create_close_bracket(),
+        {
+            type => 'close_bracket',
         }
     );
 
