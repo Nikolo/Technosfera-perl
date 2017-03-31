@@ -7,8 +7,11 @@ use Local::Expression;
 sub test_new {
     my ($self) = @_;
 
-    my $expression = Local::Expression->new();
-    ok(defined($expression));
+    my $expression = Local::Expression->new(
+        string => '2+2',
+    );
+
+    is($expression->string, '2+2');
 
     return;
 }
