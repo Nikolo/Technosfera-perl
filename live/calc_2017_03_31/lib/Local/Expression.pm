@@ -6,6 +6,8 @@ use utf8;
 
 use Mouse;
 
+use List::Util qw(sum);
+
 has string => (
     is => 'ro',
     isa => 'Str',
@@ -27,7 +29,12 @@ sub calculate {
     my $op_info = $self->_operators_info();
 
     foreach my $token (@{$self->_get_tokens}) {
-        if ($token->{type} eq 'value') {
+        if ($token->{type} eq 'dice') {
+            push(@values_stack, $self->_create_value(
+                $self->_roll($token->{number}, $token->{size})
+            ));
+        }
+        elsif ($token->{type} eq 'value') {
             push(@values_stack, $token);
         }
         elsif ($token->{type} eq 'operator') {
@@ -113,14 +120,18 @@ sub _get_tokens {
     my $operators_regex = $self->_operators_regex();
 
     while ($self->string =~ m{
-        \G (?<number>  \d+              )|
-        \G (?<op>      $operators_regex )|
-        \G (?<openbr>  \(               )|
-        \G (?<closebr> \)               )|
-        \G (?<spaces>  \s+              )|
-        \G (?<garbage> .+               )
+        \G (?<dice>    (?:\d+)? d (?:\d+)? )|
+        \G (?<number>  \d+                 )|
+        \G (?<op>      $operators_regex    )|
+        \G (?<openbr>  \(                  )|
+        \G (?<closebr> \)                  )|
+        \G (?<spaces>  \s+                 )|
+        \G (?<garbage> .+                  )
     }xg) {
-        if (length($+{number})) {
+        if (length($+{dice})) {
+            push(@result, $self->_create_dice($+{dice}));
+        }
+        elsif (length($+{number})) {
             push(@result, $self->_create_value($+{number}));
         }
         elsif (length($+{op})) {
@@ -169,6 +180,21 @@ sub _make_operation {
     return;
 }
 
+sub _roll {
+    my ($self, $number, $size) = @_;
+
+    return sum(
+        map { 1 + int($size * $self->_rand()) }
+        (0 .. $number - 1)
+    );
+}
+
+sub _rand {
+    my ($class) = @_;
+
+    return rand();
+}
+
 sub _create_value {
     my ($class, $value) = @_;
 
@@ -188,15 +214,30 @@ sub _create_operator {
 }
 
 sub _create_open_bracket {
-    my ($self) = @_;
+    my ($class) = @_;
 
     return {type => 'open_bracket'};
 }
 
 sub _create_close_bracket {
-    my ($self) = @_;
+    my ($class) = @_;
 
     return {type => 'close_bracket'};
+}
+
+sub _create_dice {
+    my ($class, $dice) = @_;
+
+    my ($number_of_dice, $die_size) = split(/d/, $dice);
+
+    $number_of_dice = 1 if $number_of_dice eq '';
+    $die_size = 20 if $die_size eq '';
+
+    return {
+        type => 'dice',
+        number => $number_of_dice,
+        size => $die_size,
+    };
 }
 
 1;

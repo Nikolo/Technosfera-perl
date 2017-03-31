@@ -19,6 +19,12 @@ sub test_new {
 sub test_calculate {
     my ($self) = @_;
 
+    local *{Local::Expression::_rand} = sub {
+        my ($class) = @_;
+
+        return 0.5;
+    };
+
     my @cases = (
         ['0',             0],
         ['0 * 100',       0],
@@ -26,6 +32,8 @@ sub test_calculate {
         ['4*5 + 3',       23],
         ['(3*4 - 2*6)',   0],
         ['(2+6) / (4+4)', 1],
+        ['1d20 + 2d8',    21],
+        ['100d100 / 100', 50],
     );
 
     foreach my $case (@cases) {
@@ -64,15 +72,15 @@ sub test__get_tokens {
     my ($self) = @_;
 
     my $expression = Local::Expression->new(
-        string => '22 + 2 * (42-1)',
+        string => 'd + 2d8 * (42-1)',
     );
 
     cmp_deeply(
         $expression->_get_tokens(),
         [
-            {type => 'value',    value => '22'},
+            {type => 'dice', number => 1, size => 20},
             {type => 'operator', operator => '+'},
-            {type => 'value',    value => '2'},
+            {type => 'dice', number => 2, size => 8},
             {type => 'operator', operator => '*'},
             {type => 'open_bracket'},
             {type => 'value',    value => '42'},
@@ -188,6 +196,28 @@ sub test__create_close_bracket {
             type => 'close_bracket',
         }
     );
+
+    return;
+}
+
+sub test__create_dice {
+    my ($self, $dice) = @_;
+
+    my @cases = (
+        ['2d10', {type => 'dice', number => '2', size => '10'}],
+        ['d30',  {type => 'dice', number => '1', size => '30'}],
+        ['3d',   {type => 'dice', number => '3', size => '20'}],
+    );
+
+    foreach my $case (@cases) {
+        my ($string, $expected) = @{$case};
+        cmp_deeply(
+            Local::Expression->_create_dice($string),
+            $expected,
+            "$string"
+        );
+    }
+
 
     return;
 }
