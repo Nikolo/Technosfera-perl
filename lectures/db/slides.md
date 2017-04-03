@@ -38,9 +38,7 @@ WHERE account.balance > 0
 class:center
 # Схема
 
-.img-xkcd[
-![image]( schema.png )
-]
+.center[.normal-width[![image]( schema.png)]]
 
 ---
 
@@ -120,9 +118,7 @@ $name = $dbh->quote($name);
 class:center
 # SQL injections
 
-.img-xkcd[
-![image]( xkcd.png )
-]
+.center[.normal-width[![image]( xkcd.png)]]
 
 ---
 
@@ -391,18 +387,14 @@ my $user_id = $dbh->last_insert_id(
 class:center
 # ok?
 
-.img-xkcd[
-![image]( bad_example.png )
-]
+.center[.normal-width[![image]( bad_example.png)]]
 
 ---
 
 class:center
 # ORM
 
-.img-xkcd[
-![image]( orm.jpg )
-]
+.center[.normal-width[![image]( orm.jpg)]]
 
 ---
 
@@ -672,9 +664,7 @@ dbicdump -o dump_directory=./lib \
 class:center
 # Memcached
 
-.img-xkcd[
-![image]( memcache.jpg )
-]
+.center[.normal-width[![image]( memcache.jpg)]]
 
 ---
 
