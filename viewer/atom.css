@@ -54,3 +54,7 @@ h1, h2, h3 {
     position: absolute;
 }
 
+.center h1 {
+    top: inherit !important;
+    position: inherit !important;
+}
