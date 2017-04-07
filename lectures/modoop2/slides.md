@@ -242,6 +242,18 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 [END] End 1
 ```
 
+---
+
+# Фазы работы интерпретатора
+
+## Особенности выполнения блоков
+
+* `BEGIN`: выполняется *немедленно* после того, как perl обнаружил данный блок и закончил его компиляцию. Компиляция оставшейся части файла продолжится по окончании выполнения блока. FIFO
+* `UNITCHECK`: выполняется по завершении компиляции файла (eval'а). LIFO
+* `CHECK`: выполняется *по окончании компиляции* всей программы, как завершающий этап фазы компиляции. LIFO
+* `INIT`: выполняется *перед началом выполнения* программы. FIFO
+* `END`: выполняется *по окончании выполнения программы*, непосредственно перед завершением работы интерпретатора. LIFO
+
 ???
 Показать, как работает BEGIN в консоли.
 
@@ -249,47 +261,14 @@ BEGIN { warn "[${^GLOBAL_PHASE}] Begin 2\n"     }
 
 # Фазы работы интерпретатора
 
-* `require` использует `eval`
-* `mod_perl` выполняет приложение, используя `eval`
-* как работают фазы и специальные блоки в `eval`?
+## Особенности выполнения блоков 
 
----
-
-# Фазы работы интерпретатора
-
-```perl
-warn "[${^GLOBAL_PHASE}] --- BEFORE EVAL\n";
-eval '
-          warn "[${^GLOBAL_PHASE}] Runtime\n";
-  END   { warn "[${^GLOBAL_PHASE}] End\n"       }
-  CHECK { warn "[${^GLOBAL_PHASE}] Check\n"     }
-  UNITCHECK
-        { warn "[${^GLOBAL_PHASE}] UnitCheck\n" }
-  INIT  { warn "[${^GLOBAL_PHASE}] Init\n"      }
-  BEGIN { warn "[${^GLOBAL_PHASE}] Begin\n"     }
-';
-warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
-```
-
----
-
-# Фазы работы интерпретатора
-
-```perl
-[RUN] --- BEFORE EVAL
-[RUN] Begin
-[RUN] UnitCheck
-[RUN] Runtime
-[RUN] --- AFTER EVAL
-[END] End
-```
-
-```perl
-# RUN?
-# CHECK?!
-# INIT?!!
-# END?!!!
-```
+* `BEGIN` выполняется *немедленно* после того, как perl обнаружил данный блок и закончил его компиляцию. Даже в `eval`
+* блоки `CHECK`, `INIT` внутри `eval` работают, только если их фазы еще не пройдены интерпретатором (иначе блоки игнорируются)
+    * не работают в `require`, `do`
+    * не работают в `mod_perl` и подобных ему системах
+* `CHECK` - последнее, что выполняет команда `perl -c ...`
+* `END` внутри `eval` *выполняется по окончании выполнения программы* (!), непосредственно перед завершением работы интерпретатора
 
 ---
 
@@ -298,23 +277,23 @@ warn "[${^GLOBAL_PHASE}] --- AFTER EVAL\n";
 ```perl
 # Local/Phases.pm
 package Local::Phases;
-BEGIN     { warn __PACKAGE__, " compile start\n" }
-UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
-CHECK     { warn __PACKAGE__, " CHECK\n"         }
-INIT      { warn __PACKAGE__, " INIT\n"          }
-            warn __PACKAGE__, " runtime\n";
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
+*BEGIN     { say "  module compile start" }
+UNITCHECK { say "  module UNITCHECK"     }
+CHECK     { say "  module CHECK"         }
+INIT      { say "  module INIT"          }
+            say "  module runtime";
+*BEGIN     { say "  module compile end"   }
 ```
 
 ```perl
 # phases.pl
-BEGIN     { warn __PACKAGE__, " compile start\n" }
-UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
-CHECK     { warn __PACKAGE__, " CHECK\n"         }
-INIT      { warn __PACKAGE__, " INIT\n"          }
-            warn __PACKAGE__, " runtime\n";
-*           require Local::Phases;
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
+BEGIN     { say "main compile start" }
+UNITCHECK { say "main UNITCHECK"     }
+CHECK     { say "main CHECK"         }
+INIT      { say "main INIT"          }
+            say "main runtime";
+*           use Local::Phases;
+BEGIN     { say "main compile end"   }
 ```
 
 ---
@@ -323,64 +302,16 @@ BEGIN     { warn __PACKAGE__, " compile end\n"   }
 
 ```perl
 main compile start
+*  module compile start
+*  module compile end
+*  module UNITCHECK
+*  module runtime
 main compile end
 main UNITCHECK
+*  module CHECK
 main CHECK
 main INIT
-main runtime
-Local::Phases compile start
-Local::Phases compile end
-Local::Phases UNITCHECK
-Local::Phases runtime
-```
-
-```perl
-# Local::Phases CHECK ?!!
-# Local::Phases INIT  ?!!
-```
-
----
-
-# Фазы работы интерпретатора
-
-```perl
-# Local/Phases.pm
-package Local::Phases;
-BEGIN     { warn __PACKAGE__, " compile start\n" }
-UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
-CHECK     { warn __PACKAGE__, " CHECK\n"         }
-INIT      { warn __PACKAGE__, " INIT\n"          }
-            warn __PACKAGE__, " runtime\n";
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
-```
-
-```perl
-# phases.pl
-BEGIN     { warn __PACKAGE__, " compile start\n" }
-UNITCHECK { warn __PACKAGE__, " UNITCHECK\n"     }
-CHECK     { warn __PACKAGE__, " CHECK\n"         }
-INIT      { warn __PACKAGE__, " INIT\n"          }
-            warn __PACKAGE__, " runtime\n";
-*BEGIN     { require Local::Phases;               }
-BEGIN     { warn __PACKAGE__, " compile end\n"   }
-```
-
----
-
-# Фазы работы интерпретатора
-
-```perl
-main compile start
-Local::Phases compile start
-Local::Phases compile end
-Local::Phases UNITCHECK
-Local::Phases runtime
-main compile end
-main UNITCHECK
-*Local::Phases CHECK
-main CHECK
-main INIT
-*Local::Phases INIT
+*  module INIT
 main runtime
 ```
 
