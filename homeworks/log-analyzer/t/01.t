@@ -1,35 +1,44 @@
 #!/usr/bin/perl
 
+use 5.010;
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 13;
+use FindBin;
+use Symbol 'gensym';
+use IPC::Open3;
 
-sub test_bin {
-    my ($name, $output) = @_;
+sub test_file {
+    my ($name, $file, $output) = @_;
 
-    system("$^X bin/analyze.pl access.log.bz2 >output.tmp 2>stderr.tmp");
-
-    my $real_output;
-    {
-        local $/ = undef;
-        open(my $output_fh, '<', 'output.tmp');
-        $real_output = <$output_fh>;
-        $output_fh->close();
+    my $outf = gensym;
+    my $errf = gensym;
+    my $pid = open3(undef,$outf,$errf, $^X, "$FindBin::Bin/../bin/analyze.pl","$FindBin::Bin/../$file");
+    waitpid( $pid, 0 );
+    my $out = do { local $/; <$outf> };
+    my $err = do { local $/; <$errf> };
+    if ($? >> 8) {
+        fail "Failed to run script";
+        diag $err;
+        exit 255;
     }
 
-    if (-s "stderr.tmp") {
-        fail("'$name' test failed because of warnings");
-    } else {
-        is($real_output, $output, $name);
+    ok !length($err),"Script has warnings";
+    diag $err if length $err;
+
+    my @template = split /\n/,$output;
+    my @result = split /\n/, $out;
+
+    for (0..$#template) {
+        is $result[$_], $template[$_], "row $_";
     }
 
-    unlink('stderr.tmp');
-    unlink('output.tmp');
+    #is($out, $output, $name);
 }
 
-test_bin 'basic', <<OUTPUT;
+test_file 'basic', "access.log.bz2", <<OUTPUT;
 IP	count	avg	data	200	301	302	400	403	404	408	414	499	500
-total	22344	544.98	7375992	1784676	1108	705	85	15469	11269	0	1	0	514
+total	22342	544.93	7375433	1784575	1108	705	85	15469	11269	0	1	0	514
 195.178.213.236	1575	38.41	390036	390036	146	248	0	0	1942	0	0	0	0
 68.51.312.236	1519	37.05	541106	79715	15	31	0	0	1060	0	0	0	0
 217.200.64.87	1287	32.17	568476	81813	1	0	0	1982	0	0	0	0	0

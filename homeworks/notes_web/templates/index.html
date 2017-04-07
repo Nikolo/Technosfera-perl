@@ -1,0 +1,78 @@
+<!doctype html>
+<head>
+    <title>Atom notes</title>
+    <style>
+        .b-block {
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #f1f1f1;
+            display: inline-block;
+        }
+
+        input, textarea {
+            border: 1px solid #e1e1e1;
+            padding: 3px;
+        }
+
+        .b-note {
+            margin: 10px 10px 10px 0;
+        }
+
+        .b-note-title, .b-note-users {
+            font-weight: bold;
+        }
+
+        textarea[name=text] {
+            width: 300px;
+            height: 150px;
+        }
+    </style>
+</head>
+
+<html>
+<body>
+
+    <!-- Авторизация -->
+    <div class="b-auth b-block">
+        <h2>Auth</h2>
+        <form action="">
+            <p><input type="text" name="username" placeholder="username" /></p>
+            <p><input type="password" name="password" placeholder="password" /></p>
+            <p><input type="submit" value="Login" /></p>
+        </form>
+    </div>
+
+    <!-- Создание заметки -->
+    <div class="b-note-creation b-block">
+        <h2>Create note</h2>
+        <form action="">
+            <p><input type="title" name="title" placeholder="Title" /></p>
+            <p><textarea name="text">Note text</textarea></p>
+            <p><textarea name="users">users</textarea></p>
+            <p><input type="submit" value="Create" /></p>
+        </form>
+    </div>
+
+
+    <!-- Список заметок -->
+    <div class="b-notes b-block">
+        <h2>My Notes</h2>
+
+        <div class="b-note">
+            <p class="b-note-title">
+                Note Title
+            </p>
+            <p class="b-note-link">
+                <a href="#">Note link</a>
+            </p>
+            <p class="b-note-text">
+                Note text
+            </p>
+            <p class="b-note-users">
+                Note shared users
+            </p>
+            
+        </div>
+    </div>
+</body>
+</html>

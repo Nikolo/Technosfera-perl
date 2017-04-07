@@ -12,6 +12,36 @@ class:note_and_mark title
 
 ---
 
+# SQL
+
+```sql
+SELECT name, surname
+FROM users
+WHERE age > 18
+```
+
+```sql
+SELECT balance
+FROM account
+WHERE user_id = 12574
+```
+
+```sql
+SELECT *
+FROM users u JOIN accounts a
+    ON u.id = a.user_id
+WHERE account.balance > 0
+```
+
+---
+
+class:center
+# Схема
+
+.center[.normal-width[![image]( schema.png)]]
+
+---
+
 # DBI
 
 ```perl
@@ -59,7 +89,9 @@ my $number_of_rows = $dbh->do(
 ');
 
 my $name = <>;
-$dbh->do("DELETE FROM user WHERE name = '$name'");
+$dbh->do(
+     "DELETE FROM user WHERE name = '$name'"
+);
 ```
 
 ---
@@ -86,9 +118,7 @@ $name = $dbh->quote($name);
 class:center
 # SQL injections
 
-.img-xkcd[
-![image]( xkcd.png )
-]
+.center[.normal-width[![image]( xkcd.png)]]
 
 ---
 
@@ -113,9 +143,62 @@ my @ary     = $sth->fetchrow_array();
 my $hash    = $sth->fetchrow_hashref();
 
 while (@row = $sth->fetchrow_array()) {
-  print "@row\n";
+     print "@row\n";
 }
 ```
+
+---
+
+# fetchrow_*
+
+```perl
+my $sth = $dbh->prepare(
+    "SELECT * FROM student where id = ?"
+);
+$sth->execute(1);
+
+my $array_ref = $sth->fetchrow_arrayref();
+
+# ['1', 'Маша', 'ВМК', '401b']
+
+```
+
+---
+
+# fetchrow_array
+
+```perl
+my $sth = $dbh->prepare(
+    "SELECT * FROM student where id = ?"
+);
+$sth->execute(1);
+
+my @array = $sth->fetchrow_arrayref();
+
+# ('1', 'Маша', 'ВМК', '401b')
+```
+
+---
+
+# fetchrow_hashref
+
+```perl
+my $sth = $dbh->prepare(
+    "SELECT * FROM student where id = ?"
+);
+$sth->execute(1);
+
+my $hash_ref = $sth->fetchrow_hashref();
+
+# {
+#      'class' => '401b',
+#      'name' => 'Маша',
+#      'id' => '1',
+#      'faculty' => 'ВМК'
+# };
+        
+```
+
 
 ---
 
@@ -143,6 +226,34 @@ $tbl_ary_ref = $sth->fetchall_arrayref({
 ```
 
 ---
+# fetchall_arrayref
+
+```perl
+my $sth = $dbh->prepare(
+    "SELECT * FROM student"
+);
+$sth->execute();
+
+my $array_ref = $sth->fetchall_arrayref({});
+
+# [
+#   {
+#     'class' => '401b',
+#     'id' => '1',
+#     'faculty' => 'ВМК',
+#     'name' => 'Маша'
+#   },
+#   {
+#     'faculty' => 'ВМК',
+#     'id' => '2',
+#     'class' => '401b',
+#     'name' => 'Николай'
+#   },
+#   ...
+# ]
+```
+
+---
 
 # fetchall_hashref
 
@@ -150,12 +261,12 @@ $tbl_ary_ref = $sth->fetchall_arrayref({
 $sth->fetchall_hashref('id');
 # { 1 => {...}, 2 => {...} }
 
-$sth->fetchall_hashref([ qw(foo bar) ]);
+$sth->fetchall_hashref([ qw(surname name) ]);
 
-{
-  1 => { a => {...}, b => {...} },
-  2 => { a => {...}, b => {...} },
-}
+# { 
+#    'Иванов' => { 'Игорь' => {...}, 'Вадим' => {...} },
+#    'Петров' => { 'Павел' => {...}, 'Сергей' => {...} },
+# }
 ```
 
 ---
@@ -191,6 +302,41 @@ $dbh->selectall_arrayref(
     "SELECT ename FROM emp ORDER BY ename",
     { Slice => {} }
 );
+```
+
+---
+
+# selectall_arrayref
+
+```perl
+
+my $array_ref = $dbh->selectall_arrayref(
+    "SELECT * FROM teacher ORDER BY first_name",
+    { Slice => {} }
+);
+
+# [
+#   {
+#     'last_name' => 'Казаков',
+#     'id' => '1',
+#     'first_name' => 'Александр',
+#     'floor' => '4'
+#   },
+#   {
+#     'first_name' => 'Андрей',
+#     'id' => '2',
+#     'last_name' => 'Аносов',
+#     'floor' => '3'
+#   },
+#   {
+#     'id' => '3',
+#     'first_name' => 'Игорь',
+#     'last_name' => 'Карбачинский',
+#     'floor' => '4'
+#   }
+# ]
+
+
 ```
 
 ---
@@ -238,6 +384,20 @@ my $user_id = $dbh->last_insert_id(
 
 ---
 
+class:center
+# ok?
+
+.center[.normal-width[![image]( bad_example.png)]]
+
+---
+
+class:center
+# ORM
+
+.center[.normal-width[![image]( orm.jpg)]]
+
+---
+
 # DBIx::Class
 
 ```perl
@@ -260,6 +420,7 @@ __PACKAGE__->add_columns(
 );
 ```
 
+
 ---
 
 # DBIx::Class
@@ -278,24 +439,6 @@ __PACKAGE__->many_to_many(
 
 ---
 
-# Files
-
-```perl
-package Local::Schema;
-use base qw/DBIx::Class::Schema/;
- 
-__PACKAGE__->load_namespaces();
-
-1;
-```
-
-```perl
-Local::Schema::Result::*;
-Local::Schema::ResultSet::*;
-```
-
----
-
 # resultset, result
 
 ```perl
@@ -303,7 +446,7 @@ my $resultset = $schema->resultset('User');
 my $resultset2 = $resultset->search({age => 25});
 
 while (my $user = $resultset->next) {
-  print $user->name . "\n";
+    print $user->name . "\n";
 }
 
 print join "\n", $resultset2->all();
@@ -342,25 +485,6 @@ $rs = $rs->search(undef, {rows => 100});
 
 ---
 
-# search — duplicate key
-
-```perl
-
-# :-(
-$rs = $rs->search({
-  age => {'>=' => 18},
-  age => {'<' => 60},
-});
-
-# :-)
-$rs = $rs->search([
-  { age => {'>=' => 18} },
-  { age => {'<'  => 60} },
-]);
-```
-
----
-
 # find, single
 
 ```perl
@@ -381,30 +505,6 @@ my $count = $schema->resultset('User')->search({
   name => 'name',
   age => 18,
 })->count();
-```
-
----
-
-# select — advanced
-
-```perl
-$resultset->search({
-  date => { '>' => \'NOW()' },
-});
-
-$rs->search(
-  \[ 'YEAR(date_of_birth) = ?', 1979 ]
-);
-
-my @albums = $schema->resultset('Album')->search({
-  -or => [
-    -and => [
-      artist => { 'like', '%Smashing Pumpkins%' },
-      title  => 'Siamese Dream',
-    ],
-    artist => 'Starchildren',
-  ],
-});
 ```
 
 ---
@@ -453,24 +553,6 @@ $rs = $schema->resultset('Dog')->search({
   'user.name' => 'Vadim',
 }, {
   join => 'user',
-});
-```
-
----
-
-# prefetch
-
-```perl
-foreach my $user ($schema->resultset('User')) {
-  foreach my $dog ($user->dogs) {
-    # ...
-  }
-}
-```
-
-```perl
-$rs = $schema->resultset('User')->search({}, {
-  prefetch => 'dogs', # implies join 
 });
 ```
 
@@ -552,54 +634,6 @@ $user->delete();
 
 ---
 
-# many_to_many
-
-```perl
-package Local::Schema::User;
-
-__PACKAGE__->has_many(
-    visits => 'Local::Schema::Visit', 'user_id');
-__PACKAGE__->many_to_many(
-    visited_cities => 'visits', 'city');
-
-
-package Local::Schema::City;
-
-__PACKAGE__->has_many(
-    visits => 'Local::Schema::Visit', 'city_id');
-__PACKAGE__->many_to_many(
-    visited_by => 'visits', 'user');
-```
-
----
-
-# many_to_many
-
-```perl
-package Local::Schema::Visit;
-
-__PACKAGE__->belongs_to(
-    user => 'Local::Schema::User', 'user_id');
-__PACKAGE__->belongs_to(
-    city => 'Local::Schema::City', 'city_id');
-```
-
-```perl
-my @cities = $schema->resultset('User')->
-    find(81858)->visited_cities;
-```
-
----
-
-# storage
-
-```perl
-$schema->storage->debug(1);
-$schema->storage->dbh();
-```
-
----
-
 # DBIx::Class::Schema::Loader
 
 ```perl
@@ -627,11 +661,10 @@ dbicdump -o dump_directory=./lib \
 
 ---
 
-# SQL::Translator
+class:center
+# Memcached
 
-```perl
-$schema->deploy();
-```
+.center[.normal-width[![image]( memcache.jpg)]]
 
 ---
 
@@ -652,6 +685,8 @@ my $memd = Cache::Memcached::Fast->new({
 });
 ```
 
+
+
 ---
 
 # Memached — operations
@@ -670,8 +705,9 @@ $memd->get('skey');
 * Redis
 * MongoDB
 * Cassandra
+* ElasticSearch
+* Aerospike
 * Tarantool
-* Octopus
 
 ---
 
@@ -679,7 +715,7 @@ $memd->get('skey');
 
 https://github.com/Nikolo/Technosfera-perl/
 
-`/homeworks/habr`
+`/homeworks/social_network`
 
 ---
 
