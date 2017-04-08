@@ -12,6 +12,25 @@ class:note_and_mark title
 
 ---
 
+# План занятия
+
+1. Не такие простые модули
+    * таблицы символов
+    * caller
+    * переопределение встроенных функций
+    * фазы работы интерпретатора
+1. Тонкости ООП
+    * bless
+    * наследование
+    * декструкторы
+    * overload
+    * tie
+    * AUTOLOAD
+1. Mouse
+1. Создание модуля
+
+---
+
 # Таблицы символов
 
 ```perl
@@ -24,6 +43,7 @@ package Some::Package {
 }
 package Some::Package::Deeper {}
 
+# `%Some::Package::` - symbol table
 printf "%-10s => %s\n", $_, $Some::Package::{$_}
     foreach keys %Some::Package::;
 ```
@@ -50,6 +70,27 @@ func       => *Some::Package::func
     * IO:  `foo`
     * NAME: `"foo"`
     * PACKAGE: `"main"`
+
+---
+
+# Таблицы символов
+
+```perl
+say ${*Some::Package::var{SCALAR}};   # 500
+say @{*Some::Package::var{ARRAY}}[2]; # 3
+say &{*Some::Package::func{CODE}};    # 400
+```
+--
+```perl
+say ${*Some::Package::var};           # 500
+say @{*Some::Package::var}[2];        # 3
+say &{*Some::Package::func};          # 400
+```
+--
+```perl
+say *Some::Package::var{NAME}     # var
+say *Some::Package::var{PACKAGE}  # Some::Package
+```
 
 ---
 
@@ -102,36 +143,106 @@ func       => *Some::Package::func
 # Таблицы символов
 
 ```perl
- *PI = \3.14159265;
- print $PI, "\n";      # 3.14159265
- $PI = 4;
- # Modification of a read-only value attempted
+*PI = \3.14159265;
+print $PI, "\n";      # 3.14159265
+$PI = 4;
+# Modification of a read-only value attempted
 ```
+--
 
 ```perl
- $glob = *FH;
- print *{$glob}{PACKAGE}, "::", *{$glob}{NAME};
- # main::FH
+sub glob_fqn {
+    my $glob = shift;
+    return *{$glob}{PACKAGE}."::".*{$glob}{NAME};
+}
+
+our $var = 100;
+say glob_fqn(*var)
 ```
 
 ---
 
-# caller
-## TODO
+# Контекст вызова функций
+## caller
+
+```perl
+package Some::Package;
+
+sub caller_test {
+    my ($package, $filename, $line) = caller;
+    say "$package, $filename, $line";
+}
+
+package main;
+Some::Package::caller_test(); # main, script.pl, 10
+```
+---
+
+# Контекст вызова функций
+## caller EXPR
+
+```perl
+package Some::Package;
+
+sub caller_test {
+    my ($package, $filename, $line,
+        $sub, $hasargs, $wantarray
+    ) = caller(1);
+    say "$package, $filename, $line";
+    say "$sub, $hasargs, $wantarray";
+}
+
+sub pre_caller_test {
+    caller_test(@_);
+}
+
+package main;
+@res = Some::Package::pre_caller_test(); 
+# main, script.pl, 17
+# Some::Package::pre_caller_test, 1, 1
+```
 
 ---
 
-# Директива `use`
+# Контекст вызова функций
+## Хвостовая рекурсия
 
-## `use` = BEGIN + require + import?
+
+```perl
+package Some::Package;
+
+sub caller_test {
+    my ($package, $filename, $line) = caller;
+    say "$package, $filename, $line";
+}
+
+sub pre_caller_test  { `caller_test(@_)` }
+sub tail_caller_test { `goto &caller_test` }
+
+package main;
+Some::Package::pre_caller_test(); 
+#Some::Package, script.pl, 9
+
+Some::Package::tail_caller_test();
+#main, script.pl, 17
+```
+
+---
+
+# Метод import
 
 ```perl
 # Local/Math.pm
+
+sub pow { $_[1] ** $_[2] }
+sub sqr { $_[0]->pow($_[1], 0.5) }
+
 sub import {
     my $self = shift;
-    my ($pkg) = caller(0);
+    my ($pkg) = `caller(0)`;
     foreach my $func (@_) {
-        *{"${pkg}::$func"} = \&{$func};
+        `no strict 'refs';`
+        `*{"${pkg}::$func"}` = `\&{$func}`;
     }
 }
 ```
@@ -144,16 +255,17 @@ print pow(2,8), "\n";             # 256
 
 ---
 
-# Директива `use`
-
-## `use` = BEGIN + require + import?
+# Метод unimport
 
 ```perl
 # Local/Math.pm
 sub unimport {
     my $self = shift;
     my ($pkg) = caller(0);
-    delete ${"${pkg}::"}{$_} foreach @_;
+    {
+        `no strict 'refs';`
+        delete `${"${pkg}::"}{$_}` foreach @_;
+    }
 }
 ```
 
@@ -167,8 +279,24 @@ print pow(2,8), "\n";
 ```
 ---
 
-# CORE::GLOBAL::
-## TODO
+# CORE и CORE::GLOBAL
+## Переопределение встроенных функций
+
+```perl
+BEGIN {
+    `*CORE::GLOBAL::`hex = sub { 1 };
+}
+say hex("0x50");         # 1
+say `CORE::`hex("0x50"); # 80
+```
+
+```perl
+`use subs qw/hex/`;
+sub hex { 1 }
+
+say hex("0x50");         # 1
+say `CORE::`hex("0x50"); # 80
+```
 
 ---
 
@@ -318,57 +446,81 @@ main runtime
 ---
 
 # bless
-
-## TODO
-
----
-
-# Базовый синтаксис
-
-## Деструкторы
+## HASH
 
 ```perl
-package Local::User;
+package User;
 
-sub DESTROY {
-  my ($self) = @_;
-  print 'DESTROYED: ', $self->name, "\n";
+sub new {
+    my ($class, %params) = @_;
+    return bless `\%params`, $class;
 }
-```
 
-```perl
-{
-  my $user =
-    Local::User->get_by_email('vasily@pupkin.ru');
-  # ...
-}                      # DESTROYED: Василий Пупкин
-```
-
----
-
-# Базовый синтаксис
-
-## Деструкторы: грабли
-
-* `die`
-* `local`
-* `AUTOLOAD`
-* `${^GLOBAL_PHASE} eq 'DESTRUCT'`
-
-```perl
-sub DESTROY {
-  my ($self) = @_;
-  $self->{handle}->close() if $self->{handle};
+sub full_name {
+    $_[0]->{first_name}." ".$$_[0]->{last_name};
 }
-```
 
-.center[.normal-width[![image](woodpecker-gun.jpg)]]
+my $u = User->new(
+    first_name => "vasya",
+    last_name  => "pupkin",
+);
+
+say `$u->{name}`;  # vasya
+say $u->full_name; # vasya pupkin
+```
 
 ---
 
-# Базовый синтаксис
+# bless
+## ARRAY
 
-## Наследование
+```perl
+package Vector;
+
+sub new {
+    my ($class, @points) = @_;
+    return bless `\@points`, $class;
+}
+
+sub len {
+    my $self = shift;
+    return sqrt($self->[0]**2 + $self->[1]**2); 
+}
+
+my $v = Vector->new(3, 4);
+
+say `$v->[0]`; # 3
+say $v->len;   # 5
+```
+
+---
+
+# bless
+## SCALAR
+
+```perl
+package Time;
+use POSIX qw/strftime/;
+
+sub new {
+    my ($class, $time) = @_;
+    return bless `\$time`, $class;
+}
+
+sub date {
+    my ($self) = @_;
+    return strftime("%D", localtime $$self);
+}
+
+my $t = Time->new(time());
+
+say `$$t`;     # 1491607207
+say $t->date;  # 04/08/17
+```
+
+---
+
+# Наследование
 
 ```perl
 package Local::Student;
@@ -393,9 +545,8 @@ say Local::Professor->isa("Local::Student");# undef
 
 ---
 
-# Базовый синтаксис
-
-## Наследование: класс UNIVERSAL
+# Наследование
+## Класс UNIVERSAL
 
 ```perl
 # ???
@@ -420,9 +571,7 @@ say Local::User->VERSION;                   # 1.4
 
 ---
 
-# Базовый синтаксис
-
-## Множественное наследование
+# Множественное наследование
 
 ```perl
 package Local::Resident;
@@ -446,9 +595,8 @@ $resident_user->name(); # ???
 
 ---
 
-# Базовый синтаксис
-
-## Множественное наследование: method resolution order
+# Множественное наследование
+## Method resolution order
 
 ```
        Object
@@ -474,9 +622,8 @@ $self->Cacheable::some_method(@params);
 
 ---
 
-# Базовый синтаксис
-
-## Множественное наследование: method resolution order
+# Множественное наследование
+## Method resolution order
 
 ```
        Object
@@ -508,9 +655,7 @@ layout: true
 
 ---
 
-# Расширенный синтаксис
-
-## Модуль `overload`
+# Модуль `overload`
 
 ```perl
 package Local::User;
@@ -527,9 +672,7 @@ print $user;   # Василий Пупкин <vasily@pupkin.ru>
 
 ---
 
-# Расширенный синтаксис
-
-## Модуль `overload`
+# Модуль `overload`
 
 ```perl
 package Local::Vector;
@@ -553,9 +696,7 @@ sub len {
 
 ---
 
-# Расширенный синтаксис
-
-## Модуль `overload`
+# Модуль `overload`
 
 ```perl
 $vec1 = Local::Vector->new(1, 2);
@@ -581,9 +722,8 @@ layout: true
 
 ---
 
-# Расширенный синтаксис
-
-## `tie`: объект под капотом переменной
+# `tie`
+## Объект под капотом переменной
 
 ```perl
 $hash{x} = 'vasily@pupkin.ru';
@@ -597,13 +737,11 @@ print ref $hash{x};
 # WTF???
 ```
 
-.center[.normal-width[![image](donald-facepalm.jpg)]]
-
 ---
 
-# Расширенный синтаксис
+# `tie`
+## Объект под капотом переменной
 
-## `tie`: объект под капотом переменной
 
 ```perl
 package Local::UserHash;
@@ -622,9 +760,8 @@ sub STORE {
 
 ---
 
-# Расширенный синтаксис
-
-## `tie`: объект под капотом переменной
+# `tie`
+## Объект под капотом переменной
 
 ```perl
 my %hash;
@@ -636,8 +773,6 @@ print $hash{x};
 # Василий Пупкин <vasily@pupkin.ru>
 ```
 
-.center[.normal-width[![image](donald-facepalm2.jpg)]]
-
 ---
 layout: true
 
@@ -645,9 +780,7 @@ layout: true
 
 ---
 
-# Расширенный синтакисис
-
-## `AUTOLOAD`
+# `AUTOLOAD`
 
 ```perl
 package Local::User;
@@ -671,13 +804,51 @@ print $user->can('first_name');    # 0 :-(
 ---
 layout: false
 
-# Moose ООП
+# Деструкторы
+
+```perl
+package Local::User;
+
+sub DESTROY {
+  my ($self) = @_;
+  print 'DESTROYED: ', $self->name, "\n";
+}
+```
+
+```perl
+{
+  my $user =
+    Local::User->get_by_email('vasily@pupkin.ru');
+  # ...
+}                      # DESTROYED: Василий Пупкин
+```
+
+---
+
+# Деструкторы: грабли
+
+* `die`
+* `local`
+* `AUTOLOAD`
+* `${^GLOBAL_PHASE} eq 'DESTRUCT'`
+
+```perl
+sub DESTROY {
+  my ($self) = @_;
+  $self->{handle}->close() if $self->{handle};
+}
+```
+
+---
+
+
+# Mouse ООП
 
 ## Базовый синтаксис
 
 ```perl
 package Local::User;
-use Moose;
+use Mouse;
 has first_name => (
   is  => 'rw',
   isa => 'Str',
@@ -697,21 +868,21 @@ Local::User->new(
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Наследование
 
 ```perl
 package Local::Teacher;
 
-use Moose;
+use Mouse;
 
 extends 'Local::User';
 ```
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Инициализация объекта
 
@@ -728,7 +899,7 @@ sub BUILD {
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Отложенное выполнение
 
@@ -747,7 +918,7 @@ has is_adult => (
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## "Ленивые вычисления"
 
@@ -772,7 +943,7 @@ sub _build_is_adult { return 1; }
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## "Ленивые вычисления"
 
@@ -796,7 +967,7 @@ sub _build_data         { find($self->xml_document) }
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Миксины
 
@@ -806,7 +977,7 @@ with 'Role::HasPassword';
 
 ```perl
 package Role::HasPassword;
-use Moose::Role;
+use Mouse::Role;
 use Some::Digest;
 
 has passwd => (
@@ -822,7 +993,7 @@ sub is_password_valid {
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Делегирование
 
@@ -844,7 +1015,7 @@ has last_login => (
 
 ---
 
-# Moose ООП
+# Mouse ООП
 
 ## Декораторы, типы, расширения
 
@@ -865,7 +1036,7 @@ has 'valid_dates' => (
 
 ```perl
 package Config;
-use MooseX::Singleton; # instead of Moose
+use MooseX::Singleton;
 ```
 
 ```perl
@@ -874,7 +1045,7 @@ $meta = $class->meta;
 
 ---
 
-# Moose — аналоги
+# Mouse — аналоги
 
 * Moose
 * *Mouse*
@@ -882,15 +1053,14 @@ $meta = $class->meta;
 * Mo
 * M
 
-.center[.normal-width[![image](donald-laugh.jpg)]]
-
 ---
 
-# CPAN
+# Создание модулей
+## module-starter
 
 ```bash
 $ module-starter --module Local::Math \
->      --author Vadim --email vadim@pushtaev.ru
+>      --author Alex --email alex@kazakov.ru
 ```
 
 ```
@@ -913,7 +1083,8 @@ Local-Math/
 
 ---
 
-# CPAN
+# Создание модулей
+## Makefile.PL
 
 ```perl
 # Makefile.PL
@@ -923,7 +1094,7 @@ use warnings FATAL => 'all';
 use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME           => 'Local::Math',
-    AUTHOR         => 'Vadim <vadim@pushtaev.ru>',
+    AUTHOR         => 'Alex <alex@kazakov.ru>',
     VERSION_FROM   => 'lib/Local/Math.pm',
     ABSTRACT_FROM  => 'lib/Local/Math.pm',
     LICENSE        => 'Artistic_2_0',
@@ -937,4 +1108,10 @@ WriteMakefile(
 
 ---
 
-# Module create master class
+class:lastpage title
+
+# Спасибо за внимание!
+
+## Оставьте отзыв
+
+.teacher[![teacher]()]
