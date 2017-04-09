@@ -156,8 +156,8 @@ sub glob_fqn {
     return *{$glob}{PACKAGE}."::".*{$glob}{NAME};
 }
 
-our $var = 100;
-say glob_fqn(*var)
+`our` $var;
+say glob_fqn(*var); # main::var
 ```
 
 ---
@@ -169,7 +169,7 @@ say glob_fqn(*var)
 package Some::Package;
 
 sub caller_test {
-    my ($package, $filename, $line) = caller;
+    my ($package, $filename, $line) = `caller`;
     say "$package, $filename, $line";
 }
 
@@ -187,7 +187,7 @@ package Some::Package;
 sub caller_test {
     my ($package, $filename, $line,
         $sub, $hasargs, $wantarray
-    ) = caller(1);
+    ) = `caller(1)`;
     say "$package, $filename, $line";
     say "$sub, $hasargs, $wantarray";
 }
@@ -212,7 +212,7 @@ package main;
 package Some::Package;
 
 sub caller_test {
-    my ($package, $filename, $line) = caller;
+    my ($package, $filename, $line) = `caller`;
     say "$package, $filename, $line";
 }
 
@@ -574,10 +574,15 @@ say Local::User->VERSION;                   # 1.4
 # Множественное наследование
 
 ```perl
+package Local::Student;
+use Class::XSAccessor {
+    accessors => [qw/`name` course/],
+};
+
 package Local::Resident;
 use Class::XSAccessor {
   accessors => [qw/
-    name snils inn
+    `name` snils inn
     passport_id passport_emission passport_date
   /],
 };
@@ -585,11 +590,11 @@ use Class::XSAccessor {
 
 ```perl
 package Local::ResidentStudent;
-use parent qw/Local::Student Local::Resident/;
+use parent qw/`Local::Student` `Local::Resident`/;
 ```
 
 ```perl
-$resident_user->name(); # ???
+$resident_user->`name`(); # ???
 # Local::Student->name or Local::Resident->name?
 ```
 
@@ -615,9 +620,9 @@ IOStream->some_method();
 ```
 
 ```perl
-$self->SUPER::some_method(@params);
+$self->`SUPER`::some_method(@params);
 
-$self->Cacheable::some_method(@params);
+$self->`Cacheable`::some_method(@params);
 ```
 
 ---
@@ -636,7 +641,7 @@ $self->Cacheable::some_method(@params);
 ```
 
 ```perl
-use mro 'c3';
+`use mro 'c3'`;
 
 IOStream->some_method();
 # IOStream InStream CacheableOutStream
@@ -644,7 +649,7 @@ IOStream->some_method();
 ```
 
 ```perl
-$self->next::method(@params);
+$self->`next`::method(@params);
 ```
 
 ---
@@ -689,8 +694,8 @@ sub add {
     );
 }
 sub len {
-    my ($self) = @_;
-    return sqrt($self->{x}**2 + $self->{y}**2);
+    my ($vec) = @_;
+    return sqrt($vec->{x}**2 + $vec->{y}**2);
 }
 ```
 
@@ -726,7 +731,7 @@ layout: true
 ## Объект под капотом переменной
 
 ```perl
-$hash{x} = 'vasily@pupkin.ru';
+$hash{x} = 'vasily@pupkin.ru'; # not a ref!
 
 print $hash{x};
 # Василий Пупкин <vasily@pupkin.ru>
@@ -774,6 +779,49 @@ print $hash{x};
 ```
 
 ---
+
+# `tie`
+## TIEHASH
+```perl
+    TIEHASH classname, LIST
+    FETCH this, key
+    STORE this, key, value
+    DELETE this, key
+    CLEAR this
+    EXISTS this, key
+    FIRSTKEY this
+    NEXTKEY this, lastkey
+    SCALAR this
+    DESTROY this
+    UNTIE this
+```
+--
+`TIEHASH`
+`TIEARRAY`
+`TIESCALAR`
+`TIEHANDLE`
+
+---
+
+# `tie`
+## Tie::IxHash - сортированный хеш
+
+```perl
+use Tie::IxHash;
+
+my %hash = (a => 1, b => 2, c => 3);
+
+tie my %sorted, "Tie::IxHash";
+%sort = (a => 1, b => 2, c => 3);
+
+say join ", ", map {"$_ => $hash{$_}"} keys %hash; 
+# b => 2, a => 1, c => 3
+
+say join ", ", map {"$_ => $sort{$_}"} keys %sort; 
+# a => 1, b => 2, c => 3
+```
+
+---
 layout: true
 
 .footer[[perlobj](http://perldoc.perl.org/perlobj.html)]
@@ -792,7 +840,9 @@ sub name              { ... }
 our $AUTOLOAD;
 sub AUTOLOAD {
     my $self = shift;
-    return $self->{$AUTOLOAD};
+    my $field = $AUTOLOAD;   # `Local::User::`method
+    $field =~ s/.*:://
+    return $self->{$field};
 }
 ```
 
@@ -826,11 +876,42 @@ sub DESTROY {
 ---
 
 # Деструкторы: грабли
+## `die`
 
-* `die`
-* `local`
-* `AUTOLOAD`
-* `${^GLOBAL_PHASE} eq 'DESTRUCT'`
+```perl
+sub DESTROY {
+  my ($self) = @_;
+  die "Object isn't stored!" unless $self->stored;
+}
+```
+
+---
+
+# Деструкторы: грабли
+## `local`
+
+```perl
+sub DESTROY {
+    my ($self) = @_;
+    $, = ";";
+    say @{$self->values};
+}
+```
+---
+
+# Деструкторы: грабли
+## `AUTOLOAD`
+
+```perl
+sub AUTOLOAD {
+    say $AUTLOAD; # Some::Package::DESTROY
+}
+```
+
+---
+
+# Деструкторы: грабли
+## `${^GLOBAL_PHASE} eq 'DESTRUCT'`
 
 ```perl
 sub DESTROY {
@@ -849,11 +930,11 @@ sub DESTROY {
 ```perl
 package Local::User;
 use Mouse;
-has first_name => (
+`has` first_name => (
   is  => 'rw',
   isa => 'Str',
 );
-has last_name => (
+`has` last_name => (
   is  => 'rw',
   isa => 'Str',
 );
@@ -877,7 +958,7 @@ package Local::Teacher;
 
 use Mouse;
 
-extends 'Local::User';
+`extends` 'Local::User';
 ```
 
 ---
@@ -887,10 +968,17 @@ extends 'Local::User';
 ## Инициализация объекта
 
 ```perl
+has gender   => (is => 'ro', isa => 'Str');
 has age      => (is => 'ro', isa => 'Int');
 has is_adult => (is => 'rw', isa => 'Bool');
 
-sub BUILD {
+sub `BUILDARGS` {
+    my ($self, $args) = @_;
+    $args{gender} //= 'male';
+    return $args;
+}
+
+sub `BUILD` {
   my ($self) = @_;
   $self->is_adult($self->age >= 18);
   return;
@@ -908,8 +996,8 @@ has age      => (is => 'ro', isa => 'Int');
 has is_adult => (
   is => 'ro',
   isa => 'Bool',
-  lazy => 1,
-  default => sub {
+  `lazy` => 1,
+  `default` => sub {
     my ($self) = @_;
     return $self->age >= 18;
   }
@@ -926,10 +1014,10 @@ has is_adult => (
 has age      => (is => 'ro', isa => 'Int');
 has is_adult => (
   is => 'ro', isa => 'Bool',
-  lazy => 1,  builder => '_build_is_adult',
+  `lazy` => 1, `builder` => '_build_is_adult',
 );
 
-sub _build_is_adult {
+sub `_build_is_adult` {
   my ($self) = @_;
   return $self->age >= 18;
 }
@@ -953,7 +1041,6 @@ has [qw(
   fh
   file_content
   xml_document
-  data
 )] => (
   lazy_build => 1,
   # ...
@@ -962,7 +1049,9 @@ has [qw(
 sub _build_fh           { open($self->file_name) }
 sub _build_file_content { read($self->fh) }
 sub _build_xml_document { parse($self->file_content) }
-sub _build_data         { find($self->xml_document) }
+# ...
+
+$obj->xml_document;
 ```
 
 ---
@@ -972,7 +1061,7 @@ sub _build_data         { find($self->xml_document) }
 ## Миксины
 
 ```perl
-with 'Role::HasPassword';
+`with` 'Role::HasPassword';
 ```
 
 ```perl
@@ -995,52 +1084,150 @@ sub is_password_valid {
 
 # Mouse ООП
 
-## Делегирование
+## Миксины
 
+.small[
 ```perl
-has doc => (
-  is    => 'ro',
-  isa   => 'Item',
-  handles => [qw(read write size)],
-);
+package Notify::Event;
+sub vars { ... }
+
+package Notify::Role::Photo;
+sub photo_vars { ... }
+
+package Notify::Role::Comment;
+sub comments_vars { ... }
+
+package Notify::Role::Like;
+sub likes_vars { ... }
 ```
+]
 
+.small[
 ```perl
-has last_login => (
-  is    => 'rw',
-  isa   => 'DateTime',
-  handles => { 'date_of_last_login' => 'date' },
-);
+package Notify::Event::PhotoComment;
+extends 'Notify::Event';
+with 'Notify::Role::Photo', 'Notify::Role::Comment';
+
+sub vars {
+    my ($self) = @_;
+    my $vars = {};
+    $vars->{photo} = $self->photo_vars(); 
+    $vars->{comments} = $self->comments_vars();
+}
+```
+]
+
+---
+
+# Mouse ООП
+
+## Миксины
+
+```
+                  Event
+                  /   \---------------
+                EXT   EXT            EXT
+                /       \              \
+        PhotoComent   PhotoLike      VideoLike
+           /   \         /   \        /    \
+         MIX   MIX     MIX   MIX    MIX    MIX
+         /       \     /       \    /        \
+Role::Comment   Role::Photo   Role::Like   Role::Video
 ```
 
 ---
 
 # Mouse ООП
 
-## Декораторы, типы, расширения
+## Делегирование
 
 ```perl
-before 'is_adult' => sub { shift->recalculate_age }
+has doc => (
+  is    => 'ro',
+  isa   => 'Item',
+  `handles` => [qw(read write size)],
+);
+# ...
+$obj->size; # same $obj->doc->size
 ```
 
 ```perl
-subtype 'ModernDateTime'
+has last_login => (
+  is    => 'rw',
+  isa   => 'DateTime',
+  `handles` => { 'date_of_last_login' => 'date' },
+);
+# ...
+$obj->date_of_last_login; 
+# same $obj->last_login->date
+```
+
+---
+
+# Mouse ООП
+
+## Декораторы
+
+```perl
+`before` 'is_adult' => sub { shift->recalculate_age }
+```
+
+```perl
+`after` 'merry' => sub { shift->is_single(0) }
+```
+
+```perl
+`around` 'BUILDARGS' => sub {
+    my $orig  = shift;
+    my $class = shift; 
+    my %args  = @_;
+    $args{is_adult} = 1 if $args{age} >= 18;
+    return $class->$orig(%args);
+}
+```
+
+---
+
+# Mouse ООП
+
+## Типы
+
+```perl
+use Mouse::Util::TypeConstraints;
+
+`subtype` 'ModernDateTime'
   => as 'DateTime'
   => where { $_->year() >= 1980 }
   => message { 'The date is not modern enough' };
 
+`enum` 'Gender' => qw/male female/,
+
 has 'valid_dates' => (
-  isa => 'ArrayRef[DateTime]',
+  isa => 'ArrayRef[ModernDateTime]',
+);
+
+has gender => (
+  isa => 'Gender'
 );
 ```
 
-```perl
-package Config;
-use MooseX::Singleton;
-```
+---
+
+# Mouse ООП
+## meta
 
 ```perl
-$meta = $class->meta;
+$meta = $class->`meta`;
+$meta->`add_attribute`('age', 
+    is => 'rw', 
+    isa => 'Int'
+);
+$meta->`add_method`('is_adult' => sub { 
+    my ($self) = @_;
+    return $self->age >= 18;
+);
+
+__PACKAGE__->meta->`make_immutable`;
 ```
 
 ---
