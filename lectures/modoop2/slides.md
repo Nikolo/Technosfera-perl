@@ -1214,7 +1214,7 @@ has gender => (
 ---
 
 # Mouse ООП
-## meta
+## Metaclass
 
 ```perl
 $meta = $class->`meta`;
@@ -1228,11 +1228,134 @@ $meta->`add_method`('is_adult' => sub {
 );
 
 __PACKAGE__->meta->`make_immutable`;
-```
+``` 
 
 ---
 
-# Mouse — аналоги
+# Mouse ООП
+## Metaclass traits
+
+.small[
+```perl
+# Notify/Trait/Event.pm
+package Notify::Trait::Event;
+use Mouse::Role;
+
+has actions => (is => 'rw', isa => 'HashRef');
+
+no Mouse::Role;
+
+package `Mouse::Meta::Class::Custom::Trait`::NotifyEvent;
+sub register_implementation {'Notify::Trait::Event'}
+```
+]
+
+.small[
+```perl
+# Notify/Event.pm
+package Notify/Event.pm
+use Mouse `-traits` => qw/`NotifyEvent`/;
+# ...
+$class->meta->actions({ vote => sub { ... } });
+# ...
+$class->meta->actions->('vote')->(@args);
+```
+]
+
+---
+
+# Mouse ООП
+## Metaclass traits
+
+.small[
+```perl
+#package Notify/Sugar.pm
+package Notify::Sugar;
+use Mouse;
+use Mouse::Exporter;
+
+Mouse::Exporter->setup_import_methods(as_is => ['has_action']);
+
+sub has_action {
+    my ($name,$sub) = @_; 
+    my $actions = caller->meta->actions;
+    caller->meta->add_method($name => $sub);
+    $actions->{$name} = $sub;
+}
+```
+]
+
+.small[
+```perl
+# Notify/Event.pm
+package Notify/Event.pm
+use Mouse `-traits` => qw/`NotifyEvent`/;
+use Notify::Sugar;
+# ...
+`has_action` vote => sub { ... };
+# ...
+$class->`vote`(@args);
+```
+]
+
+---
+
+# Mouse ООП
+## Attribute traits
+
+.small[
+```perl
+# Notify/Trait/Serialize.pm
+package Notify::Trait::Serialize;
+use Mouse::Role;
+
+has serializer => (is => 'rw', isa => 'CodeRef');
+
+no Mouse::Role;
+
+package `Mouse::Meta::Class::Custom::Trait`::NotifySerialize;
+sub register_implementation {'Notify::Trait::Serialize'}
+
+```
+]
+
+---
+
+# Mouse ООП
+## Attribute traits
+
+.small[
+```perl
+# Notify/Event.pm
+package Notify::Event;
+use Mouse;
+
+has id => (
+    is => 'rw',
+    isa => 'Int',
+    traits => ['NotifySerialize'],
+    serializer => sub { pack 'L', $_[0] },
+);
+
+sub serialize {
+    my ($self) = @_;
+    my $bin = '';
+    for my $attr_name ($self->meta->get_attribute_list) {
+        my $attr = $self->meta->get_attribute($attr_name);
+        if($attr->does('Notify::Trait::Serialize') 
+            && $attr->serializer) {
+            my $reader = $attr->get_read_method;
+            $bin .= $attr->serializer->($attr->$reader);
+        }
+    }
+    return $bin;
+}
+```
+]
+
+---
+
+ Mouse — аналоги
 
 * Moose
 * *Mouse*
