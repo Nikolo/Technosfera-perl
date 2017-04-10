@@ -2,7 +2,7 @@ class: firstpage title
 
 # Программирование на Perl
 
-## Модули и ООП (продолжение)
+## Модули и ООП: погружение
 
 ---
 
@@ -243,7 +243,7 @@ sub sqr { $_[0]->pow($_[1], 0.5) }
 
 sub import {
     my $self = shift;
-    my ($pkg) = `caller(0)`;
+    my $pkg = `caller`;
     foreach my $func (@_) {
         `no strict 'refs';`
         `*{"${pkg}::$func"}` = `\&{$func}`;
@@ -265,7 +265,7 @@ print pow(2,8), "\n";             # 256
 # Local/Math.pm
 sub unimport {
     my $self = shift;
-    my ($pkg) = caller(0);
+    my $pkg = caller;
     {
         `no strict 'refs';`
         delete `${"${pkg}::"}{$_}` foreach @_;
@@ -875,7 +875,7 @@ IOStream->some_method();
 ```
 
 ```perl
-$self->`next`::method(@params);
+$self->`next::method`(@params);
 ```
 
 ---
@@ -1130,7 +1130,7 @@ sub DESTROY {
 
 ```perl
 sub AUTOLOAD {
-    say $AUTLOAD; # Some::Package::DESTROY
+    say $AUTOLOAD; # Some::Package::DESTROY
 }
 ```
 
@@ -1265,7 +1265,7 @@ sub _build_is_adult { return 1; }
 has [qw(
   file_name
   fh
-  file_content
+  content
   xml_document
 )] => (
   lazy_build => 1,
@@ -1273,8 +1273,8 @@ has [qw(
 );
 
 sub _build_fh           { open($self->file_name) }
-sub _build_file_content { read($self->fh) }
-sub _build_xml_document { parse($self->file_content) }
+sub _build_content      { read($self->fh) }
+sub _build_xml_document { parse($self->content) }
 # ...
 
 $obj->xml_document;
@@ -1581,7 +1581,7 @@ sub serialize {
 
 ---
 
- Mouse — аналоги
+# Mouse — аналоги
 
 * Moose
 * *Mouse*
