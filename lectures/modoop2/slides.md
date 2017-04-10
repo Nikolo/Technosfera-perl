@@ -91,6 +91,10 @@ say &{*Some::Package::func};          # 400
 say *Some::Package::var{NAME}     # var
 say *Some::Package::var{PACKAGE}  # Some::Package
 ```
+--
+```perl
+say "func exists" if *Some::Package::func{CODE};
+```
 
 ---
 
@@ -300,18 +304,239 @@ say `CORE::`hex("0x50"); # 80
 
 ---
 
-# SIGDIE
-## TODO
+# warn
+
+```perl
+warn "error message";
+# error message at - line 1.
+```
+--
+```perl
+warn "error message`\n`";
+# error message
+```
+--
+```perl
+eval "2/0";
+warn;
+# Illegal division by zero at (eval 1) line 1.
+#         ...caught at - line 2.
+```
 
 ---
 
-# SIGWARN
-## TODO
+# warn + $SIG{\_\_WARN__}
+
+```perl
+$SIG{__WARN__} = sub { warn "message: [$_[0]]\n" };
+warn 1, 2, 3;
+# message: [123 at - line 2.
+# ]
+```
+--
+```perl
+use warnings;
+$SIG{__WARN__} = sub {
+    warn "[".localtime()."] $_[0]"
+};
+my $x = 1+"";
+# [Mon Apr 10 13:34:51 2017]
+#    Argument "" isn't numeric in addition (+)...
+```
+
+---
+
+# warn + $SIG{\_\_WARN__}
+
+```perl
+use warnings;
+$SIG{__WARN__} = sub {};
+my $x = 1+"";
+# ...empty...
+```
+--
+```perl
+use warnings;
+$SIG{__WARN__} = sub { warn $_[0] if $dowarn };
+my $no_warn_here = 1+"";
+$dowarn = 1;
+my $x = 1+"";
+# Argument "" isn't numeric in addition (+)...
+```
+--
+```perl
+while (my $file = shift @files) {
+    local $SIG{__WARN__} = $SIG{__WARN__};
+    do $file;
+}
+```
+
+---
+
+# die
+
+```perl
+die "error message";
+say 1;
+# error message at - line 1.
+```
+--
+```perl
+die "error message`\n`";
+# error message
+```
+--
+```perl
+eval "2/0";
+die;
+# Illegal division by zero at (eval 1) line 1.
+#         ...caught at - line 2.
+```
+---
+
+# die
+
+```perl
+eval {
+    die "exception";
+    say "after";
+};
+if ($@) {
+    if ($@ =~ /^exception/) {
+        warn "warn: $@";
+    } else {
+        die;   # similar to `die $@`
+    }
+}
+```
+
+```perl
+# warn: exception at - line 2.
+```
+
+---
+
+# die
+
+```perl
+$SIG{__DIE__} = sub {
+    warn $_[0]; exit
+};
+eval {
+    die "exception";
+};
+die "fatal";
+```
+
+```perl
+# exception at - line 5.
+```
+
+---
+
+# die
+
+```perl
+$SIG{__DIE__} = sub {
+*   return if $^S;
+    warn $_[0]; exit
+};
+eval {
+    die "exception";
+};
+die "fatal";
+```
+
+```perl
+# fatal at - line 8.
+```
 
 ---
 
 # Carp
-## TODO
+
+```perl
+use Carp ();
+
+$SIG{__WARN__} = \&Carp::cluck;
+
+sub func  { func2() }
+sub func2 { warn "error!\n"; }
+
+func();
+```
+
+```perl
+# error!
+#  at - line 6.
+#        main::func2() called at - line 5
+#        main::func() called at - line 8
+```
+
+---
+
+# Carp
+
+```perl
+use Carp ();
+
+$SIG{__DIE__} = \&Carp::confess;
+
+sub func  { func2() }
+sub func2 { 2/0 }
+
+func();
+```
+
+```perl
+# Illegal division by zero at - line 6.
+#  at - line 6
+#        main::func2() called at - line 5
+#        main::func() called at - line 8
+```
+
+---
+
+# Carp
+
+```perl
+package Some::Package {
+    use Carp;
+    sub func { carp "error\n" }
+}
+
+*sub func2 { Some::Package::func(); }
+
+func2();
+say "end";
+```
+
+```perl
+# error
+#  at - line 6.
+# end
+```
+
+---
+
+# Carp
+
+```perl
+package Some::Package {
+    use Carp;
+    sub func { croak "error\n" }
+}
+
+*sub func2 { Some::Package::func(); }
+
+func2();
+say "end";
+```
+
+```perl
+# error
+#  at - line 6.
+```
 
 ---
 
@@ -457,7 +682,7 @@ sub new {
 }
 
 sub full_name {
-    $_[0]->{first_name}." ".$$_[0]->{last_name};
+    $_[0]->{first_name}." ".$_[0]->{last_name};
 }
 
 my $u = User->new(
@@ -476,6 +701,7 @@ say $u->full_name; # vasya pupkin
 
 ```perl
 package Vector;
+use List::Util 'sum';
 
 sub new {
     my ($class, @points) = @_;
@@ -484,7 +710,7 @@ sub new {
 
 sub len {
     my $self = shift;
-    return sqrt($self->[0]**2 + $self->[1]**2); 
+    return sqrt sum map { $_**2 } @$self;
 }
 
 my $v = Vector->new(3, 4);
