@@ -1333,8 +1333,8 @@ use Mouse;
 has id => (
     is => 'rw',
     isa => 'Int',
-    traits => ['NotifySerialize'],
-    serializer => sub { pack 'L', $_[0] },
+    `traits => ['NotifySerialize']`,
+    `serializer` => sub { pack 'L', $_[0] },
 );
 
 sub serialize {
@@ -1342,10 +1342,10 @@ sub serialize {
     my $bin = '';
     for my $attr_name ($self->meta->get_attribute_list) {
         my $attr = $self->meta->get_attribute($attr_name);
-        if($attr->does('Notify::Trait::Serialize') 
+        if($attr->`does`('Notify::Trait::Serialize') 
             && $attr->serializer) {
-            my $reader = $attr->get_read_method;
-            $bin .= $attr->serializer->($attr->$reader);
+            my $reader = $attr->`get_read_method`;
+            $bin .= $attr->serializer->(`$attr->$reader`);
         }
     }
     return $bin;
