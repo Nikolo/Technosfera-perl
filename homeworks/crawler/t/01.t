@@ -11,7 +11,7 @@ BEGIN{
 no warnings 'experimental';
 our $VERSION = 1.0;
 
-use Test::More tests => 1;
+use Test::More tests => 3;
 use Data::Dumper;
 
 use FindBin;
@@ -37,11 +37,8 @@ use constant RESULT => [
 ];
 
 my ($total_size, @top10) = Crawler::run(URL, 100);
-
-is_deeply(
-    [int($total_size/1024), { map {$_ => 1 } @top10 } ],
-    RESULT,
-    URL,
-);
+cmp_ok ( int($total_size/1024), '>=', RESULT->[0], 'Size1 '.URL);
+cmp_ok ( int($total_size/1024), '<=', RESULT->[0]+100, 'Size2 '.URL);
+is_deeply( { map {$_ => 1 } @top10 }, RESULT->[1], URL);
 
 1;
