@@ -22,12 +22,18 @@ class:note_and_mark title
 1. Тонкости ООП
     * bless
     * наследование
-    * декструкторы
+    * деструкторы
     * overload
     * tie
     * AUTOLOAD
 1. Mouse
 1. Создание модуля
+
+---
+
+class: center, middle
+
+# Не такие простые модули
 
 ---
 
@@ -300,6 +306,13 @@ sub hex { 1 }
 
 say hex("0x50");         # 1
 say `CORE::`hex("0x50"); # 80
+```
+--
+```perl
+BEGIN {
+    # счастливой отладки! :)
+    `*CORE::GLOBAL::`hex = sub { `CORE::`hex(@_)+1 };
+}
 ```
 
 ---
@@ -670,6 +683,12 @@ main runtime
 
 ---
 
+class: center, middle
+
+# Тонкости ООП
+
+---
+
 # bless
 ## HASH
 
@@ -1037,7 +1056,7 @@ use Tie::IxHash;
 
 my %hash = (a => 1, b => 2, c => 3);
 
-tie my %sorted, "Tie::IxHash";
+tie my %sort, "Tie::IxHash";
 %sort = (a => 1, b => 2, c => 3);
 
 say join ", ", map {"$_ => $hash{$_}"} keys %hash; 
@@ -1148,6 +1167,11 @@ sub DESTROY {
 
 ---
 
+class: center, middle
+
+# Mouse.pm
+
+---
 
 # Mouse ООП
 
@@ -1479,7 +1503,7 @@ sub register_implementation {'Notify::Trait::Event'}
 .small[
 ```perl
 # Notify/Event.pm
-package Notify/Event.pm
+package Notify::Event;
 use Mouse `-traits` => qw/`NotifyEvent`/;
 # ...
 $class->meta->actions({ vote => sub { ... } });
