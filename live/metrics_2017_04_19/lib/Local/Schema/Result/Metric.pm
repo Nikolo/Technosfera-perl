@@ -131,6 +131,44 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-19 19:14:48
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:NmlatF4oTe9NkBTi0ISJUA
 
+use Local::Util;
+use DateTime;
 
-# You can replace this text with custom code or comments, and it will be preserved on regeneration
+sub create_required_metric_results {
+    my ($self, $until_time) = @_;
+
+    $until_time //= DateTime->now();
+
+    my $start = $self->next_measure_start();
+
+    while (1) {
+        my $stop = $start->clone()->add(seconds => $self->window_seconds);
+        last if DateTime->compare($stop, $until_time) == 1;
+
+        $self->create_related('measures', {
+            start => $start,
+            stop => $stop,
+        });
+
+        $start = $start->add(seconds => $self->step_seconds);
+    }
+
+    return;
+}
+
+sub next_measure_start {
+    my ($self) = @_;
+
+    my @measures = $self->search_related('measures', undef, {
+        order_by => {-desc => 'start'},
+        rows => 1,
+    })->all();
+
+    if (@measures) {
+        return Local::Util->str_to_datetime($measures[0]->start)->add(seconds => $self->step_seconds);
+    }
+
+    return Local::Util->str_to_datetime($self->start);
+}
+
 1;
