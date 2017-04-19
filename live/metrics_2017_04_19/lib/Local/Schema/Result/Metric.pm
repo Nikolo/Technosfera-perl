@@ -29,6 +29,19 @@ __PACKAGE__->table("metric");
   is_auto_increment: 1
   is_nullable: 0
 
+=head2 start
+
+  data_type: 'timestamp'
+  datetime_undef_if_invalid: 1
+  default_value: current_timestamp
+  is_nullable: 0
+
+=head2 stop
+
+  data_type: 'timestamp'
+  datetime_undef_if_invalid: 1
+  is_nullable: 1
+
 =head2 filter
 
   data_type: 'varchar'
@@ -57,6 +70,19 @@ __PACKAGE__->table("metric");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+  "start",
+  {
+    data_type => "timestamp",
+    datetime_undef_if_invalid => 1,
+    default_value => \"current_timestamp",
+    is_nullable => 0,
+  },
+  "stop",
+  {
+    data_type => "timestamp",
+    datetime_undef_if_invalid => 1,
+    is_nullable => 1,
+  },
   "filter",
   { data_type => "varchar", is_nullable => 0, size => 1024 },
   "step_seconds",
@@ -102,8 +128,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-19 18:58:48
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:GHlsa/QZOtVtMdFAc4xQHw
+# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-19 19:14:48
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:NmlatF4oTe9NkBTi0ISJUA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
