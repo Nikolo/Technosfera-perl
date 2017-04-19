@@ -5,8 +5,6 @@ use Local::Schema;
 
 my $schema = Local::Schema->new();
 
-use Data::Dumper; print Dumper [
-    $schema->storage->dbh->selectrow_arrayref('SELECT 1')
-];
+print $schema->resultset('Metric')->find(1)->measures->count();
 
 1;
