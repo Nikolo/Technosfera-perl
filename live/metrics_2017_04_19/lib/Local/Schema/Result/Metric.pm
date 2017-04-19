@@ -134,16 +134,17 @@ __PACKAGE__->has_many(
 use Local::Util;
 use DateTime;
 
-sub create_required_metric_results {
+sub create_required_measures {
     my ($self, $until_time) = @_;
 
     $until_time //= DateTime->now();
+    my $current_stop = $self->current_stop($until_time);
 
     my $start = $self->next_measure_start();
 
     while (1) {
         my $stop = $start->clone()->add(seconds => $self->window_seconds);
-        last if DateTime->compare($stop, $until_time) == 1;
+        last if DateTime->compare($stop, $current_stop) == 1;
 
         $self->create_related('measures', {
             start => $start,
@@ -154,6 +155,16 @@ sub create_required_metric_results {
     }
 
     return;
+}
+
+sub current_stop {
+    my ($self, $until_time) = @_;
+
+    return $until_time unless $self->stop;
+
+    my $stop = Local::Util->str_to_datetime($self->stop);
+
+    return (DateTime->compare($stop, $until_time) == 1) ? $until_time : $stop;
 }
 
 sub next_measure_start {
