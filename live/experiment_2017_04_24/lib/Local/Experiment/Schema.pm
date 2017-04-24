@@ -15,6 +15,13 @@ __PACKAGE__->load_namespaces;
 # Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 18:41:49
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0md5Yj9MQZSiCBJZZfcgRw
 
+sub new {
+    my ($class) = @_;
 
-# You can replace this text with custom code or comments, and it will be preserved on regeneration
+    return $class->connect(
+        'DBI:mysql:database=experiment;host=localhost',
+        'experiment', 'experiment'
+    );
+}
+
 1;
