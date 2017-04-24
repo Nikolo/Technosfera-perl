@@ -139,4 +139,12 @@ __PACKAGE__->belongs_to(
 # Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 19:58:32
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:fsPzxQ2q7lqnItoqQB4M1w
 
+sub start {
+    my ($self) = @_;
+
+    $self->update({started => 1});
+
+    return;
+}
+
 1;

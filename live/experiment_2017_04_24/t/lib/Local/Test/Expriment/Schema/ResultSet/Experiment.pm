@@ -53,4 +53,44 @@ sub test_create_by_user {
     return;
 }
 
+sub test_start_if_possible {
+    my ($self) = @_;
+
+    $self->{schema}->resultset('Experiment')->delete();
+
+    my %sources = (
+        1 => $self->{schema}->resultset('Source')->create({capacity => 1}),
+        2 => $self->{schema}->resultset('Source')->create({capacity => 2}),
+        3 => $self->{schema}->resultset('Source')->create({capacity => 3}),
+    );
+
+    my %experiments = (
+        1 => $self->{schema}->resultset('Experiment')->create({
+            number_of_queries => 1,
+            a_source => $sources{1},
+            b_source => $sources{2},
+        }),
+        2 => $self->{schema}->resultset('Experiment')->create({
+            number_of_queries => 3,
+            a_source => $sources{2},
+            b_source => $sources{3},
+        }),
+        3 => $self->{schema}->resultset('Experiment')->create({
+            number_of_queries => 1,
+            a_source => $sources{2},
+            b_source => $sources{3},
+        }),
+    );
+
+    $self->{schema}->resultset('Experiment')->start_if_possible();
+
+    $_->discard_changes() for values %experiments;
+
+    ok( $experiments{1}->started);
+    ok(!$experiments{2}->started);
+    ok(!$experiments{3}->started);
+
+    return;
+}
+
 1;
