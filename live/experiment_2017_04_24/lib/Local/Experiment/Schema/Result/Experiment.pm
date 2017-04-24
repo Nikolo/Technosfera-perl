@@ -29,6 +29,12 @@ __PACKAGE__->table("experiment");
   is_auto_increment: 1
   is_nullable: 0
 
+=head2 started
+
+  data_type: 'tinyint'
+  default_value: 0
+  is_nullable: 1
+
 =head2 number_of_queries
 
   data_type: 'integer'
@@ -69,6 +75,8 @@ __PACKAGE__->table("experiment");
 __PACKAGE__->add_columns(
   "id",
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
+  "started",
+  { data_type => "tinyint", default_value => 0, is_nullable => 1 },
   "number_of_queries",
   { data_type => "integer", is_nullable => 0 },
   "a_source_id",
@@ -128,7 +136,7 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 18:48:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bxbiWNrUjyz9OJzFW5FwVg
+# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 19:58:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:fsPzxQ2q7lqnItoqQB4M1w
 
 1;

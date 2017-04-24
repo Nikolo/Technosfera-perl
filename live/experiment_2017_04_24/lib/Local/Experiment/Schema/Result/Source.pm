@@ -35,6 +35,12 @@ __PACKAGE__->table("source");
   is_nullable: 1
   size: 256
 
+=head2 capacity
+
+  data_type: 'integer'
+  default_value: 0
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -42,6 +48,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "title",
   { data_type => "varchar", is_nullable => 1, size => 256 },
+  "capacity",
+  { data_type => "integer", default_value => 0, is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -89,8 +97,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 18:48:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:bVWKwD4crh3TRkLF0RspHA
+# Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-24 19:58:32
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:OkhNd5yM8iL3qep1W8UzKA
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
