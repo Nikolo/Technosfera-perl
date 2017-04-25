@@ -38,4 +38,37 @@ sub test_last_measure__no_measures {
     return;
 }
 
+sub test_next_measure_start__no_measures {
+    my ($self) = @_;
+
+    my $metric = $self->{schema}->resultset('Metric')->create({
+        start => '2016-12-12 00:00:00',
+        stop  => '2016-12-15 00:00:00',
+        query => 'test',
+    });
+
+    is($metric->next_measure_start(), '2016-12-12T00:00:00');
+
+    return;
+}
+
+sub test_next_measure_start {
+    my ($self) = @_;
+
+    my $metric = $self->{schema}->resultset('Metric')->create({
+        start => '2016-12-12 00:00:00',
+        stop  => '2016-12-15 00:00:00',
+        query => 'test',
+        step_seconds => 60,
+    });
+    $metric->create_related('measures', {
+        start => '2016-12-12 00:00:00',
+        stop  => '2016-12-12 00:03:00',
+    });
+
+    is($metric->next_measure_start(), '2016-12-12T00:01:00');
+
+    return;
+}
+
 1;
