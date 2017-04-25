@@ -42,7 +42,7 @@ sub default {
 
     if (!defined($DEFAULT_CONFIG)) {
         $DEFAULT_CONFIG = $class->new(
-            filename => dirname(__FILE__) . '../../../etc/config.yaml'
+            filename => dirname(__FILE__) . '/../../../etc/config.yaml'
         );
     }
 
