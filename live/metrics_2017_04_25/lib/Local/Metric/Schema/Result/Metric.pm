@@ -117,6 +117,15 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07045 @ 2017-04-25 18:32:21
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:nT1ODDRB6Whz/w1JfeT14g
 
+sub last_measure {
+    my ($self) = @_;
 
-# You can replace this text with custom code or comments, and it will be preserved on regeneration
+    my @measures = $self->search_related('measures', undef, {
+        order_by => {-desc => 'start'},
+        rows => 1,
+    })->all();
+
+    return $measures[0];
+}
+
 1;

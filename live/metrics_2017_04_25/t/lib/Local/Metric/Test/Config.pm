@@ -1,6 +1,6 @@
 package Local::Metric::Test::Config;
 
-use Test::Class::Moose;
+use Test::Class::Moose extends => 'Local::Test';
 
 use File::Temp ();
 
