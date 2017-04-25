@@ -120,8 +120,23 @@ __PACKAGE__->has_many(
 use DateTime;
 use Local::Metric::Util;
 
-sub create_required_measure {
+sub create_required_measures {
     my ($self) = @_;
+
+    my $u = Local::Metric::Util->new();
+
+    my $start = $self->next_measure_start();
+    while (1) {
+        my $stop = $start->clone()->add(seconds => $self->window_seconds);
+        last if DateTime->compare($stop, $u->str_to_datetime($self->stop)) == 1;
+
+        $self->create_related('measures', {
+            start => $start,
+            stop => $stop,
+        });
+
+        $start->add(seconds => $self->step_seconds);
+    }
 
     return;
 }
