@@ -1,0 +1,8 @@
+CREATE TABLE metric (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    start TIMESTAMP NOT NULL,
+    stop  TIMESTAMP NULL,
+    query VARCHAR(1024),
+    step_seconds INTEGER NOT NULL,
+    window_seconds INTEGER NOT NULL
+);
