@@ -22,12 +22,18 @@ class:note_and_mark title
 1. Тонкости ООП
     * bless
     * наследование
-    * декструкторы
+    * деструкторы
     * overload
     * tie
     * AUTOLOAD
 1. Mouse
 1. Создание модуля
+
+---
+
+class: center, middle
+
+# Не такие простые модули
 
 ---
 
@@ -101,14 +107,13 @@ say "func exists" if *Some::Package::func{CODE};
 # Таблицы символов
 
 ```perl
- package Local::Math {
-     $PI = 3.14159265;
-     sub PI { print 3.14 }
- }
-
-* *Other::Math::PI = *Local::Math::PI;
- print $Other::Math::PI, "\n";         # 3.14159265
- Other::Math::PI();                    # 3.14
+package Local::Math {
+    $PI = 3.14159265;
+    sub PI { print 3.14 }
+}
+`*Other::Math::PI = *Local::Math::PI;`
+print $Other::Math::PI, "\n";         # 3.14159265
+Other::Math::PI();                    # 3.14
 ```
 
 ---
@@ -121,7 +126,7 @@ say "func exists" if *Some::Package::func{CODE};
      sub PI { print 3.14 }
  }
 
-* *Other::Math::PI = \$Local::Math::PI;
+ `*Other::Math::PI = \$Local::Math::PI;`
  print $Other::Math::PI, "\n";         # 3.14159265
  Other::Math::PI();
  # Undefined subroutine &Other::Math::PI called
@@ -137,7 +142,7 @@ say "func exists" if *Some::Package::func{CODE};
      sub PI { print 3.14 }
  }
 
-* *Other::Math::PI = \&Local::Math::PI;
+**Other::Math::PI = \&Local::Math::PI;
  print $Other::Math::PI, "\n";         # undef
  Other::Math::PI();                    # 3.14
 ```
@@ -147,10 +152,10 @@ say "func exists" if *Some::Package::func{CODE};
 # Таблицы символов
 
 ```perl
-*PI = \3.14159265;
-print $PI, "\n";      # 3.14159265
-$PI = 4;
-# Modification of a read-only value attempted
+ *PI = \3.14159265;
+ print $PI, "\n";      # 3.14159265
+ $PI = 4;
+ # Modification of a read-only value attempted
 ```
 --
 
@@ -301,6 +306,13 @@ sub hex { 1 }
 say hex("0x50");         # 1
 say `CORE::`hex("0x50"); # 80
 ```
+--
+```perl
+BEGIN {
+    # счастливой отладки! :)
+    `*CORE::GLOBAL::`hex = sub {`CORE::`hex($_[0])+1};
+}
+```
 
 ---
 
@@ -392,6 +404,7 @@ die;
 # Illegal division by zero at (eval 1) line 1.
 #         ...caught at - line 2.
 ```
+
 ---
 
 # die
@@ -408,6 +421,28 @@ if ($@) {
         die;   # similar to `die $@`
     }
 }
+```
+
+```perl
+# warn: exception at - line 2.
+```
+
+---
+
+# die
+
+```perl
+eval {
+    die "exception";
+    say "after";
+*   1;
+*} or do {
+    if ($@ =~ /^exception/) {
+        warn "warn: $@";
+    } else {
+        die;   # similar to `die $@`
+    }
+};
 ```
 
 ```perl
@@ -670,8 +705,13 @@ main runtime
 
 ---
 
-# bless
-## HASH
+class: center, middle
+
+# Тонкости ООП
+
+---
+
+# bless: HASH
 
 ```perl
 package User;
@@ -696,8 +736,7 @@ say $u->full_name; # vasya pupkin
 
 ---
 
-# bless
-## ARRAY
+# bless: ARRAY
 
 ```perl
 package Vector;
@@ -721,8 +760,7 @@ say $v->len;   # 5
 
 ---
 
-# bless
-## SCALAR
+# bless: SCALAR
 
 ```perl
 package Time;
@@ -775,15 +813,16 @@ say Local::Professor->isa("Local::Student");# undef
 ## Класс UNIVERSAL
 
 ```perl
-# ???
 say Local::Professor->isa("UNIVERSAL");     # 1
+# ???
 ```
 
 ```perl
-my $professor = Local::Professor->new;
-say $professor->isa("Local::Teacher");      # 1
+my $prof = Local::Professor->new;
+say $prof->isa("Local::Teacher");           # 1
 
 say UNIVERSAL::isa({}, "Local::User");      # undef
+say UNIVERSAL::isa($prof, "HASH");          # 1
 ```
 
 ```perl
@@ -853,6 +892,10 @@ $self->`Cacheable`::some_method(@params);
 
 ---
 
+![image]( inheritance.png )
+
+---
+
 # Множественное наследование
 ## Method resolution order
 
@@ -890,7 +933,10 @@ layout: true
 
 ```perl
 package Local::User;
-use overload '""' => 'to_string';
+use overload
+    '""'     => 'to_string',
+    fallback => 1;
+
 sub to_string {
     my ($self) = @_;
     return $self->name.' <'.$self->email.'>';
@@ -1037,7 +1083,7 @@ use Tie::IxHash;
 
 my %hash = (a => 1, b => 2, c => 3);
 
-tie my %sorted, "Tie::IxHash";
+tie my %sort, "Tie::IxHash";
 %sort = (a => 1, b => 2, c => 3);
 
 say join ", ", map {"$_ => $hash{$_}"} keys %hash; 
@@ -1074,7 +1120,7 @@ sub AUTOLOAD {
 
 ```perl
 print $user->first_name();         # Василий
-print $user->can('first_name');    # 0 :-(
+*print $user->can('first_name');    # 0 :-(
 ```
 
 ---
@@ -1110,6 +1156,39 @@ sub DESTROY {
   die "Object isn't stored!" unless $self->stored;
 }
 ```
+
+--
+
+.left[
+```perl
+sub DESTROY {
+    warn "X"; exit;
+};
+{bless {};}
+say "ok";
+```
+]
+.right[
+```x
+X
+```
+]
+.clear[]
+
+--
+
+.left[
+```perl
+sub DESTROY { die "X"; };
+{bless {};}
+say "ok";
+```
+]
+.right[
+```x
+ok
+```
+]
 
 ---
 
@@ -1148,6 +1227,11 @@ sub DESTROY {
 
 ---
 
+class: center, middle
+
+# Mouse.pm
+
+---
 
 # Mouse ООП
 
@@ -1263,7 +1347,6 @@ sub _build_is_adult { return 1; }
 
 ```perl
 has [qw(
-  file_name
   fh
   content
   xml_document
@@ -1284,7 +1367,7 @@ $obj->xml_document;
 
 # Mouse ООП
 
-## Миксины
+## Роли
 
 ```perl
 `with` 'Role::HasPassword';
@@ -1308,9 +1391,11 @@ sub is_password_valid {
 
 ---
 
-# Mouse ООП
+![image]( inheritance.png )
 
-## Миксины
+---
+
+# Mouse ООП
 
 .small[
 ```perl
@@ -1347,7 +1432,6 @@ sub vars {
 
 # Mouse ООП
 
-## Миксины
 
 ```
                   Event
@@ -1479,12 +1563,12 @@ sub register_implementation {'Notify::Trait::Event'}
 .small[
 ```perl
 # Notify/Event.pm
-package Notify/Event.pm
+package Notify::Event;
 use Mouse `-traits` => qw/`NotifyEvent`/;
 # ...
 $class->meta->actions({ vote => sub { ... } });
 # ...
-$class->meta->actions->('vote')->(@args);
+$class->meta->actions->{'vote'}->(@args);
 ```
 ]
 
@@ -1581,6 +1665,14 @@ sub serialize {
 
 ---
 
+# Всё понятно? ;)
+
+--
+
+![image]( mind-blown.png )
+
+---
+
 # Mouse — аналоги
 
 * Moose
@@ -1641,6 +1733,22 @@ WriteMakefile(
     # ...
 );
 ```
+
+---
+
+# Домашнее задание
+
+## Легковесный ORM DBI::ActiveRecord
+
+Требуется реализовать набор классов `DBI::ActiveRecord`, позволяющий легко и непринужденно создавать объекты, интегрированные с таблицами базы данных.
+ORM должен быть написан на основе ООП фреймворка *Mouse*. 
+Для реализации следует активно использовать мета-программирование (мета-классы, трейты).
+
+После этого следует создать приложение музыкальной библиотеки, использующее данный набор классов для работы с базой данных.
+
+.center[
+## homeworks/dbi-active-record
+]
 
 ---
 

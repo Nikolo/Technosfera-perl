@@ -1,0 +1,4 @@
+mysql:
+    db:       metrics
+    user:     metrics
+    password: metrics
