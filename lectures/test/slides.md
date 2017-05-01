@@ -363,78 +363,6 @@ sub explain {
 
 ---
 
-# SKIP
-
-```perl
-use Test::More tests => 4;
-
-SKIP: {
-  skip('because we are learning', 4) if 1;
-
-  fail('A');
-  fail('B');
-  pass('C');
-  pass('D');
-}
-```
-
-```bash
-1..4
-ok 1 # skip because we are learning
-ok 2 # skip because we are learning
-ok 3 # skip because we are learning
-ok 4 # skip because we are learning
-```
-
----
-
-# TODO
-
-```perl
-TODO: {
-  local $TODO = 'we are learning';
-  fail('A'); fail('B'); pass('C'); pass('D');
-}
-```
-
-```bash
-1..4
-not ok 1 - A # TODO we are learning
-#   Failed (TODO) test 'A'
-#   at T.pm line 6.
-not ok 2 - B # TODO we are learning
-#   Failed (TODO) test 'B'
-#   at T.pm line 7.
-ok 3 - C # TODO we are learning
-ok 4 - D # TODO we are learning
-```
-
----
-
-# todo_skip
-
-```perl
-TODO: {
-  local $TODO = 'we are learning';
-
-  todo_skip('Learning!', 4);
-
-  fail('A');
-  fail('B');
-  pass('C');
-  pass('D');
-}
-```
-
-```bash
-not ok 1 # TODO & SKIP Learning!
-not ok 2 # TODO & SKIP Learning!
-not ok 3 # TODO & SKIP Learning!
-not ok 4 # TODO & SKIP Learning!
-```
-
----
-
 # BAIL_OUT
 
 ```perl
@@ -558,17 +486,6 @@ ok 1 - one plus one is two
 
 ---
 
-# TODO
-
-```perl
-sub live_test : Test  {
-    local $TODO = "live currently unimplemented";
-    ok(Object->live, "object live");
-}
-```
-
----
-
 # Наследование
 
 ```perl
@@ -599,32 +516,6 @@ use Local::OK::Post::Test;
 lib/Local/OK/Post.pm
 t/lib/Local/OK/Post/Test.pm
 t/class.t
-```
-
----
-
-# Test::Class::Moose
-
-```perl
-package TestsFor::DateTime;
-use Test::Class::Moose;
-use DateTime;
-
-sub test_constructor {
-    my $test = shift;
-    $test->test_report->plan(3);
-
-    can_ok 'DateTime', 'new';
-    my %args = (year  => 1967,
-                month => 6,
-                day => 20);
-    isa_ok my $date = DateTime->new(%args),
-        'DateTime';
-    is $date->year, $args{year},
-        '... and the year should be correct';
-}
-
-1;
 ```
 
 ---
@@ -855,7 +746,7 @@ use Module::Name;
 use Test::MockModule;
 
 {
-    my $module = Test::MockModule-
+    my $module = Test::MockModule->
         new('Module::Name');
     $module->mock('subroutine', sub { ... });
     Module::Name::subroutine(@args); # mocked
@@ -877,7 +768,40 @@ ok($mock->somemethod());
 
 $mock->set_true('foo')
     ->set_false('bar')
-    ->set_series('baz',
-        'a', 'b', 'c');
+    ->set_series('baz', 'a', 'b', 'c');
+```
+
+---
+
+# Test::TCP
+
+```perl
+my $server = Test::TCP->new(
+    listen => 1,
+    code => sub {
+        my $socket = shift;
+        # ...
+    },
+);
+my $client = MyClient->new(
+    host => '127.0.0.1',
+    port => $server->port
+);
+undef $server;
+```
+
+---
+
+# Test::TCP
+
+```perl
+my $memcached = Test::TCP->new(
+    code => sub {
+        my $port = shift;
+
+        exec $bin, '-p' => $port;
+        die "cannot execute $bin: $!";
+    },
 );
 ```
+
