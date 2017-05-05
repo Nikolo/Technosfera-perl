@@ -1,0 +1,8 @@
+-rwxrwxrwx;1;lex;lex;0;2016-10-01;21:15;123.txt
+-rwxrwxrwx;2;lex;lex;1566307135;2015-11-21;09:42;Guardians.of.the.Galaxy.BDRip-AVC.Dub.IMAX.mkv
+-rwxrwxrwx;2;lex;lex;1467283456;2015-11-14;03:00;Koroleva_benzokolonki_DVDRip.avi
+-rwxrwxrwx;2;lex;lex;1558415360;2015-10-30;02:33;Leviafan.2014_r5_HDRip.avi
+-rwxrwxrwx;1;lex;lex;478;2016-09-30;15:04;result.txt
+-rwxrwxrwx;1;lex;lex;0;2016-10-01;20:57;новый файл 
+-rwxrwxrwx;2;lex;lex;783001445;2015-10-30;02:10;Пингвины Мадагаскара (2014).mkv 
+-rwxrwxrwx;1;lex;lex;202;2016-10-01;20:58;решение к задаче 1.txt 
