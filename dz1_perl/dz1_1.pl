@@ -1,0 +1,1 @@
+`ls -l | perl -lane 'if($. != 1){print join(";",split(" ", $_,9))}'`
