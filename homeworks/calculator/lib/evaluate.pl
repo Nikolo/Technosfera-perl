@@ -18,11 +18,56 @@ BEGIN{
 no warnings 'experimental';
 
 sub evaluate {
-	my $rpn = shift;
-
-	# ...
-
-	return 0;
+	my $rpnref = shift;
+	my @rpn = @$rpnref;
+	my $el;
+	my @stack;
+	for $el (@rpn) {
+		given ($el) {
+			when ('U-') {
+				if (@stack && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/) {$stack[$#stack] = 0 - $stack[$#stack];}
+				else {return 'Err';} 
+				next;
+			}
+			when ('U+') { next;}
+			when ('^') {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+					splice (@stack, $#stack-1, 2, $stack[$#stack-1]**$stack[$#stack]);
+				} else {return 'Err';}
+				next;
+			}
+			when ('*') {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\d*.\d+/) {
+					splice (@stack, $#stack-1, 2, $stack[$#stack-1]*$stack[$#stack]);
+				} else {return 'Err';}
+				next;
+			}
+			when ('/') {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+					if ($stack[$#stack] == 0) {return 'NaN';} 
+					splice (@stack, $#stack-1, 2, $stack[$#stack-1]/$stack[$#stack]);
+				} else {return 'Err';}
+				next;
+			}
+			when ('+') {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\-?\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+					splice (@stack, $#stack-1, 2, $stack[$#stack-1]+$stack[$#stack]);
+				} else {return 'Err';}
+				next;
+			}
+			when ('-') {
+				if ($#stack >= 1 && $stack[$#stack] =~ /\-?\d+|\d*.\d+/ && $stack[$#stack-1] =~ /\-?\d+|\-?\d*.\d+/) {
+					splice (@stack, $#stack-1, 2, $stack[$#stack-1]-$stack[$#stack]);
+				} else {return 'Err';}
+				next;
+			}
+			when (/\-?\d+|\-?\d*.\d+/) {push(@stack, $el);}
+			default {return 'Err';}
+		}
+	}
+	if ($stack[$#stack]=~ /\-?\d+|\-?\d*.\d+/) {return $stack[$#stack];}
+	return 'Err';
+1;
 }
 
 1;
