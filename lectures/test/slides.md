@@ -1,6 +1,8 @@
-class: firstpage
+class: firstpage, title
 
-# Тестирование
+# Программирование на Perl
+
+## Тестирование
 
 ---
 
@@ -177,7 +179,7 @@ not ok 2 - two
 ```perl
 use Test::Simple tests => 42;
 
-ok(sin(0), 0, 'Sin(0)');
+ok(sin(0) == 0, 'Sin(0)');
 ```
 
 ---
@@ -598,6 +600,10 @@ cmp_deeply($got, [ re("ferg") ])
 cmp_deeply([1, 2, 2], bag(2, 2, 1))
 ```
 
+```perl
+cmp_bag([1, 2, 2], [2, 2, 1])
+```
+
 ---
 
 # all, any
@@ -733,7 +739,7 @@ $superuser->insert();
 # Test Double
 
 * Dummy object
-* Tets Stub
+* Test Stub
 * Test Spy
 * Mock Object
 
