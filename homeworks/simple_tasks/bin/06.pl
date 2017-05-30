@@ -26,6 +26,11 @@ sub encode {
     # ...
     # Алгоритм шифрования
     # ...
+    my @array = split(//, $str);
+
+    for (my $i = 0; $i < @array; $i++) {
+    $encoded_str = $encoded_str.chr((ord($array[$i]) + $key) % 127); #ASCII (chr) or Unicode (ord) value.
+    } # ASCII Table for characters 0-127.
 
     print "$encoded_str\n";
 }
@@ -46,8 +51,13 @@ sub decode {
     my $str = '';
 
     # ...
-    # Алгоритм дешифрования
+    # Алгоритм разшифрования
     # ...
+    my @array = split(//, $encoded_str);
+
+    for (my $i = 0; $i < @array; $i++) {
+    $str = $str.chr((ord($array[$i]) - $key + 127) % 127); 
+    }
 
     print "$str\n";
 }

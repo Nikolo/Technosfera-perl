@@ -27,10 +27,28 @@ sub run {
     my ($x, $y, $z) = @_;
     my $min = undef;
     my $max = undef;
-
+    my @values = ($x, $y, $z);
     # ...
     # Вычисление минимума и максимума
     # ...
+    $min = $values[0];
+    foreach my $i (0 .. $#values) {
+      if ($min>$values[$i]) {
+         $min = $values[$i];
+      }
+    }
+    #for(my $i = 0; $i<3; $i++) {
+    #        if ($min>$values["i"]) {
+    #            $min = $values["i"];
+    #        }
+    #}
+    
+    $max = $values[0];
+    foreach my $i (0 .. $#values) {
+      if ($max<$values[$i]) {
+         $max = $values[$i];
+      }
+    }
 
     print "$min, $max\n";
 }
