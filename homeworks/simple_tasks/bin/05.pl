@@ -33,6 +33,16 @@ sub run {
     # ...
     # Вычисление количества вохождений строки $substr в строку $str,
     # ...
+    my $i = -1;
+    while (($i = index($str, $substr, $i + 1)) != -1) {
+        $num++;
+    }
+
+
+    # while ((my $i = index($str, $substr)) != -1) {
+    #    $str = substr($str, $i + 1);
+    #    $num++;
+    # }
 
     print "$num\n";
 }
