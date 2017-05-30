@@ -24,14 +24,30 @@ run(1, 4) - печатает "2\n" и "3\n"
 
 sub run {
     my ($x, $y) = @_;
-    for (my $i = $x; $i <= $y; $i++) {
+my $X=$x;
+my $Y=$y;
 
-        # ...
-        # Проверка, что число простое
-        # ...
+my $i=$X;
+my $j;
+my $flag;
+	while ($i++<$Y) {
+	if($i ==-1 || $i==0|| $i== 1){
+		next;
+	}
+		$j=1;
+		$flag =1;
+		while(++$j<$i){
+			if($i%$j == 0){
+				$flag =0;
+				last;
+			
+			}
+		}
+		if($flag==1){
+			print "$i\n";
+		}
+	}
 
-	print "$i\n";
-    }
-}
+}   
 
 1;
