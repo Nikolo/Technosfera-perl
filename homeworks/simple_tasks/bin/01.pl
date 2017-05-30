@@ -28,15 +28,21 @@ run(1, 1, 1) - печатает "No solution!\n"
 
 sub run {
     my ($a_value, $b_value, $c_value) = @_;
-
-    my $x1 = undef;
-    my $x2 = undef;
-
-    #...
-    #Вычисление корней
-    #...
-
-    print "$x1, $x2\n";
+    if ($a_value == 0) {
+        print "No solution!\n";
+    }
+    else {
+        if ((my $D = $b_value ** 2 - 4 * $a_value * $c_value) >= 0) {
+            $D = sqrt ($D);
+            $a_value = 2 * $a_value;
+            my $x1 = (-$b_value + $D) / $a_value;
+            my $x2 = (-$b_value - $D) / $a_value;
+            print "$x1, $x2\n";
+        }
+        else {
+            print "No solution!\n";
+        }
+    }
 }
 
 1;
