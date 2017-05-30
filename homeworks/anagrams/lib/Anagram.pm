@@ -1,8 +1,10 @@
 package Anagram;
 
 use 5.010;
+use utf8;
 use strict;
 use warnings;
+use feature 'unicode_strings';
 
 =encoding UTF8
 
@@ -41,7 +43,31 @@ anagram(['пятак', 'ЛиСток', 'пятка', 'стул', 'ПяТаК', '
 
 sub anagram {
     my $words_list = shift;
+    my %dictionary;
+    my $word_arr;
+    
+    for my $word(@$words_list)
+    {
+        $word = lc "$word";
+        $word_arr = join "", sort(split //,$word);
+        $dictionary{$word} =  $word_arr;
+    }
+    
     my %result;
+    
+    for my $word(keys %dictionary)
+    {
+        my @loc_arr;
+        for my $item(keys %dictionary)
+        {
+            if($dictionary{$item} eq $dictionary{$word})
+            {
+                push @loc_arr, $item;
+                delete $dictionary{$item};
+            }
+        }
+        @result{$word} =  @loc_arr;
+    }
 
     #
     # Поиск анограмм
