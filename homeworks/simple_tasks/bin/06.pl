@@ -25,6 +25,9 @@ sub encode {
 
     # ...
     # Алгоритм шифрования
+    my @encoded_str = split //, $str;
+    $_=chr((ord($_)+$key)%128) for (@encoded_str); 
+    $encoded_str= join "", @encoded_str;
     # ...
 
     print "$encoded_str\n";
@@ -41,12 +44,18 @@ decode('$bcd', 1) - печатает '#abc'
 
 =cut
 
+decode('$bcd', 1);
+
 sub decode {
     my ($encoded_str, $key) = @_;
     my $str = '';
 
     # ...
     # Алгоритм дешифрования
+    #сделал через map, хотя можно было аналогично
+    my @str = split //, $encoded_str;
+    @str = map {chr((ord($_)-$key)%128)} @str; 
+    $str= join "", @str;
     # ...
 
     print "$str\n";

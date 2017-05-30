@@ -29,6 +29,10 @@ sub run {
 
     # ...
     # Вычисление номера первого ненулевого бита 
+    for (my $del=1; $del<32; $del++) {
+    	next if ($x % 2**$del!=0);
+    	$num=$del;
+    }
     # ...
 
     print "$num\n";
