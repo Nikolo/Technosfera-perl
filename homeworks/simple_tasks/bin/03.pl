@@ -28,11 +28,39 @@ sub run {
     my $min = undef;
     my $max = undef;
 
-    # ...
+    if ($x <= $y) {
+    	if ($y <= $z) {
+		$min = $x;
+		$max = $z;
+	}
+	else {
+		$max = $y;
+		if ($x <= $z) {
+			$min = $x;
+		}
+		else {
+			$min = $z;
+		}
+	}
+    }
+    elsif ($y >= $z) {
+	$max = $x;
+	$min = $z;
+    }
+    elsif ($z >= $x) {
+	$max = $z;
+	$min = $y;
+    }
+    else {
+    	$max = $x;
+	$min = $y;
+    }
+
     # Вычисление минимума и максимума
     # ...
 
     print "$min, $max\n";
 }
+run(1,2,2);
 
 1;

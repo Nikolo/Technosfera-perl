@@ -29,12 +29,24 @@ run("ab", "c") - печатает "0\n"
 sub run {
     my ($str, $substr) = @_;
     my $num = 0;
-
+    my $pos = 0;
     # ...
     # Вычисление количества вохождений строки $substr в строку $str,
+    if (index($str, $substr, $pos) == -1) {
+	print "0\n";
+    }
+    else {
+    	while (index($str, $substr, $pos) != -1 && $pos+length($substr) <= length ($str)) { 
+			$pos = index($str, $substr, $pos) + length($substr);
+#			print "$pos\n";
+			$num ++;
+    	}
+#    $num = length($str);
+    }
     # ...
 
     print "$num\n";
 }
+run("abcab","ab");
 
 1;

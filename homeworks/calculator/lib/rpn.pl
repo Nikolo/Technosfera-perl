@@ -20,15 +20,28 @@ BEGIN{
 no warnings 'experimental';
 use FindBin;
 require "$FindBin::Bin/../lib/tokenize.pl";
+use feature 'say';
 
 sub rpn {
-	my $expr = shift;
+	my $expr =" 3+ 4.7"; #shift;
 	my $source = tokenize($expr);
-	my @rpn;
-
-	# ...
+	my @rpn=@$source;
+	#print @$source;
+	my @stack;
+	for my $i ( @$source ) {
+		given( $i ) {
+			when ( /\d/ ) { push(@rpn,$i); }
+			when ( /\+/ ) { push(@stack,$i); }
+			#when ( /\-/ ) { if ($#rpn =~ /[\+\*\-]/) {;}
+		}
+	}
+	
+	push(@rpn,@stack);
+	
+	say join (' ', @rpn);	
 
 	return \@rpn;
 }
+rpn();
 
 1;
