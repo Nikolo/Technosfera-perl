@@ -22,6 +22,15 @@ run(1, 4) - печатает "2\n" и "3\n"
 
 =cut
 
+sub simpleTest{
+my $x =@_;
+unless($x < 2){
+for (my $i = 2; $i<$x ;++$i){
+if(($x % $i) == 0){return;}
+}
+print  $x;
+}
+}
 sub run {
     my ($x, $y) = @_;
     for (my $i = $x; $i <= $y; $i++) {
@@ -29,8 +38,9 @@ sub run {
         # ...
         # Проверка, что число простое
         # ...
+	
 
-	print "$i\n";
+	simpleTest($i);
     }
 }
 

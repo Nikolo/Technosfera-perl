@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+﻿#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -31,6 +31,43 @@ sub run {
     # ...
     # Вычисление минимума и максимума
     # ...
+
+	if($x >= $y)
+	{
+		if($y>=$z)
+		{
+			$min = $z;
+			$max = $x;
+		}
+		elsif($x >= $z)
+		{
+			$min = $y;
+			$max = $x;
+		}
+		else
+		{
+			$min = $y;
+			$max = $z;
+		}
+	}
+	elsif($y >= $z)
+	{
+		if($z >= $x)
+		{			
+			$min = $x;
+			$max = $y;
+		}
+		else
+		{
+			$min = $z;
+			$max = $y;
+		}
+	}
+	else
+	{
+		$min = $x;
+		$max = $z;
+	}
 
     print "$min, $max\n";
 }
