@@ -6,11 +6,15 @@ use Test::More;
 do "$FindBin::Bin/../bin/01.pl" or die "Can't open $FindBin::Bin/../bin/01.pl: $!";
 
 my @TESTS = (
-    [ [0, 1, 2], 'No solution!' ],
+    [ [0, 1, 2], '-2' ],
     [ [-2, 0, 128], '-8, 8' ], 
-    [ [12, 9, 0], '0, -0.75' ],
-    [ [1, 2, -3], '1, -3' ],
+    [ [12, 9, 0], '-0.75, 0' ],
+    [ [1, 2, -3], '-3, 1' ],
     [ [5, 6, 7], 'No solution!' ],
+    [ [0, 0, 0], 'Infinitive solutions!' ],
+    [ [0, 0, 3], 'No solution!'],
+    [ [0, -8, -6], '0.75' ],
+
 );
 
 plan tests => scalar(@TESTS);
