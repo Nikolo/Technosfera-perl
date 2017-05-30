@@ -21,6 +21,8 @@ has 'authorized', is => 'rw', default => 0, trigger => sub {
 
 };
 
+has 'pass', is => 'rw';
+
 has 'rooms', is => 'ro', default => sub {{}};
 
 has 'active', is => 'rw';
@@ -131,21 +133,43 @@ sub packet {
 
 			# Ask server, if we could use name
 			return if $self->nick eq $data->{nick};
-			
-			if( $self->server->validate_nick($self, $data->{nick}) ) {
 
-				if (!$self->authorized) {
-					# First name set
-					$self->authorized(1);
-					$self->on_authorized
-						and $self->on_authorized->($self);
+
+			if ($pkt->{v} == 1) {
+				if( $self->server->validate_nick($self, $data->{nick}) ) {
+
+					if (!$self->authorized) {
+						$self->authorized(1);
+						$self->on_authorized and $self->on_authorized->($self);
+						return;
+					}
 				}
 				else {
 					# Rename
 					# $self->server->user_rename($self);
 				}
 			}
-
+			if ($pkt->{v} == 2) {
+				return $self->disconnect("Password required") unless(exists $data->{pass} and defined $data->{pass});
+				if ( $self->server->validate_nick($self, $data->{nick}) ) {
+					if (!$self->authorized) {
+						if ($self->server->validate_pass($self, $data->{pass})) {
+							$self->authorized(1);
+							$self->on_authorized and $self->on_authorized->($self);
+							return;
+						}
+						else {
+							return $self->disconnect("Wrong password");
+						}
+					}
+				}
+				else {
+					$self->server->register_user($self, $data->{nick}, $data->{pass});
+					return;
+					# Rename
+					# $self->server->user_rename($self);
+				}
+			}
 		}
 		when ("msg") {
 			if (length $data->{text}) {
