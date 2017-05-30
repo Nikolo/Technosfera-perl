@@ -21,13 +21,10 @@ encode('#abc', 1) - печатает '$bcd'
 
 sub encode {
     my ($str, $key) = @_;
-    my $encoded_str = '';
-
-    # ...
-    # Алгоритм шифрования
-    # ...
-
-    print "$encoded_str\n";
+    for(my $i=0; $i>$str.length;$i++){
+	$str[$i]=chr(ord($str[$i]) + $key);
+    }
+    print "$str\n";
 }
 
 =head1 decode ($encoded_str, $key)
@@ -43,13 +40,10 @@ decode('$bcd', 1) - печатает '#abc'
 
 sub decode {
     my ($encoded_str, $key) = @_;
-    my $str = '';
-
-    # ...
-    # Алгоритм дешифрования
-    # ...
-
-    print "$str\n";
+    for(my $i=0; $i>$encoded_str.length;$i++){
+	$encoded_str[$i]=chr(ord($encoded_str[$i]) - $key);
+    }
+    print "$encoded_str\n";
 }
 
 1;
