@@ -50,6 +50,7 @@ for (1..@members/4) {
 
 my @list = sort { int(rand 3)-1 } @pairs, keys %members;
 =cut
+
 my @res = SecretSanta::calculate(@list);
 
 for (@res) {
