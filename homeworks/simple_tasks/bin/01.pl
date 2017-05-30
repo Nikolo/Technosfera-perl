@@ -33,10 +33,27 @@ sub run {
     my $x2 = undef;
 
     #...
-    #Вычисление корней
+    #a*x**2+b*x+c=0.
     #...
+    my $d = $b_value**2 - 4*$a_value*$c_value;
 
-    print "$x1, $x2\n";
+    if($a_value == 0){
+    print "No solution!\n";
+    }else{
+
+        if ($d == 0){
+            $x1 = $x2 = -1*(($b_value)/(2*$a_value));
+        } elsif ($d > 0){
+            $x1 = ((-$b_value + $d**0.5)/(2*$a_value));
+            $x2 = ((-$b_value - $d**0.5)/(2*$a_value));       
+        } else{
+        print "No solution!\n";
+        }
+
+        if($d >= 0){
+        print "$x1, $x2\n";
+        }
+    }
 }
 
 1;

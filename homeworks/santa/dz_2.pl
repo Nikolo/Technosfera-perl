@@ -1,13 +1,23 @@
-package SecretSanta;
-
-use 5.010;
 use strict;
 use warnings;
-use DDP;
+use 5.18.0;
+use Data::Dumper;
+use PadWalker;
 
-sub calculate {
-	my @members = @_;
-	my @res;
+my @members = ('K',['A','B']);
+my @res;
+#my @all = ("Ivan", "Alex", "Anna",);
+#my @fam = ("pis","sas");
+
+#my $link = \@fam;
+
+#my $los = 1;
+#my $name = "los";
+
+#push @all, $link;
+
+#say foreach @all;
+
 
 my $count = 0;
 STAR:
@@ -45,7 +55,6 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
                     goto STAR;
                 }
                 if ($count>20000){
-                        $#res=-1;
                         last;
                     }
 
@@ -122,10 +131,7 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
                 } 
             }
             $flag_1 = 0;
-            if ($count>20000){                
-                $#res=-1;
-                last;
-                }
+            if ($count>20000){last;}
     }
    
     
@@ -143,9 +149,5 @@ if ($dlina == 1 && ref($members[0]) eq "ARRAY"){
 #say @to;
 
 
- 
-
-	return @res;
-}
-
-1;
+    if($count>20000){$#res=-1;}
+print Dumper @res;

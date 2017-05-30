@@ -30,8 +30,23 @@ sub run {
 
     # ...
     # Вычисление минимума и максимума
-    # ...
+    # ... 
+    my $pis = 0;
+    if($x > $y){
+        $max = $x;
+        $min = $y;
+    } else{
+        $max = $y;
+        $min = $x;
+    }
 
+    if($max > $z){
+        if($min > $z){
+            $min = $z;
+        }
+    }else{
+        $max = $z;
+    }
     print "$min, $max\n";
 }
 

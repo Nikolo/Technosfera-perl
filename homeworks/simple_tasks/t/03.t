@@ -30,4 +30,3 @@ for (my $i = 0; $i < scalar(@TESTS); $i++) {
     is($result[$i], $TESTS[$i]->[1], $test_name);
 }
 
-1;
