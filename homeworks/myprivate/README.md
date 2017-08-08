@@ -45,7 +45,7 @@ sub _priv3 { "priv3" }          # unaffected: after 'no myprivate'
     package xxx;
     print main::_priv1();       # "priv1"
     print main::glob2();        # "glob2"
-    print main::_priv2();       # Died: "Private sub main::_priv2 was called from xxx"
+    print main::_priv2();       # Died: "Private sub main::_priv2 was called from xxx at line .... " #carp
 }
 ```
 
